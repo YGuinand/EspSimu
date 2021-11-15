@@ -1,0 +1,66 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="standardbutton-open-16.png">images/standardbutton-open-16.png</file>
+        <file alias="refresh-24.png">images/refresh-24.png</file>
+        <file alias="led_rouge_off.png">images/led_rouge_off.png</file>
+        <file alias="led_rouge_on.png">images/led_rouge_on.png</file>
+        <file alias="led_verte_off.png">images/led_verte_off.png</file>
+        <file alias="led_verte_on.png">images/led_verte_on.png</file>
+        <file alias="arret.png">images/arret.png</file>
+        <file alias="marche_vert.png">images/marche_vert.png</file>
+        <file alias="marche_orange.png">images/marche_orange.png</file>
+        <file alias="lcd.png">images/lcd.png</file>
+        <file alias="locked.png">images/locked.png</file>
+        <file alias="unlocked.png">images/unlocked.png</file>
+        <file alias="micropro.png">images/micropro.png</file>
+        <file alias="oscillo.png">images/oscillo.png</file>
+        <file alias="icone_lcd.png">images/icone_lcd.png</file>
+        <file alias="icone_oscillo.png">images/icone_oscillo.png</file>
+        <file alias="fdc_off.png">images/fdc_off.png</file>
+        <file alias="fdc_on.png">images/fdc_on.png</file>
+        <file alias="jack_off_2.png">images/jack_off_2.png</file>
+        <file alias="jack_on_2.png">images/jack_on_2.png</file>
+        <file alias="gamel.png">images/gamel.png</file>
+        <file alias="icone_gamel.png">images/icone_gamel.png</file>
+        <file alias="nc_down.png">images/nc_down.png</file>
+        <file alias="nc_up.png">images/nc_up.png</file>
+        <file alias="no_down.png">images/no_down.png</file>
+        <file alias="no_up.png">images/no_up.png</file>
+        <file alias="echange.png">images/echange.png</file>
+        <file alias="mot_droit.png">images/mot_droit.png</file>
+        <file alias="mot_gauche.png">images/mot_gauche.png</file>
+        <file alias="floppy-16.png">images/floppy-16.png</file>
+        <file alias="sch_cny_up.png">images/sch_cny_up.png</file>
+        <file alias="sch_cny_down.png">images/sch_cny_down.png</file>
+        <file alias="sch_nocomp_up.png">images/sch_nocomp_up.png</file>
+        <file alias="sch_comp_neg_down.png">images/sch_comp_neg_down.png</file>
+        <file alias="sch_comp_neg_up.png">images/sch_comp_neg_up.png</file>
+        <file alias="sch_comp_pos_down.png">images/sch_comp_pos_down.png</file>
+        <file alias="sch_comp_pos_up.png">images/sch_comp_pos_up.png</file>
+        <file alias="sch_nocomp_down.png">images/sch_nocomp_down.png</file>
+        <file alias="gamel_axes.png">images/gamel_axes.png</file>
+        <file alias="add.png">images/add.png</file>
+        <file alias="suppr.png">images/suppr.png</file>
+        <file alias="droite.png">images/droite.png</file>
+        <file alias="gauche.png">images/gauche.png</file>
+        <file alias="cny70blanc.png">images/cny70blanc.png</file>
+        <file alias="cny70bleu.png">images/cny70bleu.png</file>
+        <file alias="cny70focus.png">images/cny70focus.png</file>
+        <file alias="icone_piste.png">images/icone_piste.png</file>
+        <file alias="move_gamel.png">images/move_gamel.png</file>
+        <file alias="wood.png">images/wood.png</file>
+        <file alias="clockwise.png">images/clockwise.png</file>
+        <file alias="anticlockwise.png">images/anticlockwise.png</file>
+        <file alias="zoommoins.png">images/zoommoins.png</file>
+        <file alias="zoomplus.png">images/zoomplus.png</file>
+        <file alias="close.png">images/standardbutton-closetab-16.png</file>
+        <file alias="info.png">images/fileinfo-16.png</file>
+        <file alias="zoomfit.png">images/zoomfit.png</file>
+        <file alias="equal.png">images/equal.png</file>
+        <file alias="diff.png">images/diff.png</file>
+        <file alias="iutenligne.png">images/iutenligne.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>piste001.pis</file>
+    </qresource>
+</RCC>

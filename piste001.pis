@@ -1,0 +1,169 @@
+<!DOCTYPE piste PUBLIC '-//YG//DTD Piste 1.0 //EN' 'http://www.guinand.fr/DTD/piste.dtd'>
+<!--This file describe a gamel-->
+<piste name="/home/yves/seven/ProjetPic/Qt/picsimu-build-desktop/piste001.pis">
+ <repere numero="0">
+  <x>-4000</x>
+  <y>4200</y>
+  <theta>0</theta>
+ </repere>
+ <droite numero="1">
+  <longueur>7000</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="2">
+  <rayon>1000</rayon>
+  <largeur>19</largeur>
+  <angle>-90</angle>
+ </courbe>
+ <droite numero="3">
+  <longueur>6000</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="4">
+  <rayon>1000</rayon>
+  <largeur>19</largeur>
+  <angle>-180</angle>
+ </courbe>
+ <droite numero="5">
+  <longueur>500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="6">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>60</angle>
+ </courbe>
+ <courbe numero="7">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>-120</angle>
+ </courbe>
+ <courbe numero="8">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>120</angle>
+ </courbe>
+ <courbe numero="9">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>-120</angle>
+ </courbe>
+ <courbe numero="10">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>60</angle>
+ </courbe>
+ <droite numero="11">
+  <longueur>1000</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="12">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>-270</angle>
+ </courbe>
+ <droite numero="13">
+  <longueur>2500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <marqueur_gauche numero="14">
+  <longueur>300</longueur>
+  <largeur>19</largeur>
+ </marqueur_gauche>
+ <droite numero="15">
+  <longueur>300</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <droite numero="16">
+  <longueur>1500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="17">
+  <rayon>800</rayon>
+  <largeur>19</largeur>
+  <angle>270</angle>
+ </courbe>
+ <droite numero="18">
+  <longueur>1500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="19">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>90</angle>
+ </courbe>
+ <droite numero="20">
+  <longueur>1500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="21">
+  <rayon>1000</rayon>
+  <largeur>19</largeur>
+  <angle>90</angle>
+ </courbe>
+ <droite numero="22">
+  <longueur>3000</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="23">
+  <rayon>1000</rayon>
+  <largeur>19</largeur>
+  <angle>90</angle>
+ </courbe>
+ <droite numero="24">
+  <longueur>3000</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="25">
+  <rayon>500</rayon>
+  <largeur>19</largeur>
+  <angle>270</angle>
+ </courbe>
+ <droite numero="26">
+  <longueur>1500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="27">
+  <rayon>1000</rayon>
+  <largeur>19</largeur>
+  <angle>-90</angle>
+ </courbe>
+ <droite numero="28">
+  <longueur>2500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <obstacle numero="29">
+  <longueur>800</longueur>
+  <largeur>50</largeur>
+ </obstacle>
+ <aveugle numero="30">
+  <longueur>150</longueur>
+ </aveugle>
+ <obstacle numero="31">
+  <longueur>1000</longueur>
+  <largeur>50</largeur>
+ </obstacle>
+ <repere numero="32">
+  <x>-300</x>
+  <y>1670</y>
+  <theta>-90</theta>
+ </repere>
+ <droite numero="33">
+  <longueur>1500</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <courbe numero="34">
+  <rayon>800</rayon>
+  <largeur>19</largeur>
+  <angle>-90</angle>
+ </courbe>
+ <courbe numero="35">
+  <rayon>800</rayon>
+  <largeur>19</largeur>
+  <angle>90</angle>
+ </courbe>
+ <droite numero="36">
+  <longueur>710</longueur>
+  <largeur>19</largeur>
+ </droite>
+</piste>
