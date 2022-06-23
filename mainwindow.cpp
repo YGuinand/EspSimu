@@ -168,9 +168,14 @@ void MainWindow::on_action_Mode_complet_triggered()
 
 void MainWindow::timerEvent(QTimerEvent * /* event */)
 {
-    static QTime mesure;
+    static QElapsedTimer mesure;
+    static bool isStarted = false;
     static int calcul = 0;
 
+    if (!isStarted) {
+        mesure.start();
+        isStarted = true;
+    }
     calcul -= mesure.elapsed();
 
     static int boucle = 0;

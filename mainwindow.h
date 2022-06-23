@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QLabel>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>

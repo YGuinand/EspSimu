@@ -1,6 +1,6 @@
 <!DOCTYPE piste PUBLIC '-//YG//DTD Piste 1.0 //EN' 'http://www.guinand.fr/DTD/piste.dtd'>
 <!--This file describe a gamel-->
-<piste name="/home/yves/seven/ProjetPic/Qt/picsimu-build-desktop/piste001.pis">
+<piste name="Z:/tmp/build-picsimu-Desktop_Qt_6_3_1_MinGW_64_bit-Release/release/picsimu/files/piste001.pis">
  <repere numero="0">
   <x>-4000</x>
   <y>4200</y>
@@ -163,7 +163,15 @@
   <angle>90</angle>
  </courbe>
  <droite numero="36">
-  <longueur>710</longueur>
+  <longueur>410</longueur>
+  <largeur>19</largeur>
+ </droite>
+ <marqueur_gauche numero="37">
+  <longueur>300</longueur>
+  <largeur>19</largeur>
+ </marqueur_gauche>
+ <droite numero="38">
+  <longueur>300</longueur>
   <largeur>19</largeur>
  </droite>
 </piste>

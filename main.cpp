@@ -20,10 +20,12 @@ int main(int argc, char *argv[])
             QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     a.installTranslator(&qtTranslator);
 */
+/*
     QTranslator qtTranslator;
-    qtTranslator.load("picsimu_en");
-    a.installTranslator(&qtTranslator);
-
+    if (qtTranslator.load("qt_en")) {
+        a.installTranslator(&qtTranslator);
+    }
+*/
     QFile f("./sortie.txt");
     f.open(QIODevice::WriteOnly);
     dbg = new QDebug(&f);

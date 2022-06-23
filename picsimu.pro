@@ -4,22 +4,18 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml svg
+QT       += core gui xml svg core5compat
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = picsimuQt5
+TARGET = picsimu
 TEMPLATE = app
 
+CONFIG += qwt
 CONFIG += rtti
 CONFIG += static
 
-unix:INCLUDEPATH += /usr/include/qt5/qwt
-unix:LIBS += /usr/lib64/libqwt-qt5.so
-
-windows:INCLUDEPATH += /usr/x86_64-w64-mingw32/sys-root/mingw/include/qt5/qwt
-windows:LIBS += -lqwindows -ldwmapi -lQt5FontDatabaseSupport -lQt5WindowsUIAutomationSupport -lQt5VulkanSupport -lQt5PlatformCompositorSupport -lQt5EventDispatcherSupport \
-             -lQt5ThemeSupport -lQt5Core -lQt5Gui -lQt5OpenGL -lQt5PrintSupport -lQt5Svg -lqwt-qt5
+windows:include ( C:/Qwt-6.2.0/features/qwt.prf )
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -89,11 +85,12 @@ FORMS    += \
 RESOURCES += \
     ressources.qrc
 
+RC_ICONS = images/micropro.ico
 
 TRANSLATIONS = picsimu_en.ts \
                picsimu_it.ts
 
-QMAKE_CFLAGS  += -O3
-QMAKE_CXXFLAGS  += -O3
-QMAKE_LFLAGS  += -O3
+QMAKE_CFLAGS  += -Ofast
+QMAKE_CXXFLAGS  += -Ofast
+QMAKE_LFLAGS  += -Ofast
 

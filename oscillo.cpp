@@ -2,6 +2,8 @@
 
 #include "oscillo.h"
 
+#include <QPen>
+
 Oscillo::Oscillo(P18f4550 *p, QwtPlot *qp)
 {
     processeur = p;
@@ -46,7 +48,7 @@ void Oscillo::setBaseTemps(int d)
     QString str("s");
     if (bx<1e-3) {
         unite = 1e6;
-        str = QString(0x03bc)+QString("s");
+        str = QChar(0x03bc)+QString("s");
     } else if (bx<1) {
         unite = 1e3;
         str = "ms";
