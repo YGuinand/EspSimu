@@ -3,34 +3,47 @@
 #include "oscillo.h"
 
 #include <QPen>
+#include <QAbstractAxis>
+#include <QList>
+#include <QGraphicsLayout>
 
-Oscillo::Oscillo(P18f4550 *p, QwtPlot *qp)
+Oscillo::Oscillo(P18f4550 *p, QChartView *qp)
 {
     processeur = p;
-    qwtPlot = qp;
+
+    figure = new QChart();
+    qp->setChart(figure);
+    figure->setMargins(QMargins(0,0,0,0));
 
     trigTemps = 1;
 
-    for (int i=0; i<NB_PTS; i++) {
-        x[i]=(i-trigTemps)/(48e6/dt)*1e6;
-        y[i]=0;
-    }
+    courbe = new QLineSeries();
+    figure->addSeries(courbe);
+    figure->legend()->setVisible(false);
 
-    qwtPlot->setAxisScale(QwtPlot::yLeft, 0, 5);
-    qwtPlot->setAxisTitle(QwtPlot::yLeft, QString("Volts"));
+    axisY = new QValueAxis;
+    axisY->setTickType(QValueAxis::TicksDynamic);
+    axisY->setTickAnchor(0);
+    axisY->setTickInterval(1);
+    axisY->setTickCount(6);
+    axisY->setLabelFormat("%.0f");
+    axisY->setRange(-0.1, 5.1);
+    axisY->setTitleText("Volts");
+    figure->addAxis(axisY, Qt::AlignLeft);
+    courbe->attachAxis(axisY);
 
-    courbe.setRawSamples(x, y, NB_PTS);
-    courbe.attach(qwtPlot);
-    courbe.setStyle(QwtPlotCurve::Steps);
-    courbe.setYAxis(QwtPlot::yLeft);
+    axisX = new QValueAxis;
+    axisX->setTickType(QValueAxis::TicksDynamic);
+    axisX->setTickAnchor(0);
+    axisX->setTickInterval(1);
+    axisX->setLabelFormat("%.0f");
+    axisX->setRange(-0.1, 5.1);
+    axisX->setTitleText("s");
+    figure->addAxis(axisX, Qt::AlignBottom);
+    courbe->attachAxis(axisX);
 
-    QPen pen(Qt::DotLine);
-    pen.setColor(QColor(255,255,255));
-    grille.setMajorPen(pen);
-    grille.attach(qwtPlot);
-
-    trigAuto = 5000;
-    trigNiveau = 2.5;
+    trigAuto = 50000;
+    trigNiveau = 2.6;
     trigEtat = 0;
     nbAcq = 0;
 
@@ -43,6 +56,7 @@ void Oscillo::setBaseTemps(int d)
 {
     if (estEnregistre()) supprimer();
     dt = exp(0.085619911*d);
+
     double unite = 1;
     double bx = NB_PTS/(48e6/dt);
     QString str("s");
@@ -53,12 +67,38 @@ void Oscillo::setBaseTemps(int d)
         unite = 1e3;
         str = "ms";
     }
+
+    double delta = 1.0/(48e6/dt)*unite;
     for (int i=0; i<NB_PTS; i++) {
-        x[i]=(i-trigTemps)/(48e6/dt)*unite;
+        xmem[i] = (i-trigTemps)*delta;
     }
-    qwtPlot->setAxisScale(QwtPlot::xBottom, x[0], x[NB_PTS-1]);
-    qwtPlot->setAxisTitle(QwtPlot::xBottom, str);
-    qwtPlot->replot();
+
+    axisX->setLabelFormat("%.0f");
+    double ecart = xmem[NB_PTS-1]-xmem[0];
+
+    trigAuto = 0.1*unite/ecart*NB_PTS;
+
+    if (ecart>800) ecart = 200;
+    else if (ecart>400) ecart = 100;
+    else if (ecart>200) ecart = 50;
+    else if (ecart>80) ecart = 20;
+    else if (ecart>40) ecart = 10;
+    else if (ecart>20) ecart = 5;
+    else if (ecart>8) ecart = 2;
+    else if (ecart>4) ecart = 1;
+    else {
+        axisX->setLabelFormat("%.1f");
+        if (ecart>2) ecart = 0.5;
+        else if (ecart>0.8) ecart = 0.2;
+        else ecart = 0.1;
+    }
+
+    axisX->setTickInterval(ecart);
+    axisX->setRange(xmem[0], xmem[NB_PTS-1]);
+    axisX->setTitleText(str);
+
+    pts.clear();
+    courbe->replace(pts);
 }
 
 void Oscillo::observer(Connexion *c, int param)
@@ -81,15 +121,22 @@ void Oscillo::executer()
     uint16_t i, j;
 
     if (nbAcq > trigAuto) {
-        i=0;
         j=index;
-        do {
+        valActu = ymem[j++];
+        pts.clear();
+        pts.append(QPointF(xmem[0], valActu));
+        for (i=1; i<NB_PTS; i++, j++)
+        {
             if (j>=NB_PTS) j=0;
-            y[i++] = ymem[j++];
-        } while (i < NB_PTS);
-        qwtPlot->replot();
-        supprimer();
-        return;
+            if (ymem[j] != valActu) {
+                pts.append(QPointF(xmem[i], valActu));
+                valActu = ymem[j];
+                pts.append(QPointF(xmem[i], valActu));
+            }
+        }
+        pts.append(QPointF(xmem[NB_PTS-1], valActu));
+        courbe->replace(pts);
+        trigEtat = 0;
     }
     nbAcq++;
     supprimer();
@@ -114,24 +161,38 @@ void Oscillo::executer()
         if (ymem[index]>trigNiveau) {
             trigEtat=3;
             nbAcq = 0;
-            j = index - trigTemps;
-            if (j>=NB_PTS) j+=NB_PTS;
-            for (i=0; i<=trigTemps; i++, j++) {
-                if (j>=NB_PTS) j = 0;
-                y[i] = ymem[j];
+            j = index - trigTemps;      // si dépassement j >= NB_PTS car j non-signé
+            if (j>=NB_PTS) j+=NB_PTS;   // on élimine le dépassement
+            valActu = ymem[j++];
+            pts.clear();
+            pts.append(QPointF(xmem[0], valActu));
+            for (i=1; i<=trigTemps; i++, j++)
+            {
+                if (j>=NB_PTS) j=0;
+                if (ymem[j] != valActu) {
+                    pts.append(QPointF(xmem[i], valActu));
+                    valActu = ymem[j];
+                    pts.append(QPointF(xmem[i], valActu));
+                }
             }
             index = trigTemps;
         }
         index++;
         if (index>=NB_PTS) index=0;
-        enregistrerDernier(1, processeur->getListeEvts());
+        enregistrerDernier(dt, processeur->getListeEvts());
     } else {
-        y[index++] = observ->getValParam(numParam);
+        double val = observ->getValParam(numParam);
+        if (val != valActu) {
+            pts.append(QPointF(xmem[index], valActu));
+            valActu = val;
+            pts.append(QPointF(xmem[index], valActu));
+        }
+        index++;
         if (index<NB_PTS) {
             enregistrerDernier(dt, processeur->getListeEvts());
         } else {
-            qwtPlot->replot();
+            pts.append(QPointF(xmem[NB_PTS-1], valActu));
+            courbe->replace(pts);
         }
     }
-
 }

@@ -184,8 +184,7 @@ void MainWindow::timerEvent(QTimerEvent * /* event */)
 
     ui->labelTime->setText(QLocale().toString(modele.getProcesseur().time()/48e6,'f',3));
     boucle++;
-
-    if ((boucle % 10) == 0) oscillos->miseAJour();
+    if ((boucle%20) == 0) oscillos->miseAJour();
 
     calcul += mesure.elapsed();
     if (boucle>=100) {

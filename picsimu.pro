@@ -4,18 +4,15 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml svg core5compat
+QT       += core gui xml svg core5compat charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = picsimu
 TEMPLATE = app
 
-CONFIG += qwt
 CONFIG += rtti
 CONFIG += static
-
-windows:include ( C:/Qwt-6.2.0/features/qwt.prf )
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -90,7 +87,7 @@ RC_ICONS = images/micropro.ico
 TRANSLATIONS = picsimu_en.ts \
                picsimu_it.ts
 
-QMAKE_CFLAGS  += -Ofast
-QMAKE_CXXFLAGS  += -Ofast
-QMAKE_LFLAGS  += -Ofast
+QMAKE_CFLAGS_RELEASE  += -O3
+QMAKE_CXXFLAGS_RELEASE  += -O3
+QMAKE_LFLAGS  += -O3
 

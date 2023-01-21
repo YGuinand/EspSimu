@@ -3,6 +3,8 @@
 
 #include "general.h"
 
+#include <QObject>
+
 class P18f4550;
 class DataMemory;
 class Port;

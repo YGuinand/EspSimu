@@ -17,12 +17,12 @@ FenetreOscillos::FenetreOscillos(Modele &m, QWidget *parent) :
 //    modele->getProcesseur().getPortC()->connecte(1, &ledPwm2);
     ui->ledPwm2->hide();
 
-    oscillo1 = new Oscillo(&modele->getProcesseur(), ui->qwtPlot_1);
+    oscillo1 = new Oscillo(&modele->getProcesseur(), ui->graphicsView1);
 //    oscillo1->observer(&ledPwm1);
     oscillo1->observer(modele->getMoteurD(), 0);
     ui->comboBox_1->addItem(modele->getMoteurD()->getNameParam(0));
 
-    oscillo2 = new Oscillo(&modele->getProcesseur(), ui->qwtPlot_2);
+    oscillo2 = new Oscillo(&modele->getProcesseur(), ui->graphicsView2);
 //    oscillo2->observer(&ledPwm2);
     oscillo2->observer(modele->getMoteurG(), 0);
     ui->comboBox_2->addItem(modele->getMoteurG()->getNameParam(0));

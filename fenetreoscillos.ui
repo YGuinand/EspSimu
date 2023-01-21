@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>349</width>
-    <height>371</height>
+    <width>503</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,15 +70,12 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
-      <widget class="QwtPlot" name="qwtPlot_1">
+      <widget class="QChartView" name="graphicsView1">
        <property name="minimumSize">
         <size>
-         <width>250</width>
-         <height>137</height>
+         <width>400</width>
+         <height>200</height>
         </size>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
        </property>
       </widget>
      </item>
@@ -197,17 +194,11 @@ de temps</string>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_9">
      <item>
-      <widget class="QwtPlot" name="qwtPlot_2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QChartView" name="graphicsView2">
        <property name="minimumSize">
         <size>
-         <width>250</width>
-         <height>137</height>
+         <width>400</width>
+         <height>200</height>
         </size>
        </property>
       </widget>
@@ -297,9 +288,9 @@ de Temps</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>qchartview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

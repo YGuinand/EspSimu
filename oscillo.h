@@ -5,24 +5,27 @@
 #include "evenement.h"
 #include "ports.h"
 
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-#include <qwt_plot_grid.h>
+#include <QChartView>
+#include <QLineSeries>
+#include <QPointF>
+#include <QValueAxis>
 
 #define NB_PTS  250
 
 class Oscillo : public Evenement
 {
 private :
-    QwtPlot *qwtPlot;
-    QwtPlotCurve courbe;
-    QwtPlotGrid grille;
+    QChart *figure;
+    QLineSeries *courbe;
+    QValueAxis *axisX, *axisY;
     Connexion *observ;
 
     int dt;
     P18f4550 *processeur;
 
-    double x[NB_PTS], y[NB_PTS], ymem[NB_PTS], trigNiveau;
+    double ymem[NB_PTS], xmem[NB_PTS], trigNiveau, valActu;
+    QList<QPointF> pts;
+
     uint16_t index, trigTemps;
     int trigAuto, nbAcq;
     int trigEtat;
@@ -30,7 +33,7 @@ private :
     int numParam;
 
 public:
-    Oscillo(P18f4550 *p, QwtPlot *qp);
+    Oscillo(P18f4550 *p, QChartView *qp);
     virtual ~Oscillo() {}
 
     virtual void executer();
