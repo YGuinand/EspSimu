@@ -72,6 +72,26 @@ void FenetreCarteMicro::on_boutonPower_toggled(bool checked)
 
 void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
 {
+#ifdef Q_OS_WASM
+    auto fileContentReady = [this](const QString &fichier, const QByteArray &fileContent) {
+        if (fichier.isEmpty()) {
+            // No file was selected
+        } else {
+            // Use fichier and fileContent
+            ui->fichier->setText(fichier);
+            QByteArray ba = fichier.toLatin1();
+            QString sandboxFile = "tmp.hex";
+            QFile file(sandboxFile);
+            file.open(QIODeviceBase::WriteOnly);
+            file.write(fileContent);
+            file.close();
+            modele->getProcesseur().readFromHex(sandboxFile.toLatin1().data());
+//            ui->pushButtonRefresh->setEnabled(true);
+//            emit refreshEnabled(true);
+        }
+    };
+    QFileDialog::getOpenFileContent(tr("Fichier HEX (*.hex)"),  fileContentReady);
+#else
     QString fichier = QFileDialog::getOpenFileName(0, tr("Choisir un fichier"), ui->fichier->text(), tr("Fichier HEX (*.hex)"));
     if (!fichier.isEmpty()) {
         ui->fichier->setText(fichier);
@@ -81,6 +101,7 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
         ui->pushButtonRefresh->setEnabled(true);
         emit refreshEnabled(true);
     }
+#endif
 }
 
 void FenetreCarteMicro::on_pushButtonRefresh_clicked()

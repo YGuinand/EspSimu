@@ -4,6 +4,10 @@
 const Byte Registre::maskSet[8] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
 const Byte Registre::maskClr[8] = {0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F};
 
+#ifdef Q_OS_WASM
+#define inline
+#endif
+
 inline void RegistrePREINC0::doPreIndirect() {  mem->incFSR0();  }
 inline void RegistrePREINC1::doPreIndirect() {  mem->incFSR1();  }
 inline void RegistrePREINC2::doPreIndirect() {  mem->incFSR2();  }

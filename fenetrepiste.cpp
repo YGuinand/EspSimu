@@ -189,23 +189,49 @@ void FenetrePiste::on_doubleSpinBox3_valueChanged(double val)
 
 void FenetrePiste::on_toolButtonOpen_clicked()
 {
-//    QString f = QFileDialog::getOpenFileName(0, QString::fromUtf8(tr("Charger les données d'une piste")), fichier, tr("Fichier PIS (*.pis)"));
+#ifdef Q_OS_WASM
+    auto fileContentReady = [this](const QString &fichier, const QByteArray &fileContent) {
+        if (fichier.isEmpty()) {
+            // No file was selected
+        } else {
+            // Use fichier and fileContent
+            QString sandboxFile = "tmp.pis";
+            QFile file(sandboxFile);
+            file.open(QIODeviceBase::WriteOnly);
+            file.write(fileContent);
+            file.close();
+            modele->getPiste().openData(sandboxFile);
+            drawPiste();
+        }
+    };
+    QFileDialog::getOpenFileContent(tr("Fichier PIS (*.pis)"),  fileContentReady);
+#else
     QString f = QFileDialog::getOpenFileName(0, QString(tr("Charger les données d'une piste")), fichier, tr("Fichier PIS (*.pis)"));
     if (!f.isEmpty()) {
         fichier = f;
         modele->getPiste().openData(fichier);
         drawPiste();
     }
+#endif
 }
 
 void FenetrePiste::on_toolButtonSave_clicked()
 {
-//    QString f = QFileDialog::getSaveFileName(0, QString::fromUtf8(tr("Sauvegarder les données d'une piste")), fichier, tr("Fichier PIS (*.pis)"));
+#ifdef Q_OS_WASM
+    QString sandboxFile = "tmpSave.pis";
+    modele->getPiste().saveData(sandboxFile);
+    QFile file(sandboxFile);
+    file.open(QIODeviceBase::ReadOnly);
+    QByteArray data = file.readAll();
+    file.close();
+    QFileDialog::saveFileContent(data, "pisteDatas.pis");
+#else
     QString f = QFileDialog::getSaveFileName(0, QString(tr("Sauvegarder les données d'une piste")), fichier, tr("Fichier PIS (*.pis)"));
     if (!f.isEmpty()) {
         fichier = f;
         modele->getPiste().saveData(fichier);
     }
+#endif
 }
 
 void FenetrePiste::on_toolButtonEdit_toggled(bool checked)

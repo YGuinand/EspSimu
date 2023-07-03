@@ -402,22 +402,47 @@ void Gamel::on_fdcResistance_valueChanged(double value)
 
 void Gamel::on_saveButton_clicked()
 {
-//    QString f = QFileDialog::getSaveFileName(0, QString::fromUtf8("Sauvegarder les données d'une gamelle"), fichier, tr("Fichier GML (*.gml)"));
+#ifdef Q_OS_WASM
+    QString sandboxFile = "tmpSave.gml";
+    modele->saveGamelData(sandboxFile);
+    QFile file(sandboxFile);
+    file.open(QIODeviceBase::ReadOnly);
+    QByteArray data = file.readAll();
+    file.close();
+    QFileDialog::saveFileContent(data, "gamelDatas.gml");
+#else
     QString f = QFileDialog::getSaveFileName(0, QString(tr("Sauvegarder les données d'une gamelle")), fichier, tr("Fichier GML (*.gml)"));
     if (!f.isEmpty()) {
         fichier = f;
         modele->saveGamelData(fichier);
     }
+#endif
 }
 
 void Gamel::on_openButton_clicked()
 {
-//    QString f = QFileDialog::getOpenFileName(0, QString::fromUtf8("Charger les données d'une gamelle"), fichier, tr("Fichier GML (*.gml)"));
+#ifdef Q_OS_WASM
+    auto fileContentReady = [this](const QString &fichier, const QByteArray &fileContent) {
+        if (fichier.isEmpty()) {
+            // No file was selected
+        } else {
+            // Use fichier and fileContent
+            QString sandboxFile = "tmp.gml";
+            QFile file(sandboxFile);
+            file.open(QIODeviceBase::WriteOnly);
+            file.write(fileContent);
+            file.close();
+            modele->openData(sandboxFile);
+        }
+    };
+    QFileDialog::getOpenFileContent(tr("Fichier GML (*.gml)"),  fileContentReady);
+#else
     QString f = QFileDialog::getOpenFileName(0, QString(tr("Charger les données d'une gamelle")), fichier, tr("Fichier GML (*.gml)"));
     if (!f.isEmpty()) {
         fichier = f;
         modele->openData(fichier);
     }
+#endif
 }
 
 void Gamel::on_motPinsButton_clicked()
