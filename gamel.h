@@ -79,7 +79,7 @@ private:
 
     void changePinsInUse();
 
-    void remplirComboPins(QComboBox &c, const Connexion &cnx);
+    void remplirComboJ2(QComboBox &c, int indexCourant);
 
     double changeRepX(double x) { return x*echelle-delta; }
     double changeRepY(double y) { return -y*echelle-delta; }

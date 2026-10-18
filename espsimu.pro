@@ -8,68 +8,47 @@ QT       += core gui xml svg core5compat charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = picsimu
+TARGET = espsimu
 TEMPLATE = app
 
 CONFIG += rtti
 CONFIG += static
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    instructions.cpp \
+    connexion.cpp \
+    esp32backend.cpp \
+    grovelcdrgb.cpp \
+    mainwindow.cpp \
     lcdscreen.cpp \
     ledalpha.cpp \
     modele.cpp \
     fenetrecartemicro.cpp \
     fenetreoscillos.cpp \
     fenetrepiste.cpp \
-    flashmemory.cpp \
+    fenetreterminal.cpp \
     gamel.cpp \
-    hex_file.cpp \
     oscillo.cpp \
     piste.cpp \
-    ports.cpp \
-    processeur.cpp \
-    pwm.cpp \
-    registre.cpp \
-    timer0.cpp \
-    timer1.cpp \
-    timer2.cpp \
     xmlopensavedata.cpp \
-    adc.cpp \
-    alu.cpp \
-    apropos.cpp \
-    datamemory.cpp \
-    evenement.cpp
+    apropos.cpp
 
 HEADERS  += mainwindow.h \
-    adc.h \
-    hex_file.h \
-    instructions.h \
+    connexion.h \
+    esp32backend.h \
+    grovelcdrgb.h \
     lcdfont.h \
     lcdscreen.h \
     ledalpha.h \
     fenetrecartemicro.h \
     fenetreoscillos.h \
     fenetrepiste.h \
-    flashmemory.h \
+    fenetreterminal.h \
     gamel.h \
-    general.h \
     modele.h \
     oscillo.h \
     piste.h \
-    ports.h \
-    processeur.h \
-    pwm.h \
-    registre.h \
-    timer0.h \
-    timer1.h \
-    timer2.h \
     xmlopensavedata.h \
-    alu.h \
-    apropos.h \
-    datamemory.h \
-    evenement.h
+    apropos.h
 
 FORMS    += \
     apropos.ui \
@@ -84,10 +63,15 @@ RESOURCES += \
 
 RC_ICONS = images/micropro.ico
 
-TRANSLATIONS = picsimu_en.ts \
-               picsimu_it.ts
+TRANSLATIONS = espsimu_en.ts \
+               espsimu_it.ts
 
 QMAKE_CFLAGS_RELEASE  += -O3
 QMAKE_CXXFLAGS_RELEASE  += -O3
 QMAKE_LFLAGS  += -O3
+
+unix:!macx {
+    LIBS += -ldl -lpthread -lglib-2.0 -lpixman-1 -lz -lgcrypt -lm
+    QMAKE_LFLAGS += -rdynamic
+}
 

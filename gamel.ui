@@ -909,7 +909,7 @@
            <item>
             <widget class="QLabel" name="motGPin">
              <property name="text">
-              <string>Pin RC2
+              <string>IO26
 (PWM1)</string>
              </property>
              <property name="alignment">
@@ -937,7 +937,7 @@
            <item>
             <widget class="QLabel" name="motDPin">
              <property name="text">
-              <string>Pin RC1
+              <string>IO27
 (PWM2)</string>
              </property>
             </widget>
@@ -2231,13 +2231,13 @@ QCheckBox::indicator:checked {
                 <number>3</number>
                </property>
                <property name="maximum">
-                <double>5.000000000000000</double>
+                <double>3.300000000000000</double>
                </property>
                <property name="singleStep">
                 <double>0.100000000000000</double>
                </property>
                <property name="value">
-                <double>2.500000000000000</double>
+                <double>1.650000000000000</double>
                </property>
               </widget>
              </item>

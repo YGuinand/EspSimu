@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
-#include <QElapsedTimer>
 #include <QLabel>
 #include <QGraphicsView>
 #include <QGraphicsPixmapItem>
@@ -11,10 +10,10 @@
 #include <QTranslator>
 
 #include <math.h>
-#include "general.h"
 #include "fenetrecartemicro.h"
 #include "fenetreoscillos.h"
 #include "fenetrepiste.h"
+#include "fenetreterminal.h"
 #include "modele.h"
 #include "gamel.h"
 #include "apropos.h"
@@ -48,27 +47,24 @@ private:
     QMdiSubWindow *subWindow4;
     FenetrePiste *piste;
 
+    QMdiSubWindow *subWindow5;
+    FenetreTerminal *terminal;
+
     Apropos *apropos;
 
-    int timerID, speed;
-    bool validTimer;
-
-    void timerEvent(QTimerEvent *event);
+    bool m_closing = false;
 
 protected:
     void keyPressEvent(QKeyEvent* event);
     void keyReleaseEvent(QKeyEvent* event);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
-    void on_speedSpinBox_valueChanged(double );
-    void on_speedSlider_valueChanged(int value);
     void action_apropos() {  apropos->show();  }
     void on_action_Mode_simple_triggered();
     void on_action_Mode_complet_triggered();
 
 public slots :
-    void stopTimer() { if (validTimer) { killTimer(timerID); validTimer=false; } }
-    void newTimer();
     void organiser();
 };
 

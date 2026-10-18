@@ -47,6 +47,7 @@
         <file alias="cny70bleu.png">images/cny70bleu.png</file>
         <file alias="cny70focus.png">images/cny70focus.png</file>
         <file alias="icone_piste.png">images/icone_piste.png</file>
+        <file alias="icone_terminal.png">images/computer-16.png</file>
         <file alias="move_gamel.png">images/move_gamel.png</file>
         <file alias="wood.png">images/wood.png</file>
         <file alias="clockwise.png">images/clockwise.png</file>
@@ -59,6 +60,8 @@
         <file alias="equal.png">images/equal.png</file>
         <file alias="diff.png">images/diff.png</file>
         <file alias="iutenligne.png">images/iutenligne.png</file>
+        <file alias="led_jaune_on.png">images/led_jaune_on.png</file>
+        <file alias="led_jaune_off.png">images/led_jaune_off.png</file>
     </qresource>
     <qresource prefix="/">
         <file>piste001.pis</file>

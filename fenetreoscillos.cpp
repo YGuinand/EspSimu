@@ -9,25 +9,54 @@ FenetreOscillos::FenetreOscillos(Modele &m, QWidget *parent) :
 
     modele = &m;
 
-//    ledPwm1.setGraphics(&modele->getProcesseur(), ui->ledPwm1, ":/images/led_verte_on.png",":/images/led_verte_off.png");
-//    modele->getProcesseur().getPortC()->connecte(2, &ledPwm1);
-    ui->ledPwm1->hide();
+    // Sources de signal pour les deux oscilloscopes (GPIO brute)
+    srcGpio2  = [this](double &rapport, double &frequence) {
+        return modele->etatPwmGpio(2,  rapport, frequence); };
+    srcGpio4  = [this](double &rapport, double &frequence) {
+        return modele->etatPwmGpio(4,  rapport, frequence); };
+    srcGpio26 = [this](double &rapport, double &frequence) {
+        return modele->etatPwmGpio(26, rapport, frequence); };
+    srcGpio27 = [this](double &rapport, double &frequence) {
+        return modele->etatPwmGpio(27, rapport, frequence); };
 
-//    ledPwm2.setGraphics(&modele->getProcesseur(), ui->ledPwm2, ":/images/led_verte_on.png",":/images/led_verte_off.png");
-//    modele->getProcesseur().getPortC()->connecte(1, &ledPwm2);
-    ui->ledPwm2->hide();
+    // Liste identique pour les deux oscilloscopes : IO2, IO4, IO26, IO27
+    QStringList gpioList;
+    gpioList << "IO2" << "IO4" << "IO26" << "IO27";
 
-    oscillo1 = new Oscillo(&modele->getProcesseur(), ui->graphicsView1);
-//    oscillo1->observer(&ledPwm1);
-    oscillo1->observer(modele->getMoteurD(), 0);
-    ui->comboBox_1->addItem(modele->getMoteurD()->getNameParam(0));
+    oscillo1 = new Oscillo(ui->graphicsView1);
+    oscillo1->setSource(srcGpio26);   // defaut : IO26 en haut
+    ui->comboBox_1->addItems(gpioList);
+    ui->comboBox_1->setCurrentIndex(2); // IO26
 
-    oscillo2 = new Oscillo(&modele->getProcesseur(), ui->graphicsView2);
-//    oscillo2->observer(&ledPwm2);
-    oscillo2->observer(modele->getMoteurG(), 0);
-    ui->comboBox_2->addItem(modele->getMoteurG()->getNameParam(0));
+    oscillo2 = new Oscillo(ui->graphicsView2);
+    oscillo2->setSource(srcGpio27);   // defaut : IO27 en bas
+    ui->comboBox_2->addItems(gpioList);
+    ui->comboBox_2->setCurrentIndex(3); // IO27
 
-    connect(modele, SIGNAL(cnxMotChange()), this, SLOT(cnxChange()));
+    // Basculer la source selon la selection dans chaque liste deroulante
+    connect(ui->comboBox_1, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, [this](int idx) {
+                switch (idx) {
+                    case 0: oscillo1->setSource(srcGpio2);  break;
+                    case 1: oscillo1->setSource(srcGpio4);  break;
+                    case 2: oscillo1->setSource(srcGpio26); break;
+                    default: oscillo1->setSource(srcGpio27); break;
+                }
+            });
+    connect(ui->comboBox_2, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, [this](int idx) {
+                switch (idx) {
+                    case 0: oscillo2->setSource(srcGpio2);  break;
+                    case 1: oscillo2->setSource(srcGpio4);  break;
+                    case 2: oscillo2->setSource(srcGpio26); break;
+                    default: oscillo2->setSource(srcGpio27); break;
+                }
+            });
+
+    // Rafraichissement de la trace (10 Hz)
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &FenetreOscillos::miseAJour);
+    timer->start(100);
 }
 
 FenetreOscillos::~FenetreOscillos()
@@ -35,12 +64,6 @@ FenetreOscillos::~FenetreOscillos()
     delete ui;
     delete oscillo1;
     delete oscillo2;
-}
-
-void FenetreOscillos::cnxChange()
-{
-    ui->comboBox_1->setItemText(0, modele->getMoteurD()->getNameParam(0));
-    ui->comboBox_2->setItemText(0, modele->getMoteurG()->getNameParam(0));
 }
 
 void FenetreOscillos::on_baseTpsOscillo1_valueChanged(int value)
@@ -66,33 +89,9 @@ void FenetreOscillos::on_checkBoxBaseTps2_clicked(bool checked)
     }
 }
 
-
-void LedPwmCNX::setGraphics(P18f4550 *p, QGraphicsView *gv, QString str_on, QString str_off)
+void FenetreOscillos::miseAJour()
 {
-    processeur = p;
-    if (!gv) return;
-
-    on.setPixmap(QPixmap(str_on));
-    on.setPos(0,0);
-    on.setScale(1);
-    on.setOpacity(0);
-    gs.addItem(&on);
-    off.setPixmap(QPixmap(str_off));
-    off.setPos(0,0);
-    off.setScale(1);
-    off.setOpacity(1.0);
-    gs.addItem(&off);
-    gv->setScene(&gs);
+    if (!isVisible()) return;
+    oscillo1->rafraichir();
+    oscillo2->rafraichir();
 }
-
-void LedPwmCNX::modifie(double /* v */)
-{
-    uint64_t newt = processeur->time();
-    double mtsurtau = ((double)(newt-temps)) / 48000.0;
-    vs = (vs-vmemo)*exp(-mtsurtau) + vmemo;
-    temps = newt;
-    vmemo = getVin();
-    alpha = vs / 5.0;
-    redraw();
-}
-

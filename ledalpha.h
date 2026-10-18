@@ -17,7 +17,13 @@ private :
     double courantMax, courant, variation;
 
 public:
+    enum Couleur {
+        VERT,
+        JAUNE,
+        ROUGE
+    };
     explicit LedAlpha(QWidget *parent = 0);
+    void setColor(Couleur c = VERT);
 
 public slots:
     void setCourant(double i) {

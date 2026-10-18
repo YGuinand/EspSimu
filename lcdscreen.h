@@ -5,19 +5,11 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 
-#include "ports.h"
+#include <QObject>
+#include <cstdint>
 
-class ConnexionLcd : public Connexion {
-private :
-    bool etat;
-    bool e;
-public :
-    ConnexionLcd(bool isE=false) {  e=isE;  }
-    virtual void modifie(double v);
-    bool bit() {  return etat;  }
-    int b01() {  return (etat) ? 1 : 0;  }
-};
-
+// Afficheur HD44780 2x16 (JHD1313M1 du module Grove LCD RGB) : decode les commandes
+// et donnees recues en I2C (octets complets, deja assembles) et met a jour le texte affiche.
 class LcdScreen : public QObject
 {
     Q_OBJECT
@@ -28,25 +20,10 @@ public:
 private:
     int ascii[16][2];
 
-    ConnexionLcd e, rs, rw, d4, d5, d6, d7;
-    int d, dhigh, dlow; // latch d4...d7
-    bool rw_latch, rs_latch, rs_memo, e_latch;
     int adresse;
-    bool displayOn;
+    bool allume;
     int contraste;
-    unsigned long timeOut;
 
-    unsigned long time;
-    enum EtatLCD { EtatOff, EtatReset, EtatWait4_1ms, EtatWait100us, EtatInit,
-                   EtatInterface4bits, EtatInterface4bitsLow, EtatWait};
-    EtatLCD etat;
-    bool dirInput;
-
-    void dataIn();
-    void dataOut();
-    bool busy();
-    void setWait(unsigned long t);
-    void traitement();
     void clearDisplay();
     void modif(int x, int y, int c);
 
@@ -54,17 +31,10 @@ public:
     void powerOn();
     void powerOff();
 
-    Connexion *getE() { return &e; }
-    Connexion *getRS() { return &rs; }
-    Connexion *getRW() { return &rw; }
-    Connexion *getD4() { return &d4; }
-    Connexion *getD5() { return &d5; }
-    Connexion *getD6() { return &d6; }
-    Connexion *getD7() { return &d7; }
-    void clock();
-    void reset() { if (etat!=EtatOff) etat=EtatReset; }
-
     int getAscii(int x, int y) {  return ascii[x][y];  }
+
+    // Injecte un octet de commande (isData=false) ou de donnee (isData=true)
+    void injectI2cByte(bool isData, uint8_t value);
 
 public slots :
     void setContraste(int c);
@@ -72,9 +42,8 @@ public slots :
 signals :
     void modifie(int x, int y, int c);
     void setOpacity(double cd);
+    void setBacklightColor(int r, int g, int b, int alpha);
 };
-
-inline void ConnexionLcd::modifie(double v) { etat = v > 2.5;  }
 
 class LcdScreenView : public QObject
 {
@@ -97,6 +66,7 @@ public :
 public slots :
     void setOpacity(double cd);
     void modifie(int x, int y, int c);
+    void setBacklightColor(int r, int g, int b, int alpha);
 };
 
 #endif // LCDSCREEN_H

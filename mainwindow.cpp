@@ -6,6 +6,10 @@
 #include <QMdiSubWindow>
 #include <QTextCodec>
 #include <QScrollBar>
+#include <QTimer>
+#include <QCloseEvent>
+#include <QThread>
+#include <QProgressDialog>
 
 // #define VERSION_SANS_GAMELLE
 
@@ -65,13 +69,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Piste, SIGNAL(triggered()), subWindow4, SLOT(show()));
     connect(ui->action_Piste, SIGNAL(triggered()), subWindow4, SLOT(setFocus()));
 
-    speed = 1;
-    validTimer = false;
-    ui->speedSpinBox->setValue(speed);
-    connect(&modele, SIGNAL(setPowerOn()), this, SLOT(newTimer()));
-    connect(&modele, SIGNAL(setPowerOff()), this, SLOT(stopTimer()));
+    terminal = new FenetreTerminal(modele);
+    subWindow5 = new QMdiSubWindow;
+    subWindow5->setWidget(terminal);
+    subWindow5->setWindowIcon(QIcon(":/images/icone_terminal.png"));
+    ui->mdiArea->addSubWindow(subWindow5, Qt::SubWindow);
 
-    connect(ui->action_Barre_de_vitesse, SIGNAL(toggled(bool)), ui->widgetSpeedBar, SLOT(setVisible(bool)));
+    connect(ui->action_Terminal, SIGNAL(triggered()), subWindow5, SLOT(show()));
+    connect(ui->action_Terminal, SIGNAL(triggered()), subWindow5, SLOT(setFocus()));
 
     apropos = new Apropos();
     connect(ui->action_propos, SIGNAL(triggered()), SLOT(action_apropos()));
@@ -121,6 +126,9 @@ void MainWindow::on_action_Mode_simple_triggered()
     subWindow3->hide();
     subWindow4->hide();
     subWindow2->hide();
+    subWindow5->hide();
+    ui->action_Terminal->setDisabled(true);
+    ui->action_Terminal->setVisible(false);
     ui->action_Gamelle->setDisabled(true);
     ui->action_Gamelle->setVisible(false);
     ui->action_Piste->setDisabled(true);
@@ -131,7 +139,6 @@ void MainWindow::on_action_Mode_simple_triggered()
     show();
     resize(subWindow1->frameSize().width(),
            subWindow1->frameGeometry().height()+
-           ui->widgetSpeedBar->frameGeometry().height()+
            ui->menuBar->frameGeometry().height());
     organiser();
     subWindow1->showMaximized();
@@ -150,6 +157,9 @@ void MainWindow::on_action_Mode_complet_triggered()
     subWindow3->show();
     subWindow4->show();
     subWindow2->show();
+    subWindow5->show();
+    ui->action_Terminal->setDisabled(false);
+    ui->action_Terminal->setVisible(true);
     ui->action_Gamelle->setDisabled(false);
     ui->action_Gamelle->setVisible(true);
     ui->action_Piste->setDisabled(false);
@@ -166,64 +176,6 @@ void MainWindow::on_action_Mode_complet_triggered()
     disconnect(oscillos, SIGNAL(estCache(bool)), this, SLOT(organiser()));
 }
 
-void MainWindow::timerEvent(QTimerEvent * /* event */)
-{
-    static QElapsedTimer mesure;
-    static bool isStarted = false;
-    static int calcul = 0;
-
-    if (!isStarted) {
-        mesure.start();
-        isStarted = true;
-    }
-    calcul -= mesure.elapsed();
-
-    static int boucle = 0;
-
-    modele.clock();
-
-    ui->labelTime->setText(QLocale().toString(modele.getProcesseur().time()/48e6,'f',3));
-    boucle++;
-    if ((boucle%20) == 0) oscillos->miseAJour();
-
-    calcul += mesure.elapsed();
-    if (boucle>=100) {
-        int pc = 70 * (calcul+100) / (speed*100);
-        if (pc>=70) {
-            ui->progressBar->setStyleSheet("::chunk { background-color: rgb(250,0,0); }");
-            if (pc>100) pc=100;
-        } else if (pc>=50) {
-            ui->progressBar->setStyleSheet("::chunk { background-color: rgb(255,170,40); }");
-        } else {
-            ui->progressBar->setStyleSheet("::chunk { background-color: rgb(0,220,0); }");
-        }
-        ui->progressBar->setValue(pc);
-        int duree = mesure.restart();
-        ui->speedLabel->setText(QLocale().toString(duree/1000.0,'f',3));  // setNum(duree/1000.0);
-        boucle = 0;
-        calcul = 0;
-    }
-}
-
-void MainWindow::newTimer()
-{
-    if (validTimer) killTimer(timerID);
-    timerID = startTimer(speed);
-    validTimer = true;
-}
-
-void MainWindow::on_speedSlider_valueChanged(int value)
-{
-    speed = value;
-    ui->speedSpinBox->setValue(value/10.0);
-    if (validTimer) newTimer();
-}
-
-void MainWindow::on_speedSpinBox_valueChanged(double value)
-{
-    ui->speedSlider->setValue(value*10);
-}
-
 void MainWindow::organiser()
 {
     int deltaH = 0, deltaW = 0, h, w, h1, w1;
@@ -237,8 +189,7 @@ void MainWindow::organiser()
     if (ui->mdiArea->verticalScrollBar()) {
         if (ui->mdiArea->verticalScrollBar()->isVisible()) deltaW = ui->mdiArea->verticalScrollBar()->width();
     }
-    h = h1 + ui->widgetSpeedBar->frameGeometry().height() +
-             ui->menuBar->frameGeometry().height() + deltaH + 8;
+    h = h1 + ui->menuBar->frameGeometry().height() + deltaH + 8;
     if (subWindow2->isVisible()) {
         w = w1*2 + deltaW + 1;
         subWindow2->showNormal();
@@ -248,4 +199,34 @@ void MainWindow::organiser()
         w = subWindow1->frameSize().width() + deltaW + 2;
     }
     resize(w, h);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // Deuxieme passage : on ferme pour de vrai
+    if (m_closing) {
+        event->accept();
+        return;
+    }
+
+    // Premier passage : on refuse et on affiche la popup
+    event->ignore();
+    m_closing = true;
+
+    qDebug() << "Fermeture : arret de l'ESP32...";
+
+    QProgressDialog *progress = new QProgressDialog("Fermeture en cours...",
+                                                    nullptr, 0, 0, this);
+    progress->setWindowTitle("EspSimu");
+    progress->setWindowModality(Qt::ApplicationModal);
+    progress->setMinimumDuration(0);
+    progress->setCancelButton(nullptr);
+    progress->setAttribute(Qt::WA_DeleteOnClose);
+    progress->show();
+
+    // Laisser la popup s'afficher, PUIS arreter l'ESP32
+    QTimer::singleShot(200, this, [this]() {
+        modele.stopEsp32();
+        close();   // relance closeEvent, mais m_closing=true -> accepte
+    });
 }

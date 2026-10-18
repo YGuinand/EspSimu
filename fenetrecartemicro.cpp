@@ -2,7 +2,195 @@
 #include "ui_fenetrecartemicro.h"
 
 #include <QFileDialog>
+#include <QFileSystemModel>
+#include <QSortFilterProxyModel>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QTreeView>
+#include <QDialogButtonBox>
 #include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <QMessageBox>
+#include <QDebug>
+#include <QDir>
+#include <QFileInfo>
+#include <QFont>
+
+// Filtre dedie a l'ouverture d'un firmware ESP32.
+// Entre un QFileSystemModel (qui inclut les entites cachees) et la vue.
+// N'accepte que : les dossiers non caches, le dossier cache .pio (PlatformIO),
+// et les fichiers .bin. Les autres dossiers/fichiers caches sont masques.
+class FirmwareFilterProxyModel : public QSortFilterProxyModel
+{
+public:
+    explicit FirmwareFilterProxyModel(QObject *parent = nullptr)
+        : QSortFilterProxyModel(parent) {}
+
+protected:
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
+    {
+        QModelIndex idx = sourceModel()->index(source_row, 0, source_parent);
+        if (!idx.isValid())
+            return false;
+        const QFileInfo info = static_cast<const QFileSystemModel *>(sourceModel())->fileInfo(idx);
+
+        // Fichiers binaires : toujours visibles
+        if (info.isFile() && info.suffix() == QLatin1String("bin"))
+            return true;
+        // Dossiers : visibles s'ils ne sont pas caches
+        if (info.isDir() && !info.isHidden())
+            return true;
+        // Le dossier cache .pio est le seul dossier cache rendu visible
+        if (info.isDir() && info.fileName() == QLatin1String(".pio"))
+            return true;
+        return false;
+    }
+
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
+    {
+        const QFileSystemModel *fsModel =
+            static_cast<const QFileSystemModel *>(sourceModel());
+        const QFileInfo leftInfo = fsModel->fileInfo(left);
+        const QFileInfo rightInfo = fsModel->fileInfo(right);
+
+        const bool leftIsPio = leftInfo.isDir() && leftInfo.fileName() == QLatin1String(".pio");
+        const bool rightIsPio = rightInfo.isDir() && rightInfo.fileName() == QLatin1String(".pio");
+
+        // Le dossier .pio passe toujours en premier
+        if (leftIsPio && !rightIsPio)
+            return true;
+        if (!leftIsPio && rightIsPio)
+            return false;
+
+        // Ordre alphabétique croissant (insensible à la casse) sur le nom
+        return QString::compare(leftInfo.fileName(), rightInfo.fileName(), Qt::CaseInsensitive) < 0;
+    }
+
+    QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (role == Qt::FontRole) {
+            QModelIndex sourceIdx = mapToSource(index);
+            if (sourceIdx.isValid()) {
+                QFileInfo info = static_cast<const QFileSystemModel *>(sourceModel())->fileInfo(sourceIdx);
+                const QString name = info.fileName();
+                if ((info.isFile() && name == QLatin1String("firmware.bin")) ||
+                    (info.isDir() && (name == QLatin1String("build") || name == QLatin1String(".pio")))) {
+                    QFont font;
+                    font.setBold(true);
+                    return font;
+                }
+            }
+        }
+        return QSortFilterProxyModel::data(index, role);
+    }
+};
+
+static QString choisirFirmware(QWidget *parent, const QString &repertoireDepart)
+{
+    QDialog dialog(parent);
+    dialog.setWindowTitle(QObject::tr("Choisir un firmware"));
+    dialog.resize(700, 500);
+
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
+
+    // Modèle source : inclut les entités cachées pour pouvoir voir .pio
+    QFileSystemModel *sourceModel = new QFileSystemModel(&dialog);
+    sourceModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files | QDir::Hidden);
+    sourceModel->setRootPath(QString());
+
+    // Proxy : n'affiche que les dossiers non cachés, le dossier caché .pio,
+    // et les fichiers .bin (les autres dossiers/fichiers cachés sont masqués).
+    FirmwareFilterProxyModel *proxy = new FirmwareFilterProxyModel(&dialog);
+    proxy->setSourceModel(sourceModel);
+
+    QTreeView *view = new QTreeView(&dialog);
+    view->setModel(proxy);
+    view->setSelectionMode(QAbstractItemView::SingleSelection);
+    view->setSortingEnabled(true);
+    view->sortByColumn(0, Qt::AscendingOrder);
+    view->setAnimated(false);
+    for (int col = 1; col < proxy->columnCount(); ++col)
+        view->hideColumn(col);
+
+    // Barre de navigation : dossier courant + bouton remonter (en haut)
+    QHBoxLayout *navLayout = new QHBoxLayout;
+    QLabel *label = new QLabel(QObject::tr("Dossier :"));
+    QLineEdit *pathEdit = new QLineEdit;
+    pathEdit->setReadOnly(true);
+    QPushButton *btnUp = new QPushButton(QStringLiteral("\u2191")); // flèche vers le haut
+    btnUp->setToolTip(QObject::tr("Remonter au dossier parent"));
+    navLayout->addWidget(label);
+    navLayout->addWidget(pathEdit);
+    navLayout->addWidget(btnUp);
+    layout->addLayout(navLayout);
+
+    layout->addWidget(view);
+
+    QDialogButtonBox *buttons =
+        new QDialogButtonBox(QDialogButtonBox::Open | QDialogButtonBox::Cancel, &dialog);
+    layout->addWidget(buttons);
+
+    QString currentRoot = repertoireDepart;
+    if (currentRoot.isEmpty() || !QDir(currentRoot).exists())
+        currentRoot = QDir::currentPath();
+
+    auto refreshView = [&]() {
+        QModelIndex sourceIdx = sourceModel->index(currentRoot);
+        QModelIndex proxyIdx = proxy->mapFromSource(sourceIdx);
+        view->setRootIndex(proxyIdx);
+        pathEdit->setText(currentRoot);
+        if (proxyIdx.isValid()) {
+            view->setCurrentIndex(proxyIdx);
+            view->scrollTo(proxyIdx);
+        }
+    };
+
+    QString resultat;
+
+    // Double-clic : descendre dans un dossier, ou ouvrir directement un fichier .bin
+    QObject::connect(view, &QTreeView::doubleClicked, [&](const QModelIndex &proxyIdx) {
+        QModelIndex sourceIdx = proxy->mapToSource(proxyIdx);
+        if (!sourceIdx.isValid())
+            return;
+        QFileInfo info = sourceModel->fileInfo(sourceIdx);
+        if (info.isDir()) {
+            currentRoot = info.absoluteFilePath();
+            refreshView();
+        } else if (info.isFile() && info.suffix() == QLatin1String("bin")) {
+            resultat = info.absoluteFilePath();
+            dialog.accept();
+        }
+    });
+
+    // Bouton Remonter : aller dans le dossier parent
+    QObject::connect(btnUp, &QPushButton::clicked, [&]() {
+        QDir d(currentRoot);
+        if (d.cdUp()) {
+            currentRoot = d.absolutePath();
+            refreshView();
+        }
+    });
+
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    refreshView();
+
+    if (dialog.exec() == QDialog::Accepted && resultat.isEmpty()) {
+        const QModelIndexList sel = view->selectionModel()->selectedRows();
+        if (!sel.isEmpty()) {
+            QModelIndex sourceIdx = proxy->mapToSource(sel.first());
+            if (!sourceIdx.isValid())
+                return QString();
+            QFileInfo info = sourceModel->fileInfo(sourceIdx);
+            if (info.isFile() && info.suffix() == QLatin1String("bin"))
+                resultat = info.absoluteFilePath();
+        }
+    }
+    return resultat;
+}
 
 FenetreCarteMicro::FenetreCarteMicro(Modele &m, QWidget *parent) :
     QFrame(parent),
@@ -26,9 +214,16 @@ FenetreCarteMicro::FenetreCarteMicro(Modele &m, QWidget *parent) :
     connect(ui->an0SpinBox, SIGNAL(valueChanged(double)), modele, SLOT(setPotAN0Value(double)));
 
     connect(&modele->getLedA6(), SIGNAL(setCourant(double)), ui->ledA6, SLOT(setCourant(double)));
+    connect(&modele->getLed2(), SIGNAL(setCourant(double)), ui->ledA6_2,  SLOT(setCourant(double)));
 
     connect(ui->contraste, SIGNAL(valueChanged(int)), &modele->getLcd(), SLOT(setContraste(int)));
+
+    // Connexion du retroeclairage RGB
+    connect(modele, &Modele::backlightChanged, &lcd, &LcdScreenView::setBacklightColor);
+
     ui->lcd->setScene(lcd.getScene());
+
+    ui->ledA6_2->setColor(LedAlpha::JAUNE);
 }
 
 FenetreCarteMicro::~FenetreCarteMicro()
@@ -66,49 +261,53 @@ void FenetreCarteMicro::on_checkBoxMaintienBP2_clicked(bool checked)
 
 void FenetreCarteMicro::on_boutonPower_toggled(bool checked)
 {
-    if (checked) modele->powerOn(); else modele->powerOff();
+    if (checked) {
+        // Verifier qu'un firmware est charge
+        if (ui->fichier->text().isEmpty()) {
+            QMessageBox::warning(this, "EspSimu",
+                                 "Veuillez d'abord charger un firmware (.bin) avec le bouton Ouvrir.");
+            ui->boutonPower->setChecked(false);
+            return;
+        }
+        if (!modele->isEsp32Running()) {
+            modele->startEsp32();
+        }
+    } else {
+        if (modele->isEsp32Running()) {
+            modele->stopEsp32();
+        }
+    }
     ui->ledPower->setChecked(checked);
 }
-
 void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
 {
-#ifdef Q_OS_WASM
-    auto fileContentReady = [this](const QString &fichier, const QByteArray &fileContent) {
-        if (fichier.isEmpty()) {
-            // No file was selected
-        } else {
-            // Use fichier and fileContent
-            ui->fichier->setText(fichier);
-            QByteArray ba = fichier.toLatin1();
-            QString sandboxFile = "tmp.hex";
-            QFile file(sandboxFile);
-            file.open(QIODeviceBase::WriteOnly);
-            file.write(fileContent);
-            file.close();
-            modele->getProcesseur().readFromHex(sandboxFile.toLatin1().data());
-//            ui->pushButtonRefresh->setEnabled(true);
-//            emit refreshEnabled(true);
-        }
-    };
-    QFileDialog::getOpenFileContent(tr("Fichier HEX (*.hex)"),  fileContentReady);
-#else
-    QString fichier = QFileDialog::getOpenFileName(0, tr("Choisir un fichier"), ui->fichier->text(), tr("Fichier HEX (*.hex)"));
-    if (!fichier.isEmpty()) {
+    // Dossier de départ : celui du fichier précédemment sélectionné, s'il existe
+    QString repertoireDepart = ui->fichier->text();
+    if (!repertoireDepart.isEmpty()) {
+        QFileInfo info(repertoireDepart);
+        if (info.isFile())
+            repertoireDepart = info.dir().absolutePath();
+    }
+
+    QString fichier = choisirFirmware(this, repertoireDepart);
+    if (fichier.isEmpty()) return;
+
+    // Le nom n'est affiche que si le firmware est accepte
+    if (modele->loadEsp32Firmware(fichier)) {
         ui->fichier->setText(fichier);
-        QByteArray ba = fichier.toLatin1();
-        char *c_str2 = ba.data();
-        modele->getProcesseur().readFromHex(c_str2);
+        qDebug() << "Firmware ESP32 charge:" << fichier;
         ui->pushButtonRefresh->setEnabled(true);
         emit refreshEnabled(true);
+    } else {
+        QMessageBox::warning(this, "EspSimu",
+                             "Firmware ESP32 refuse. Utilisez firmware.bin / firmware.factory.bin d'un build PlatformIO (dossier .pio/build/...) ou une image flash de 2, 4, 8 ou 16 Mo.");
     }
-#endif
 }
 
 void FenetreCarteMicro::on_pushButtonRefresh_clicked()
 {
-    QByteArray ba = ui->fichier->text().toLatin1();
-    char *c_str2 = ba.data();
-    modele->getProcesseur().readFromHex(c_str2);
+    QString fichier = ui->fichier->text();
+    if (!fichier.isEmpty()) modele->loadEsp32Firmware(fichier);
 }
 
 void FenetreCarteMicro::set_bp0Pressed()

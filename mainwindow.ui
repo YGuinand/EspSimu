@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Simulateur de carte PIC v1.11</string>
+   <string>Simulateur de carte ESP32 v1.12</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -71,233 +71,6 @@
       </item>
      </layout>
     </item>
-    <item>
-     <widget class="QWidget" name="widgetSpeedBar" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="leftMargin">
-        <number>1</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>1</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="labelTime">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>94</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Temps simulé</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <property name="text">
-          <string>0,000</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="margin">
-          <number>4</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="speedSlider">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Facteur de ralentissement
-1=temps réel</string>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>500</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="invertedAppearance">
-          <bool>false</bool>
-         </property>
-         <property name="invertedControls">
-          <bool>false</bool>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksAbove</enum>
-         </property>
-         <property name="tickInterval">
-          <number>50</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <item>
-          <widget class="QDoubleSpinBox" name="speedSpinBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>97</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="toolTip">
-            <string>Facteur de ralentissement
-1=temps réel</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::UpDownArrows</enum>
-           </property>
-           <property name="decimals">
-            <number>1</number>
-           </property>
-           <property name="minimum">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>50.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.500000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="speedLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>95</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>Rapport réel</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="margin">
-              <number>4</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QProgressBar" name="progressBar">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>95</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>10</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Charge de calcul</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">::chunk {
-	background-color: rgb(0,220,0);
-}</string>
-             </property>
-             <property name="value">
-              <number>40</number>
-             </property>
-             <property name="format">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -309,13 +82,7 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_Affichage">
-    <property name="title">
-     <string>Affi&amp;chage</string>
-    </property>
-    <addaction name="action_Barre_de_vitesse"/>
-   </widget>
-   <widget class="QMenu" name="menuFe_n_tres">
+      <widget class="QMenu" name="menuFe_n_tres">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -332,6 +99,7 @@
     <addaction name="action_Gamelle"/>
     <addaction name="action_Piste"/>
     <addaction name="action_Oscilloscopes"/>
+    <addaction name="action_Terminal"/>
     <addaction name="separator"/>
     <addaction name="action_Mode_simple"/>
     <addaction name="action_Mode_complet"/>
@@ -352,28 +120,10 @@
     <addaction name="action_Quitter"/>
    </widget>
    <addaction name="menu_Quitter"/>
-   <addaction name="menu_Affichage"/>
    <addaction name="menuFe_n_tres"/>
    <addaction name="menu_Aide"/>
   </widget>
-  <action name="action_Barre_de_vitesse">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Barre de performance</string>
-   </property>
-   <property name="toolTip">
-    <string>Barre de vitesse</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+B</string>
-   </property>
-  </action>
-  <action name="action_Cascader">
+    <action name="action_Cascader">
    <property name="text">
     <string>&amp;Cascader</string>
    </property>
@@ -460,6 +210,21 @@
    </property>
    <property name="shortcut">
     <string>Alt+P</string>
+   </property>
+  </action>
+  <action name="action_Terminal">
+   <property name="icon">
+    <iconset resource="ressources.qrc">
+     <normaloff>:/images/icone_terminal.png</normaloff>:/images/icone_terminal.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Terminal</string>
+   </property>
+   <property name="toolTip">
+    <string>Terminal série (UART0)</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+T</string>
    </property>
   </action>
   <action name="action_Oscilloscopes">

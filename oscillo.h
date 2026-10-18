@@ -1,9 +1,7 @@
 #ifndef OSCILLO_H
 #define OSCILLO_H
 
-#include "processeur.h"
-#include "evenement.h"
-#include "ports.h"
+#include <functional>
 
 #include <QChartView>
 #include <QLineSeries>
@@ -12,35 +10,32 @@
 
 #define NB_PTS  250
 
-class Oscillo : public Evenement
+// Oscilloscope du signal PWM de commande d'un hacheur (sortie LEDC de l'ESP32).
+// Le signal est reconstitue a partir du rapport cyclique et de la frequence lus dans QEMU,
+// avec un declenchement sur front montant.
+class Oscillo
 {
 private :
     QChart *figure;
     QLineSeries *courbe;
     QValueAxis *axisX, *axisY;
-    Connexion *observ;
 
-    int dt;
-    P18f4550 *processeur;
+    // Renvoie le rapport cyclique (0..1) et la frequence (Hz) du signal observe
+    std::function<bool(double &, double &)> source;
 
-    double ymem[NB_PTS], xmem[NB_PTS], trigNiveau, valActu;
-    QList<QPointF> pts;
+    int dt;                 // base de temps, en periodes d'une horloge de 48 MHz
+    double xmem[NB_PTS];    // abscisses affichees (dans l'unite choisie)
+    double unite;           // facteur secondes -> unite d'affichage
+    int trigTemps;          // nombre d'echantillons avant le declenchement
 
-    uint16_t index, trigTemps;
-    int trigAuto, nbAcq;
-    int trigEtat;
-
-    int numParam;
+    double tension(int i, double rapport, double frequence) const;
 
 public:
-    Oscillo(P18f4550 *p, QChartView *qp);
-    virtual ~Oscillo() {}
+    explicit Oscillo(QChartView *qp);
 
-    virtual void executer();
-    void observer(Connexion *c, int param);
-    void debut();
-
+    void setSource(std::function<bool(double &, double &)> f) {  source = f;  }
     void setBaseTemps(int d);
+    void rafraichir();
 };
 
 #endif // OSCILLO_H

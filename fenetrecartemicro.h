@@ -1,7 +1,6 @@
 #ifndef FENETRECARTEMICRO_H
 #define FENETRECARTEMICRO_H
 
-#include "ports.h"
 #include "lcdscreen.h"
 #include "modele.h"
 

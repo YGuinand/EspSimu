@@ -64,9 +64,9 @@ Gamel::Gamel(Modele &m, QWidget *parent) :
 
 void Gamel::changePinsInUse()
 {
-    remplirComboPins(*ui->jackPin, modele->getJack());
-    remplirComboPins(*ui->fdcPin, modele->getFdc());
-    if (modele->nbCaptIr()>0) remplirComboPins(*ui->cnyPin, *modele->getCaptIr(captIrIndex));
+    remplirComboJ2(*ui->jackPin, modele->getJackPinIndex());
+    remplirComboJ2(*ui->fdcPin, modele->getFdcPinIndex());
+    if (modele->nbCaptIr()>0) remplirComboJ2(*ui->cnyPin, modele->getCaptIr(captIrIndex)->getJ2Pin());
 }
 
 void Gamel::viewModele()
@@ -84,7 +84,7 @@ void Gamel::viewModele()
     ui->jack->blockSignals(true);
     ui->jack->setChecked(modele->getJack().isActif());
     ui->jack->blockSignals(false);
-    remplirComboPins(*ui->jackPin, modele->getJack());
+    remplirComboJ2(*ui->jackPin, modele->getJackPinIndex());
     ui->schemaPinJack->setText(ui->jackPin->currentText());
     changerJackSchema();
 
@@ -101,7 +101,7 @@ void Gamel::viewModele()
     fdc->blockSignals(true);
     fdc->setChecked(modele->getFdc().isActif());
     fdc->blockSignals(false);
-    remplirComboPins(*ui->fdcPin, modele->getFdc());
+    remplirComboJ2(*ui->fdcPin, modele->getFdcPinIndex());
     ui->schemaPinFdc->setText(ui->fdcPin->currentText());
     changerFdcSchema();
 
@@ -243,7 +243,7 @@ void Gamel::viewCaptIrModele()
         ui->doubleH->blockSignals(true);
         ui->doubleH->setValue(c.getH());
         ui->doubleH->blockSignals(false);
-        remplirComboPins(*ui->cnyPin, *modele->getCaptIr(captIrIndex));
+        remplirComboJ2(*ui->cnyPin, modele->getCaptIr(captIrIndex)->getJ2Pin());
         ui->schemaPinCny->setText(ui->cnyPin->currentText());
         changerCaptIrSchema();
         focusItem->blockSignals(true);
@@ -262,20 +262,21 @@ Gamel::~Gamel()
     delete ui;
 }
 
-void Gamel::remplirComboPins(QComboBox &c, const Connexion &cnx)
+// Liste des entrees du connecteur J2 : la broche courante en premier, puis NC, puis les broches libres
+void Gamel::remplirComboJ2(QComboBox &c, int indexCourant)
 {
     std::vector<QString> tab;
-    std::vector<int>tabIndex;
-    modele->getUnusedPins(tab, tabIndex);
+    std::vector<int> tabIndex;
+    modele->getUnusedJ2(tab, tabIndex);
 
     c.blockSignals(true);
     c.clear();
-    if (cnx.getPort()) {
-        c.addItem(QString("Pin ")+cnx.pinName(),QVariant(modele->pinNameToIndex(cnx.pinName())));
+    if (indexCourant>=0) {
+        c.addItem(Modele::j2Name(indexCourant), QVariant(indexCourant));
     }
     c.addItem(Connexion::NCString, QVariant(-1));
     for (unsigned int j=0; j<tab.size(); j++) {
-        c.addItem(QString("Pin ")+tab[j], QVariant(tabIndex[j]));
+        c.addItem(tab[j], QVariant(tabIndex[j]));
     }
     c.setCurrentIndex(0);
     c.blockSignals(false);

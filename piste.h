@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include "xmlopensavedata.h"
-#include "general.h"
+#include <vector>
 
 #include <QGraphicsScene>
 #include <QGraphicsItem>
@@ -227,7 +227,7 @@ class Piste : public XMLOpenSaveData
     Q_OBJECT
 
 protected :
-    vector<Portion *> tab;
+    std::vector<Portion *> tab;
     unsigned int focus;
 
     Portion *eltCreate(int t);

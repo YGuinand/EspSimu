@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="it_IT">
+<TS version="2.1" language="en_US">
 <context>
     <name>Apropos</name>
     <message>
         <location filename="apropos.ui" line="17"/>
         <source>A propos</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">About</translation>
     </message>
     <message>
         <location filename="apropos.ui" line="125"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:14pt; font-weight:600;&quot;&gt;Simulateur de carte ESP32&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;Version 1.12 (03/07/2023)&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;Qt 6.5.1&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;Yves Guinand&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;2010-2014 pour &lt;/span&gt;&lt;a href=&quot;http://www.iutenligne.net/&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; text-decoration: underline; color:#0057ae;&quot;&gt;iut en ligne&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;2014-2023 IUT de Cachan&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -18,113 +31,122 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Version 1.04 (27/03/2013)&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Yves Guinand&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;2010-2013&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;pour &lt;/span&gt;&lt;a href=&quot;http://www.iutenligne.net/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;iut en ligne&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;pour &lt;/span&gt;&lt;a href=&quot;http://www.iutenligne.net/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;iut en ligne&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;PIC Board Simulator&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Version 1.04 (03/27/2013)&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Yves Guinand&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;2010-2013&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;/span&gt;&lt;a href=&quot;http://www.iutenligne.net/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;iut en ligne&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="apropos.ui" line="159"/>
+        <location filename="apropos.ui" line="163"/>
         <source>Fermer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Close</translation>
     </message>
 </context>
 <context>
     <name>FenetreCarteMicro</name>
-    <message utf8="true">
+    <message>
         <location filename="fenetrecartemicro.ui" line="20"/>
         <source>Carte Microcontrôleur</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Microcontroller Board</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="fenetrecartemicro.ui" line="60"/>
         <source>Programme chargé</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Program loaded</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="103"/>
         <source>Choisir un fichier...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Choose a file...</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="138"/>
         <source>Recharger le fichier</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reload the program file</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="193"/>
         <location filename="fenetrecartemicro.ui" line="258"/>
         <source>Alimentation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Power</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="313"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Reset</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="371"/>
         <source>Contraste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Contrast</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="418"/>
+        <location filename="fenetrecartemicro.ui" line="460"/>
         <source>A6</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">A6</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="507"/>
-        <location filename="fenetrecartemicro.ui" line="544"/>
+        <location filename="fenetrecartemicro.ui" line="549"/>
+        <location filename="fenetrecartemicro.ui" line="586"/>
         <source>Ecran LCD</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">LCD screen</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="588"/>
+        <location filename="fenetrecartemicro.ui" line="630"/>
         <source>BP2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PushButton2</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="634"/>
+        <location filename="fenetrecartemicro.ui" line="676"/>
         <source>BP3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PushButton3</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="686"/>
+        <location filename="fenetrecartemicro.ui" line="728"/>
         <source>BP1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="fenetrecartemicro.ui" line="753"/>
-        <location filename="fenetrecartemicro.ui" line="792"/>
-        <source>AN0</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PushButton1</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="795"/>
+        <location filename="fenetrecartemicro.ui" line="834"/>
+        <source>AN0</source>
+        <translation type="unfinished">AN0</translation>
+    </message>
+    <message>
+        <location filename="fenetrecartemicro.ui" line="837"/>
         <source> V</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> V</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="877"/>
+        <location filename="fenetrecartemicro.ui" line="919"/>
         <source>Verrouiller BP2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock PushButton2</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="917"/>
+        <location filename="fenetrecartemicro.ui" line="959"/>
         <source>Verrouiller BP1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lock PushButton1</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="957"/>
+        <location filename="fenetrecartemicro.ui" line="999"/>
         <source>Verrouiller BP3</source>
+        <translation type="unfinished">Lock PushButton3</translation>
+    </message>
+    <message>
+        <location filename="fenetrecartemicro.cpp" line="100"/>
+        <source>Choisir un firmware</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.cpp" line="75"/>
-        <source>Choisir un fichier</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="fenetrecartemicro.cpp" line="75"/>
-        <source>Fichier HEX (*.hex)</source>
+        <location filename="fenetrecartemicro.cpp" line="102"/>
+        <source>Firmware ESP32 (*.bin)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -133,34 +155,24 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="fenetreoscillos.ui" line="14"/>
         <source>Oscilloscopes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Oscilloscopes</translation>
     </message>
     <message>
-        <location filename="fenetreoscillos.ui" line="53"/>
-        <source>PWM1 (RC2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="fenetreoscillos.ui" line="119"/>
+        <location filename="fenetreoscillos.ui" line="80"/>
         <source>base
 de temps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">time base</translation>
     </message>
     <message>
-        <location filename="fenetreoscillos.ui" line="180"/>
-        <source>PWM2 (RC1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="fenetreoscillos.ui" line="249"/>
+        <location filename="fenetreoscillos.ui" line="168"/>
         <source>base
 de Temps</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">time base</translation>
     </message>
     <message>
-        <location filename="fenetreoscillos.ui" line="288"/>
+        <location filename="fenetreoscillos.ui" line="207"/>
         <source>activer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">activate</translation>
     </message>
 </context>
 <context>
@@ -171,97 +183,98 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="33"/>
-        <location filename="fenetrepiste.ui" line="47"/>
-        <location filename="fenetrepiste.ui" line="61"/>
-        <location filename="fenetrepiste.ui" line="88"/>
-        <location filename="fenetrepiste.ui" line="102"/>
-        <location filename="fenetrepiste.ui" line="116"/>
-        <location filename="fenetrepiste.ui" line="140"/>
-        <location filename="fenetrepiste.ui" line="151"/>
-        <location filename="fenetrepiste.ui" line="162"/>
-        <location filename="fenetrepiste.ui" line="226"/>
-        <location filename="fenetrepiste.ui" line="246"/>
-        <location filename="fenetrepiste.ui" line="378"/>
-        <location filename="fenetrepiste.ui" line="389"/>
+        <location filename="fenetrepiste.ui" line="42"/>
+        <location filename="fenetrepiste.ui" line="56"/>
+        <location filename="fenetrepiste.ui" line="70"/>
+        <location filename="fenetrepiste.ui" line="97"/>
+        <location filename="fenetrepiste.ui" line="111"/>
+        <location filename="fenetrepiste.ui" line="125"/>
+        <location filename="fenetrepiste.ui" line="149"/>
+        <location filename="fenetrepiste.ui" line="160"/>
+        <location filename="fenetrepiste.ui" line="171"/>
+        <location filename="fenetrepiste.ui" line="235"/>
+        <location filename="fenetrepiste.ui" line="255"/>
+        <location filename="fenetrepiste.ui" line="387"/>
+        <location filename="fenetrepiste.ui" line="398"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="236"/>
+        <location filename="fenetrepiste.ui" line="245"/>
         <source>0</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
-        <location filename="fenetrepiste.ui" line="257"/>
+    <message>
+        <location filename="fenetrepiste.ui" line="266"/>
         <source>Repère</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="262"/>
+        <location filename="fenetrepiste.ui" line="271"/>
         <source>Ligne droite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="267"/>
+        <location filename="fenetrepiste.ui" line="276"/>
         <source>Courbe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="272"/>
+        <location filename="fenetrepiste.ui" line="281"/>
         <source>Obstacle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="277"/>
+        <location filename="fenetrepiste.ui" line="286"/>
         <source>Droite sans scotch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="282"/>
+        <location filename="fenetrepiste.ui" line="291"/>
         <source>Marqueur gauche</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="290"/>
+        <location filename="fenetrepiste.ui" line="299"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="297"/>
-        <location filename="fenetrepiste.ui" line="323"/>
+        <location filename="fenetrepiste.ui" line="306"/>
+        <location filename="fenetrepiste.ui" line="332"/>
         <source> mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="316"/>
+        <location filename="fenetrepiste.ui" line="325"/>
         <source>y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.ui" line="342"/>
+        <location filename="fenetrepiste.ui" line="351"/>
         <source>angle</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
-        <location filename="fenetrepiste.ui" line="349"/>
+    <message>
+        <location filename="fenetrepiste.ui" line="358"/>
         <source>°</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.cpp" line="193"/>
-        <source>Charger les donnÃ©es d&apos;une piste</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="fenetrepiste.cpp" line="193"/>
-        <location filename="fenetrepiste.cpp" line="204"/>
+        <location filename="fenetrepiste.cpp" line="207"/>
+        <location filename="fenetrepiste.cpp" line="209"/>
+        <location filename="fenetrepiste.cpp" line="229"/>
         <source>Fichier PIS (*.pis)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.cpp" line="204"/>
-        <source>Sauvegarder les donnÃ©es d&apos;une piste</source>
+        <location filename="fenetrepiste.cpp" line="209"/>
+        <source>Charger les données d&apos;une piste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetrepiste.cpp" line="229"/>
+        <source>Sauvegarder les données d&apos;une piste</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -313,13 +326,13 @@ de Temps</source>
         <source>Normalement ouvert</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="150"/>
         <location filename="gamel.ui" line="293"/>
         <source>Normalement fermé</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="162"/>
         <location filename="gamel.ui" line="305"/>
         <location filename="gamel.ui" line="426"/>
@@ -340,7 +353,7 @@ de Temps</source>
         <source>Pull-down</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="187"/>
         <location filename="gamel.ui" line="330"/>
         <source>Résistance</source>
@@ -355,7 +368,7 @@ de Temps</source>
         <source> kOhms</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="223"/>
         <source>Schéma Jack enlevé</source>
         <translation type="unfinished"></translation>
@@ -377,7 +390,7 @@ de Temps</source>
         <source>Configuration du contact de fin de course</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="366"/>
         <source>Schéma contact inactif</source>
         <translation type="unfinished"></translation>
@@ -402,12 +415,12 @@ de Temps</source>
         <source>Sans</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="464"/>
         <source>Supérieur</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="469"/>
         <source>Inférieur</source>
         <translation type="unfinished"></translation>
@@ -448,7 +461,7 @@ de Temps</source>
         <location filename="gamel.ui" line="1844"/>
         <location filename="gamel.ui" line="2228"/>
         <source> V</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> V</translation>
     </message>
     <message>
         <location filename="gamel.ui" line="837"/>
@@ -470,13 +483,13 @@ de Temps</source>
     </message>
     <message>
         <location filename="gamel.ui" line="912"/>
-        <source>Pin RC2
+        <source>IO26
 (PWM1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="gamel.ui" line="940"/>
-        <source>Pin RC1
+        <source>IO27
 (PWM2)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -530,7 +543,7 @@ de Temps</source>
         <source> mNm/A</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="1182"/>
         <location filename="gamel.ui" line="1440"/>
         <source>I à vide</source>
@@ -559,7 +572,7 @@ de Temps</source>
         <source>Moteur droit</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="1535"/>
         <source>Paramètres généraux</source>
         <translation type="unfinished"></translation>
@@ -588,7 +601,7 @@ de Temps</source>
         <source> mm</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="1637"/>
         <source>Réflexion infrarouge</source>
         <translation type="unfinished"></translation>
@@ -603,12 +616,12 @@ de Temps</source>
         <source>Scotch</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="1750"/>
         <source>Résistance au roulement</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="1789"/>
         <source>Diamètre d&apos;une roue</source>
         <translation type="unfinished"></translation>
@@ -618,7 +631,7 @@ de Temps</source>
         <source>Tension de batterie</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="1867"/>
         <source>Rapport de réduction</source>
         <translation type="unfinished"></translation>
@@ -643,7 +656,7 @@ de Temps</source>
         <source>Vue de dessus</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="2092"/>
         <source>Paramètres électriques</source>
         <translation type="unfinished"></translation>
@@ -668,7 +681,7 @@ de Temps</source>
         <source>Vseuil</source>
         <translation type="unfinished"></translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="gamel.ui" line="2256"/>
         <source>Paramètres géométriques</source>
         <translation type="unfinished"></translation>
@@ -723,19 +736,20 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.cpp" line="406"/>
-        <source>Sauvegarder les donnÃ©es d&apos;une gamelle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="gamel.cpp" line="406"/>
-        <location filename="gamel.cpp" line="416"/>
+        <location filename="gamel.cpp" line="415"/>
+        <location filename="gamel.cpp" line="439"/>
+        <location filename="gamel.cpp" line="441"/>
         <source>Fichier GML (*.gml)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.cpp" line="416"/>
-        <source>Charger les donnÃ©es d&apos;une gamelle</source>
+        <location filename="gamel.cpp" line="415"/>
+        <source>Sauvegarder les données d&apos;une gamelle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.cpp" line="441"/>
+        <source>Charger les données d&apos;une gamelle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -743,168 +757,122 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="29"/>
-        <source>Simulateur de carte PIC v1.04</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="100"/>
-        <source>Temps simulé</source>
-        <translation type="unfinished"></translation>
+        <source>Simulateur de carte ESP32 v1.12</source>
+        <oldsource>Simulateur de carte PIC v1.04</oldsource>
+        <translation type="unfinished">PIC Board Simulator v1.04</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="109"/>
-        <source>0,000</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="134"/>
-        <location filename="mainwindow.ui" line="185"/>
-        <source>Facteur de ralentissement
-1=temps réel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="233"/>
-        <source>Rapport réel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="270"/>
-        <source>Charge de calcul</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="305"/>
-        <source>Affi&amp;chage</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="317"/>
+        <location filename="mainwindow.ui" line="93"/>
         <source>Fe&amp;nêtres</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Window</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="332"/>
+        <location filename="mainwindow.ui" line="108"/>
         <source>&amp;Aide</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Help</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="338"/>
+        <location filename="mainwindow.ui" line="114"/>
         <source>&amp;Fichier</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;File</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="358"/>
-        <source>&amp;Barre de performance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="361"/>
-        <source>Barre de vitesse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="364"/>
-        <source>Alt+B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="369"/>
+        <location filename="mainwindow.ui" line="127"/>
         <source>&amp;Cascader</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Cascade</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="378"/>
+    <message>
+        <location filename="mainwindow.ui" line="136"/>
         <source>À &amp;propos</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;About</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="387"/>
+        <location filename="mainwindow.ui" line="145"/>
         <source>&amp;Ouvrir un programme...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Open program file...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="390"/>
+        <location filename="mainwindow.ui" line="148"/>
         <source>Ctrl+O</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+O</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="399"/>
+        <location filename="mainwindow.ui" line="157"/>
         <source>&amp;Quitter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Quit</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="402"/>
+        <location filename="mainwindow.ui" line="160"/>
         <source>Ctrl+Q</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="414"/>
+        <location filename="mainwindow.ui" line="172"/>
         <source>&amp;Recharger le programme</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Reload program file</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="426"/>
+    <message>
+        <location filename="mainwindow.ui" line="184"/>
         <source>&amp;Micro-contrôleur</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Microcontroller</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="429"/>
+        <location filename="mainwindow.ui" line="187"/>
         <source>Alt+M</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+M</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="438"/>
+        <location filename="mainwindow.ui" line="196"/>
         <source>&amp;Gamelle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Gamel</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="441"/>
+        <location filename="mainwindow.ui" line="199"/>
         <source>Alt+G</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+G</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="450"/>
+        <location filename="mainwindow.ui" line="208"/>
         <source>&amp;Piste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Track</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="453"/>
+        <location filename="mainwindow.ui" line="211"/>
         <source>Alt+P</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+T</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="462"/>
+        <location filename="mainwindow.ui" line="220"/>
         <source>&amp;Oscilloscopes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Oscilloscopes</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="465"/>
+        <location filename="mainwindow.ui" line="223"/>
         <source>Alt+O</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+O</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="470"/>
+        <location filename="mainwindow.ui" line="228"/>
         <source>O&amp;rganiser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">O&amp;rganize</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="478"/>
+        <location filename="mainwindow.ui" line="236"/>
         <source>Mode simple</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Beginner</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="483"/>
+        <location filename="mainwindow.ui" line="241"/>
         <source>Mode complet</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Expert</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="ports.h" line="38"/>
+        <location filename="connexion.h" line="28"/>
         <source>Connexion</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Connection</translation>
     </message>
 </context>
 </TS>

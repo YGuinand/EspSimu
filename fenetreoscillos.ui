@@ -29,42 +29,6 @@
      <item>
       <widget class="QComboBox" name="comboBox_1"/>
      </item>
-     <item>
-      <widget class="QGraphicsView" name="ledPwm1">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>31</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>31</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>PWM1 (RC2)</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QGraphicsView {
-	background : transparent;
-}</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="interactive">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -152,42 +116,6 @@ de temps</string>
     <layout class="QHBoxLayout" name="horizontalLayout_8">
      <item>
       <widget class="QComboBox" name="comboBox_2"/>
-     </item>
-     <item>
-      <widget class="QGraphicsView" name="ledPwm2">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>31</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>31</width>
-         <height>31</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>PWM2 (RC1)</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QGraphicsView {
-	background : transparent;
-}</string>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="interactive">
-        <bool>false</bool>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
