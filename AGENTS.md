@@ -35,4 +35,4 @@ ESP32 backend quirk: `modele.cpp` loads `3rdparty/qemu/lib/libqemu-xtensa.so` re
 - Key pieces: `esp32backend.*` (QEMU shared lib wrapper, GPIO/ADC/LEDC access), `modele.*` (robot model: contacts, IR sensors, motors, track), `grovelcdrgb.*` + `lcdscreen.*` (I2C Grove LCD), `gamel.*`/`fenetre*.*` (windows), `oscillo.*` (PWM scope built from LEDC duty/frequency). Board pin mapping (J2 connector, IOxx) lives in `Esp32Pins` (`esp32backend.h`); `VCC_CARTE` = 3.3 V in `connexion.h`.
 - `picsimlab` in `esp32backend.cpp` (`qemu_picsimlab_*`, machine `esp32-picsimlab`) is the external QEMU fork API: do not rename it.
 - UI strings and comments are in French; identifiers are mixed English/French. Match surrounding style — no enforced formatter.
-- The working tree has uncommitted changes (ESP32/Grove LCD update, v1.12 in progress): check `git status` before assuming the tree is clean.
+- The working tree has uncommitted changes (ESP32/Grove LCD update, v2.00): check `git status` before assuming the tree is clean.

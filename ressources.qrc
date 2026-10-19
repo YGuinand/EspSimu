@@ -59,7 +59,6 @@
         <file alias="zoomfit.png">images/zoomfit.png</file>
         <file alias="equal.png">images/equal.png</file>
         <file alias="diff.png">images/diff.png</file>
-        <file alias="iutenligne.png">images/iutenligne.png</file>
         <file alias="led_jaune_on.png">images/led_jaune_on.png</file>
         <file alias="led_jaune_off.png">images/led_jaune_off.png</file>
     </qresource>
