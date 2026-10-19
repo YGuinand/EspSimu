@@ -29,6 +29,7 @@
 // ==================== ShutdownCause ====================
 #define SHUTDOWN_CAUSE_HOST_QMP_SYSTEM_RESET  3
 #define SHUTDOWN_CAUSE_HOST_UI                5
+#define SHUTDOWN_CAUSE_GUEST_RESET            7   // utilise par le code QEMU natif ESP32 (esp32_dig_reset, cpu_reset, etc.)
 
 // ==================== Structure callbacks (identique au fork) ====================
 typedef struct {
@@ -406,10 +407,11 @@ void Esp32Backend::reset()
         return;
     }
 
-    qDebug() << "Esp32Backend: reset VM (avec BQL)";
-    if (p_bql_lock)   p_bql_lock(__FILE__, __LINE__);
-    p_system_reset(3);   // SHUTDOWN_CAUSE_HOST_QMP_SYSTEM_RESET
-    if (p_bql_unlock) p_bql_unlock();
+    qDebug() << "Esp32Backend: reset VM (sans BQL, cause GUEST_RESET)";
+    // qemu_system_reset_request est thread-safe (pose un drapeau + notifie la boucle QEMU).
+    // Il ne faut PAS detenir le BQL pendant l'appel, sinon le thread QEMU ne peut pas
+    // traiter le reset (il est bloque en attente du BQL que ce thread detient).
+    p_system_reset(SHUTDOWN_CAUSE_GUEST_RESET);
 }
 
 void Esp32Backend::stop()
