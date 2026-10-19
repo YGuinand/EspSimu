@@ -81,6 +81,10 @@ Modele::Modele()
     pwmChrono = new QElapsedTimer();
     pwmDernierTemps = 0;
     connect(pwmTimer, &QTimer::timeout, this, &Modele::updatePwm);
+
+    // === Capteurs IR (1 kHz) ===
+    irTimer = new QTimer(this);
+    connect(irTimer, &QTimer::timeout, this, &Modele::updateIrSensors);
 }
 
 Modele::~Modele()
@@ -93,6 +97,13 @@ Modele::~Modele()
     }
     delete pwmChrono;
     pwmChrono = nullptr;
+
+    // === Capteurs IR ===
+    if (irTimer) {
+        irTimer->stop();
+        delete irTimer;
+        irTimer = nullptr;
+    }
 
     // === ESP32 ===
     if (esp32) {
@@ -496,7 +507,7 @@ double CaptIrCNX::ReflexionScotch = 0.9;
 
 void CaptIrCNX::preCalcul()
 {
-    iForward = (VCC_CARTE-1.025)/(8+resD);
+    iForward = (VCC_CARTE-0.95)/(5+resD);
     if (iForward>50e-3) iForward=0; // emetteur detruit !
     if (h<0.3) kDist=1.0;
     else kDist = exp(-0.393812354555733*h+0.00471501771834415*h*h+0.000234514291708762*h*h*h);
@@ -692,7 +703,8 @@ void Modele::startEsp32()
         pwmChrono->start();
     }
     pwmDernierTemps = pwmChrono->elapsed();
-    pwmTimer->start(20);   // 50 Hz
+    pwmTimer->start(20);   // 50 Hz : moteurs, odometrie, UI
+    irTimer->start(1);     // 1 kHz : capteurs IR + envoi QEMU
 
 }
 
@@ -705,6 +717,9 @@ void Modele::stopEsp32()
     // Arreter le timer PWM
     pwmTimer->stop();
     pwmPinsPrec.clear();
+
+    // Arreter le timer capteurs IR
+    irTimer->stop();
 
     // Pause (le thread QEMU reste vivant)
     esp32->pause();
@@ -831,20 +846,37 @@ void Modele::updatePwm()
     // Mise a jour de l'UI
     emit deplaceGamel(x, y, theta);
 
-    // Mise a jour des capteurs IR
-    for (unsigned i=0; i<tabCaptIR.size(); i++) {
-        double x0, y0, x1, y1;
-        tabCaptIR[i]->unforce();
-        x0 = 120.0 + tabCaptIR[i]->getY();
-        y0 = -tabCaptIR[i]->getX();
-        x1 = x + x0 * ct - y0 * st;
-        y1 = y + x0 * st + y0 * ct;
-        tabCaptIR[i]->setXPiste(x1);
-        tabCaptIR[i]->setYPiste(y1);
-        tabCaptIR[i]->evalue(&piste);
-    }
+    // Mise a jour de l'UI (captCNYChange notifie l'UI a 50 Hz ; les valeurs des
+    // capteurs sont maintenues a jour par updateIrSensors() a 1 kHz)
     if (tabCaptIR.size() > 0) emit captCNYChange();
 
     // Collision avec un obstacle : fin de course
     miseAJourFdc();
+}
+
+// ============================================================================
+// updateIrSensors() : appelee a 1 kHz par irTimer.
+// Recalcule la position des capteurs IR dans le repere piste, evalue leur
+// reflexion, et envoie la valeur analogique vers QEMU si elle a changed.
+// Pas d'emission de signal UI ici (trop frequence pour l'affichage) :
+// captCNYChange() est emise par updatePwm() a 50 Hz.
+// ============================================================================
+void Modele::updateIrSensors()
+{
+    if (!esp32EnCours || !esp32) return;
+
+    for (unsigned i = 0; i < tabCaptIR.size(); i++) {
+        CaptIrCNX *c = tabCaptIR[i];
+        c->unforce();
+        double x0 = 120.0 + c->getY();
+        double y0 = -c->getX();
+        double x1 = x + x0 * ct - y0 * st;
+        double y1 = y + x0 * st + y0 * ct;
+        c->setXPiste(x1);
+        c->setYPiste(y1);
+        c->evalue(&piste);
+
+        // Envoyer la valeur vers QEMU si elle a change (niveau digital + analogique)
+        appliqueCaptIrEsp32(c, false);
+    }
 }

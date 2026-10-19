@@ -211,12 +211,15 @@ protected :
     bool esp32EnCours;
     bool esp32Initialise;
 
-    // === PWM ESP32 ===
+    // === PWM ESP32 (50 Hz) ===
     QTimer        *pwmTimer;
     QElapsedTimer *pwmChrono;
     qint64         pwmDernierTemps;
     QMap<int,int>  pwmPinsPrec;   // dernier routage GPIO -> canal LEDC connu
     QMap<int,bool> m_gpioOutputLevels;  // dernier niveau digital connu par GPIO (pour l'oscillo)
+
+    // === Capteurs IR (1 kHz) ===
+    QTimer        *irTimer;
 
 signals :
     void fdcChange();
@@ -334,7 +337,8 @@ public slots :
 
     // === ESP32 ===
     void onEsp32Gpio(int pin, bool level);
-    void updatePwm();   // <-- AJOUTE
+    void updatePwm();   // 50 Hz : moteurs, odometrie, UI
+    void updateIrSensors();  // 1 kHz : capteurs IR + envoi QEMU
 };
 
 #endif // MODELE_H
