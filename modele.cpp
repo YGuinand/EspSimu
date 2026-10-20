@@ -684,7 +684,20 @@ void Modele::miseAJourFdc()
 bool Modele::loadEsp32Firmware(const QString &filename)
 {
     if (!esp32) return false;
-    return esp32->loadFirmware(filename);
+    if (esp32Initialise) {
+        // La carte est demarree (meme en pause apres un Off) : QEMU ne relit la
+        // flash qu'au qemu_init, on reprogramme donc directement le fichier image
+        // deja ouvert afin que le prochain reset demarre sur ce firmware.
+        if (!esp32->programFirmware(filename)) return false;
+        if (esp32EnCours) resetEsp32();   // redemarrage immediat sur le nouveau firmware
+        firmwareSelection = filename;
+        return true;
+    }
+    if (esp32->loadFirmware(filename)) {
+        firmwareSelection = filename;
+        return true;
+    }
+    return false;
 }
 
 void Modele::startEsp32()
@@ -696,6 +709,12 @@ void Modele::startEsp32()
         esp32->start();
         esp32Initialise = true;
     } else {
+        // Reprise apres arret : le firmware charge dans la flash est celui
+        // programme par loadEsp32Firmware (eventuellement pendant l'Off).
+        // Si un fichier a ete modifie/selectionne ailleurs (cas residuel), on
+        // reprogramme la flash avant de repartir.
+        if (esp32->firmwareChange() && !firmwareSelection.isEmpty())
+            esp32->programFirmware(firmwareSelection);
         esp32->resume();
         QThread::msleep(50);
         esp32->reset();

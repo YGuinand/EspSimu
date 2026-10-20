@@ -210,6 +210,7 @@ protected :
     GroveLcdRgb  *groveLcd;
     bool esp32EnCours;
     bool esp32Initialise;
+    QString firmwareSelection;   // fichier .bin reellement accepte par le dernier chargement
 
     // === PWM ESP32 (50 Hz) ===
     QTimer        *pwmTimer;

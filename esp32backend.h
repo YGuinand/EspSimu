@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QString>
 #include <QByteArray>
+#include <QDateTime>
 #include <QMap>
 #include <cstdint>
 #include <atomic>
@@ -64,6 +65,7 @@ public:
     // ==================== Cycle de vie ====================
     bool loadLibrary(const QString &libPath);
     bool loadFirmware(const QString &binPath);
+    bool programFirmware(const QString &binPath);  // reprogramme la flash deja ouverte par QEMU
     void start();       // Init QEMU + lance le thread (une seule fois)
     void pause();       // Gele la VM (thread reste vivant)
     void resume();      // Reprend la VM
@@ -92,6 +94,11 @@ public:
     bool isRunning() const { return running; }
     bool isMachineReady() const { return m_ready; }
 
+    // true si le firmware prepare (firmwarePath) differe de celui effectivement
+    // charge dans QEMU (chemin different ou fichier modifie depuis qemu_init) :
+    // il faut alors reprogrammer la flash (programFirmware) avant le prochain reset.
+    bool firmwareChange() const;
+
     // GPIO -> canal LEDC (0..15) pour toutes les broches routees vers un signal LEDC
     QMap<int,int> pwmPins();
     // Duty (0..100 %) d'un canal LEDC, -1 si indisponible
@@ -119,7 +126,9 @@ private:
     QThread *qemuThread;
     std::atomic<bool> running;
     std::atomic<bool> m_ready;
-    QString firmwarePath;
+    QString firmwarePath;          // firmware prepare (image flash complete)
+    QString activeFirmwarePath;    // firmware effectivement donne a qemu_init
+    QDateTime activeFirmwareStamp; // empreinte du fichier activeFirmwarePath
     char **qemuArgv;
     int qemuArgc;
 
@@ -148,6 +157,7 @@ private:
     void (*p_vmstop_request)(int);
 
     bool placeInImage(QByteArray &img, const QString &file, qint64 offset);
+    bool prepareFlashImage(const QString &binPath, QByteArray &img);
     bool resolveSymbols();
     void buildArgv();
     void freeArgv();

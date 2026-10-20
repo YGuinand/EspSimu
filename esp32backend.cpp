@@ -9,6 +9,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <QDebug>
+#include <QDateTime>
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
@@ -269,6 +270,26 @@ bool Esp32Backend::placeInImage(QByteArray &img, const QString &file, qint64 off
 
 bool Esp32Backend::loadFirmware(const QString &binPath)
 {
+    QByteArray img;
+    if (!prepareFlashImage(binPath, img)) return false;
+
+    const QString out = QDir::temp().filePath(
+        QString("espsimu_flash_%1.bin").arg(QCoreApplication::applicationPid()));
+    QFile o(out);
+    if (!o.open(QIODevice::WriteOnly | QIODevice::Truncate) || o.write(img) != img.size()) {
+        emit error(QString("Ecriture impossible: %1").arg(out));
+        return false;
+    }
+    o.close();
+    firmwarePath = out;
+    return true;
+}
+
+// Construit une image flash complete (4 Mo) a partir d'un fichier firmware .bin
+// (image flash de la taille attendue, firmware PlatformIO assemble avec
+// bootloader.bin + partitions.bin + boot_app0.bin, ou firmware.factory.bin).
+bool Esp32Backend::prepareFlashImage(const QString &binPath, QByteArray &img)
+{
     if (!QFileInfo::exists(binPath)) {
         emit error(QString("Firmware introuvable: %1").arg(binPath));
         return false;
@@ -276,8 +297,14 @@ bool Esp32Backend::loadFirmware(const QString &binPath)
     const QFileInfo fi(binPath);
     const QString dir = fi.absolutePath();
 
+    img.clear();
     if (isFlashSize(fi.size())) {
-        firmwarePath = binPath;
+        // Image flash complete : lecture directe du contenu
+        QFile f(binPath);
+        if (!f.open(QIODevice::ReadOnly) || (img = f.readAll()).isEmpty()) {
+            emit error(QString("Lecture impossible: %1").arg(binPath));
+            return false;
+        }
         return true;
     }
     if (fi.size() > FLASH_SIZE_DEFAULT) {
@@ -285,7 +312,7 @@ bool Esp32Backend::loadFirmware(const QString &binPath)
         return false;
     }
 
-    QByteArray img(int(FLASH_SIZE_DEFAULT), char(0xFF));
+    img = QByteArray(int(FLASH_SIZE_DEFAULT), char(0xFF));
     if (fi.fileName().endsWith(".factory.bin", Qt::CaseInsensitive)) {
         if (!placeInImage(img, binPath, 0)) return false;
     } else {
@@ -304,16 +331,36 @@ bool Esp32Backend::loadFirmware(const QString &binPath)
             !placeInImage(img, binPath, OFFSET_APP))
             return false;
     }
+    return true;
+}
 
-    const QString out = QDir::temp().filePath(
-        QString("espsimu_flash_%1.bin").arg(QCoreApplication::applicationPid()));
-    QFile o(out);
-    if (!o.open(QIODevice::WriteOnly | QIODevice::Truncate) || o.write(img) != img.size()) {
-        emit error(QString("Ecriture impossible: %1").arg(out));
+// Programme le firmware dans la flash telle qu'elle est actuellement ouverte par
+// QEMU (carte demarree, meme en pause). En effet, QEMU ne re-lit la flash
+// (-drive) qu'au qemu_init : pour charger un nouveau firmware sans re-initialiser
+// la machine, on reecrit le contenu du fichier image deja ouvert — la lecture de
+// la flash par le ROM/bootloader passe par blk_pread (pas de cache interne
+// persistant), donc le prochain reset demarrera sur le nouveau programme.
+bool Esp32Backend::programFirmware(const QString &binPath)
+{
+    QByteArray img;
+    if (!prepareFlashImage(binPath, img)) return false;
+
+    if (activeFirmwarePath.isEmpty()) {
+        // QEMU pas encore init : on se contente de preparer le firmware
+        return loadFirmware(binPath);
+    }
+
+    QFile f(activeFirmwarePath);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate) || f.write(img) != img.size()) {
+        emit error(QString("Reprogrammation flash impossible: %1").arg(activeFirmwarePath));
         return false;
     }
-    o.close();
-    firmwarePath = out;
+    f.flush();
+    f.close();
+
+    firmwarePath = activeFirmwarePath;   // le firmware prepare = la flash chargee
+    activeFirmwareStamp = QFileInfo(activeFirmwarePath).lastModified();
+    qDebug() << "Esp32Backend: flash reprogrammee:" << activeFirmwarePath;
     return true;
 }
 
@@ -321,6 +368,9 @@ bool Esp32Backend::loadFirmware(const QString &binPath)
 void Esp32Backend::buildArgv()
 {
     freeArgv();
+
+    activeFirmwarePath = firmwarePath;                    // firmware passe a qemu_init
+    activeFirmwareStamp = QFileInfo(firmwarePath).lastModified();
 
     QByteArray biosPath = (QCoreApplication::applicationDirPath() + "/pc-bios").toUtf8();
     QByteArray driveArg = QString("file=%1,if=mtd,format=raw")
@@ -474,6 +524,16 @@ void Esp32Backend::shutdown()
         qemuThread = nullptr;
     }
     running = false;
+}
+
+// ==================== Firmware effectivement charge ====================
+bool Esp32Backend::firmwareChange() const
+{
+    if (activeFirmwarePath.isEmpty()) return false;   // rien chargé dans QEMU
+    if (firmwarePath != activeFirmwarePath) return true;
+    QFileInfo fi(firmwarePath);
+    if (!fi.exists()) return false;
+    return fi.lastModified() != activeFirmwareStamp;  // meme fichier, modifié (recompilation)
 }
 
 // ==================== UI -> QEMU ====================

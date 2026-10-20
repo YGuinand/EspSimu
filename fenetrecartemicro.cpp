@@ -307,7 +307,12 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
 void FenetreCarteMicro::on_pushButtonRefresh_clicked()
 {
     QString fichier = ui->fichier->text();
-    if (!fichier.isEmpty()) modele->loadEsp32Firmware(fichier);
+    if (fichier.isEmpty()) return;
+    // Carte en cours, la reprogrammation + redemarrage sont geres par loadEsp32Firmware
+    if (!modele->loadEsp32Firmware(fichier)) {
+        QMessageBox::warning(this, "EspSimu",
+                             "Impossible de recharger le firmware sélectionné.");
+    }
 }
 
 void FenetreCarteMicro::set_bp0Pressed()
