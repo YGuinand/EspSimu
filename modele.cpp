@@ -52,8 +52,13 @@ Modele::Modele()
     esp32Initialise = false;
 
     // Charger la bibliotheque QEMU (une seule fois)
+#ifdef _WIN32
+    QString libPath = QCoreApplication::applicationDirPath()
+                      + "/3rdparty/qemu/lib/libqemu-xtensa.dll";
+#else
     QString libPath = QCoreApplication::applicationDirPath()
                       + "/3rdparty/qemu/lib/libqemu-xtensa.so";
+#endif
     if (esp32->loadLibrary(libPath)) {
         qDebug() << "Modele: bibliotheque QEMU chargee";
     } else {

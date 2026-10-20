@@ -1,8 +1,25 @@
 #include "esp32backend.h"
 #include "grovelcdrgb.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 #include <cstring>
+#include <cstdlib>
+#include <QDebug>
+#include <QFileInfo>
+#include <QFile>
+#include <QDir>
+#include <QMetaObject>
+#include <QCoreApplication>
+
+#ifdef _WIN32
+#define DL_SYM(handle, name) (void *)GetProcAddress((HMODULE)(handle), (name))
+#else
+#define DL_SYM(handle, name) dlsym((handle), (name))
+#endif
 #include <cstdlib>
 #include <QDebug>
 #include <QFileInfo>
@@ -112,7 +129,11 @@ Esp32Backend::~Esp32Backend()
     if (firmwarePath.contains("espsimu_flash_") && firmwarePath.startsWith(QDir::tempPath()))
         QFile::remove(firmwarePath);
     if (libHandle) {
+#ifdef _WIN32
+        FreeLibrary((HMODULE)libHandle);
+#else
         dlclose(libHandle);
+#endif
         libHandle = nullptr;
     }
     freeArgv();
@@ -127,9 +148,17 @@ bool Esp32Backend::loadLibrary(const QString &libPath)
         return false;
     }
 
+#ifdef _WIN32
+    libHandle = LoadLibraryA(libPath.toUtf8().constData());
+#else
     libHandle = dlopen(libPath.toUtf8().constData(), RTLD_NOW | RTLD_GLOBAL);
+#endif
     if (!libHandle) {
+#ifdef _WIN32
+        emit error(QString("LoadLibrary: %1").arg((quint64)GetLastError()));
+#else
         emit error(QString("dlopen: %1").arg(dlerror()));
+#endif
         return false;
     }
     return resolveSymbols();
@@ -138,31 +167,31 @@ bool Esp32Backend::loadLibrary(const QString &libPath)
 bool Esp32Backend::resolveSymbols()
 {
     // --- Fonctions QEMU principales ---
-    p_register_callbacks = (void(*)(void*))               dlsym(libHandle, "qemu_picsimlab_register_callbacks");
-    p_set_pin            = (void(*)(int,int))             dlsym(libHandle, "qemu_picsimlab_set_pin");
-    p_set_apin           = (void(*)(int,int))             dlsym(libHandle, "qemu_picsimlab_set_apin");
-    p_uart_receive       = (void(*)(int,const uint8_t*,int)) dlsym(libHandle, "qemu_picsimlab_uart_receive");
-    p_get_internals      = (uint32_t*(*)(int))            dlsym(libHandle, "qemu_picsimlab_get_internals");
-    p_flash_dump         = (int(*)(int64_t,void*,int))    dlsym(libHandle, "qemu_picsimlab_flash_dump");
-    p_qemu_init          = (void(*)(int,char**))          dlsym(libHandle, "qemu_init");
-    p_qemu_main_loop     = (void(*)(void))                dlsym(libHandle, "qemu_main_loop");
-    p_qemu_cleanup       = (void(*)(void))                dlsym(libHandle, "qemu_cleanup");
-    p_system_reset       = (void(*)(int))                 dlsym(libHandle, "qemu_system_reset_request");
-    p_system_shutdown    = (void(*)(int))                 dlsym(libHandle, "qemu_system_shutdown_request");
+    p_register_callbacks = (void(*)(void*))               DL_SYM(libHandle, "qemu_picsimlab_register_callbacks");
+    p_set_pin            = (void(*)(int,int))             DL_SYM(libHandle, "qemu_picsimlab_set_pin");
+    p_set_apin           = (void(*)(int,int))             DL_SYM(libHandle, "qemu_picsimlab_set_apin");
+    p_uart_receive       = (void(*)(int,const uint8_t*,int)) DL_SYM(libHandle, "qemu_picsimlab_uart_receive");
+    p_get_internals      = (uint32_t*(*)(int))            DL_SYM(libHandle, "qemu_picsimlab_get_internals");
+    p_flash_dump         = (int(*)(int64_t,void*,int))    DL_SYM(libHandle, "qemu_picsimlab_flash_dump");
+    p_qemu_init          = (void(*)(int,char**))          DL_SYM(libHandle, "qemu_init");
+    p_qemu_main_loop     = (void(*)(void))                DL_SYM(libHandle, "qemu_main_loop");
+    p_qemu_cleanup       = (void(*)(void))                DL_SYM(libHandle, "qemu_cleanup");
+    p_system_reset       = (void(*)(int))                 DL_SYM(libHandle, "qemu_system_reset_request");
+    p_system_shutdown    = (void(*)(int))                 DL_SYM(libHandle, "qemu_system_shutdown_request");
 
     // --- BQL (QEMU 9.x : API moderne) ---
-    p_bql_lock   = (void(*)(const char*,int)) dlsym(libHandle, "bql_lock_impl");
-    p_bql_unlock = (void(*)(void))            dlsym(libHandle, "bql_unlock");
+    p_bql_lock   = (void(*)(const char*,int)) DL_SYM(libHandle, "bql_lock_impl");
+    p_bql_unlock = (void(*)(void))            DL_SYM(libHandle, "bql_unlock");
     if (!p_bql_lock || !p_bql_unlock) {
         // Fallback ancienne API (QEMU 4.x-8.x)
-        p_bql_lock   = (void(*)(const char*,int)) dlsym(libHandle, "qemu_mutex_lock_iothread");
-        p_bql_unlock = (void(*)(void))            dlsym(libHandle, "qemu_mutex_unlock_iothread");
+        p_bql_lock   = (void(*)(const char*,int)) DL_SYM(libHandle, "qemu_mutex_lock_iothread");
+        p_bql_unlock = (void(*)(void))            DL_SYM(libHandle, "qemu_mutex_unlock_iothread");
     }
 
     // --- Pause / Resume ---
-    p_vm_start        = (void(*)(void))  dlsym(libHandle, "vm_start");
-    p_vmstop_prepare  = (void(*)(void))  dlsym(libHandle, "qemu_system_vmstop_request_prepare");
-    p_vmstop_request  = (void(*)(int))   dlsym(libHandle, "qemu_system_vmstop_request");
+    p_vm_start        = (void(*)(void))  DL_SYM(libHandle, "vm_start");
+    p_vmstop_prepare  = (void(*)(void))  DL_SYM(libHandle, "qemu_system_vmstop_request_prepare");
+    p_vmstop_request  = (void(*)(int))   DL_SYM(libHandle, "qemu_system_vmstop_request");
 
     // --- Verifications des symboles essentiels ---
     if (!p_register_callbacks) { emit error("Symbole manquant: qemu_picsimlab_register_callbacks"); return false; }
@@ -333,7 +362,11 @@ void Esp32Backend::start()
     if (!libHandle)     { emit error("Bibliotheque non chargee"); return; }
     if (firmwarePath.isEmpty()) { emit error("Firmware non charge");  return; }
 
+#ifdef _WIN32
+    _putenv_s("QEMU_DATADIR", "pc-bios");
+#else
     setenv("QEMU_DATADIR", "pc-bios", 1);
+#endif
 
     static callbacks_t cbs;
     cbs.picsimlab_write_pin     = on_picsimlab_write_pin;

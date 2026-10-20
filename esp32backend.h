@@ -9,6 +9,10 @@
 #include <cstdint>
 #include <atomic>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 class GroveLcdRgb;
 
 // Brochage de la carte (cf. docs/schema.pdf), en numeros de GPIO ESP32.

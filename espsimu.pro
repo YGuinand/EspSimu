@@ -70,7 +70,7 @@ QMAKE_CFLAGS_RELEASE  += -O3
 QMAKE_CXXFLAGS_RELEASE  += -O3
 QMAKE_LFLAGS  += -O3
 
-unix:!macx {
+!win32 {
     LIBS += -ldl -lpthread -lglib-2.0 -lpixman-1 -lz -lgcrypt -lm
     QMAKE_LFLAGS += -rdynamic
 }
