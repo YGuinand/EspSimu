@@ -55,3 +55,6 @@ compile_commands.json
 *_qmlcache.qrc
 
 /build/
+# binaire et artefacts runtime du simulateur
+/espsimu
+/pc-bios

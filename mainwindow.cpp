@@ -201,6 +201,31 @@ void MainWindow::organiser()
     resize(w, h);
 }
 
+// ==================== Mode diagnostic ====================
+void MainWindow::demarrageDiagnostic(const QString &firmware)
+{
+    if (!modele.loadEsp32Firmware(firmware)) {
+        qWarning() << "Diagnostic: impossible de charger le firmware" << firmware;
+        return;
+    }
+    qDebug() << "Diagnostic: demarrage ESP32 avec" << firmware;
+    modele.startEsp32();
+
+    // Reset toutes les 8 s : le premier tombe apres le premier tour(s) de loop
+    // (rampe PWM ~1.7 s par tour), les suivants re-exposent le phenomene. 5 cycles.
+    QTimer *horlogeReset = new QTimer(this);
+    connect(horlogeReset, &QTimer::timeout, this, [this, horlogeReset, n = 0]() mutable {
+        qDebug() << "Diagnostic: reset automatique";
+        modele.resetEsp32();
+        if (++n >= 5) horlogeReset->stop();
+    });
+    horlogeReset->start(8000);
+
+    // Fermeture automatique pour les essais en batch (ESPSIMU_DIAG_AUTOCLOSE=1)
+    if (qEnvironmentVariable("ESPSIMU_DIAG_AUTOCLOSE") == "1")
+        QTimer::singleShot(50000, this, [this]() { close(); });
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     // Deuxieme passage : on ferme pour de vrai

@@ -1,4 +1,5 @@
 #include "esp32backend.h"
+#include "diagnostic.h"
 #include "grovelcdrgb.h"
 
 #ifdef _WIN32
@@ -80,6 +81,7 @@ extern "C" void on_picsimlab_dir_pin(int pin, int value) {
     if (g_backend) g_backend->emitGpioDir(pin, value);
 }
 extern "C" void on_picsimlab_uart_tx(const uint8_t id, const uint8_t value) {
+    if (EspDiag::actif()) EspDiag::uartSource(id, value);
     if (g_backend) g_backend->emitUartTx(id, value);
 }
 extern "C" int on_picsimlab_i2c_event(const uint8_t id, const uint8_t addr, const uint16_t event) {
@@ -162,6 +164,7 @@ bool Esp32Backend::loadLibrary(const QString &libPath)
 #endif
         return false;
     }
+    EspDiag::init(libHandle);   // diagnostic deja actif/inactif selon ESPSIMU_DIAG
     return resolveSymbols();
 }
 
@@ -444,9 +447,12 @@ void Esp32Backend::runQemuThread()
     p_qemu_init(qemuArgc, qemuArgv);
     m_ready = true;
     QMetaObject::invokeMethod(this, [this]() { emit machineReady(); }, Qt::QueuedConnection);
+    EspDiag::mark("qemu_init fini");
+    EspDiag::demarrerEchantillonneur();
     qDebug() << "Esp32Backend: qemu_main_loop...";
     p_qemu_main_loop();
     qDebug() << "Esp32Backend: qemu_cleanup...";
+    EspDiag::arreterEchantillonneur();
     p_qemu_cleanup();
     m_ready = false;
     running = false;
@@ -463,6 +469,7 @@ void Esp32Backend::pause()
 {
     if (!running) return;
     if (p_vmstop_prepare && p_vmstop_request) {
+        EspDiag::mark("pause VM");
         qDebug() << "Esp32Backend: pause VM (vmstop_request)";
         p_vmstop_prepare();
         p_vmstop_request(RUN_STATE_PAUSED);
@@ -475,6 +482,7 @@ void Esp32Backend::resume()
 {
     if (!running) return;
     if (p_vm_start) {
+        EspDiag::mark("resume VM");
         qDebug() << "Esp32Backend: resume VM";
         p_vm_start();   // vm_start acquiert le BQL lui-meme
     } else {
@@ -490,6 +498,7 @@ void Esp32Backend::reset()
         return;
     }
 
+    EspDiag::mark("reset VM (boot qemu)");
     qDebug() << "Esp32Backend: reset VM (sans BQL, cause GUEST_RESET)";
     // qemu_system_reset_request est thread-safe (pose un drapeau + notifie la boucle QEMU).
     // Il ne faut PAS detenir le BQL pendant l'appel, sinon le thread QEMU ne peut pas
@@ -523,6 +532,7 @@ void Esp32Backend::shutdown()
         delete qemuThread;
         qemuThread = nullptr;
     }
+    EspDiag::arreterEchantillonneur();
     running = false;
 }
 

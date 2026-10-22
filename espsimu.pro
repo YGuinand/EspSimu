@@ -16,6 +16,7 @@ CONFIG += static
 
 SOURCES += main.cpp\
     connexion.cpp \
+    diagnostic.cpp \
     esp32backend.cpp \
     grovelcdrgb.cpp \
     mainwindow.cpp \
@@ -34,6 +35,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     connexion.h \
+    diagnostic.h \
     esp32backend.h \
     grovelcdrgb.h \
     lcdfont.h \

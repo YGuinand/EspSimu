@@ -30,6 +30,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    // Mode diagnostic en ligne de commande (--diag-autostart <firmware>) :
+    // charge et demarre un firmware d'un seul tenant (utilisable hors ecran :
+    // QT_QPA_PLATFORM=offscreen), puis enchaine des reset toutes les 8 s
+    // (apres le premier tour de loop) pour reproduire et mesurer le lag
+    // post-reset. Fermeture auto si ESPSIMU_DIAG_AUTOCLOSE=1.
+    void demarrageDiagnostic(const QString &firmware);
+
 private:
     Ui::MainWindow *ui;
 

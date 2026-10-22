@@ -1,5 +1,6 @@
 #include "modele.h"
 
+#include "diagnostic.h"
 #include <math.h>
 #include <QDomImplementation>
 #include <QFile>
@@ -72,6 +73,14 @@ Modele::Modele()
     jack.onChange = [this]() { if (jackPin>=0) appliqueContactEsp32(jackPin, jack.niveauHaut()); };
     fdc.onChange  = [this]() { if (fdcPin>=0)  appliqueContactEsp32(fdcPin,  fdc.niveauHaut());  };
     connect(esp32, &Esp32Backend::machineReady, this, &Modele::appliquePinsEsp32);
+
+    // Diagnostic : horodatage des evenements cote Qt (livraison UART, machine prete)
+    connect(esp32, &Esp32Backend::uartTx, this, [](int uartId, char) {
+        EspDiag::uartLivraison(uartId);
+    });
+    connect(esp32, &Esp32Backend::machineReady, this, []() {
+        EspDiag::mark("machine prete");
+    });
 
     connect(esp32, &Esp32Backend::error,
             this, [](const QString &msg) {
@@ -721,6 +730,7 @@ void Modele::startEsp32()
         QTimer::singleShot(300, this, &Modele::appliquePinsEsp32);   // le reset efface l'etat des entrees
     }
     esp32EnCours = true;
+    EspDiag::mark("start esp32 (power on)");
 
     // Demarrer le timer PWM
     if (!pwmChrono->isValid()) {
@@ -755,9 +765,15 @@ void Modele::resetEsp32()
     if (!esp32EnCours) return;
     if (!esp32) return;
 
+    EspDiag::mark("reset esp32 (bouton/appui)");
+
     // Reset cote QEMU (CPU + peripheriques ESP32)
     esp32->reset();
     QTimer::singleShot(300, this, &Modele::appliquePinsEsp32);   // le reset efface l'etat des entrees
+
+    // Dump de diagnostic 5 s apres le reset (couvre le boot + le premier tour de loop)
+    if (EspDiag::actif())
+        QTimer::singleShot(5000, this, []() { EspDiag::dump("5 s apres reset"); });
 
     // Reset du chrono PWM
     if (pwmChrono->isValid()) {
