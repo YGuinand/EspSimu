@@ -755,6 +755,19 @@ void Modele::stopEsp32()
     // Arreter le timer capteurs IR
     irTimer->stop();
 
+    // Coupure d'alimentation : aucune commande ne maintient plus les moteurs ni
+    // les LED (comme sur la vraie carte). Sans purge ici, les moteurs gardent
+    // leur vitesse d'avant l'extinction et glissent des le retour du Power,
+    // pendant tout le boot, avec une deceleration lente (duty = 0 ne les empeche
+    // pas de rouler sur l'inertie) : la gamelle semble reprendre avant la fin de
+    // l'initialisation.
+    moteurG->reset();
+    moteurD->reset();
+    ledA6.setValue(0.0);
+    ledA6.setPwmDuty(0.0);
+    led2.setValue(0.0);
+    led2.setPwmDuty(0.0);
+
     // Pause (le thread QEMU reste vivant)
     esp32->pause();
     esp32EnCours = false;
