@@ -10,26 +10,30 @@
 #                    qemu/build_libqemu-esp32-windows.sh  (DLL Windows)
 #
 # ==================== Revision QEMU (Linux) ====================
-# Source buildee le 2026-10-23 : arbre git qemu/ PROPRE au commit
-#   52301a8a75c19972d0c1ed29780e7de6043bc54e (2026-10-23 10:46)
-#   "Reset LEDC au reset systeme : purge imputee de l'ancienne consigne PWM"
-# Tag pose au moment du build : libqemu-esp32-2026-10-23 (sur ce commit)
+# Source buildee le 2026-10-24 (ninja incremental) : arbre git qemu/ dont le
+#   seul diff au moment du build a ensuite forme le commit
+#   5800d6fda6263d5ee9a60c7bd058476e77af27f0 (2026-10-24 00:41)
+#   "eFuse : calibration usine ADC (Vref BLK0) gravee par defaut"
+#   (arbre PROPRE depuis ce commit ; le .so reproduit son contenu exact).
+# Tag pose au moment du build : libqemu-esp32-2026-10-24 (sur ce commit)
 #   -> toute reconstruction incrementale depuis ce tag partage cette source.
 #
 # ==================== Artefacts livres ====================
 # Path                Copie le            Build
-# libqemu-xtensa.so   2026-10-23 22:00:31 Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus)
-# libqemu-riscv32.so  2026-10-23 22:00:31 Linux    riscv32   (42.4 Mo, idem)
+# libqemu-xtensa.so   2026-10-24 00:43    Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus)
+# libqemu-riscv32.so  2026-10-23 22:00    Linux    riscv32   (42.4 Mo, commit 52301a8a75, non reconstruit)
 # libqemu-xtensa.dll  2026-10-21 10:16    Windows  xtensa    (etat source anterieur, non trace)
 # libqemu-riscv32.dll 2026-10-21 10:16    Windows  riscv32   (etat source anterieur, non trace)
 #
-# Note : le `.so` xtensa precedent (23 oct 10:43) pesait 67.7 Mo contre
-# 45.3 Mo pour celui-ci, meme script de build ; taille anterieure a
-# traiter comme un artefact du build debug du 21-22 oct, sans valeur.
-#
-# Les DLL Windows restent a mettre en accord a la prochaine execution de
-# build_libqemu-esp32-windows.sh : alors taguer + re-ecrire ce fichier
-# (hash source complet au lancement du script + heure de copie).
+# Contenu fonctionnel introduit par libqemu-esp32-2026-10-24 :
+#   calibration usine ADC gravee dans les eFuse (champ ADC_VREF, BLK0 w4
+#   bits [12:8] = +2 pas -> 1114 mV). Sans elle, IDF5 (LINE FITTING) passait
+#   par la branche default_vref que le coeur Arduino ne renseigne pas :
+#   adc_cali_create_scheme_line_fitting() renvoyait ESP_ERR_INVALID_ARG et
+#   analogReadMilliVolts() restait bloquee a 0. Depuis cette lib, la
+#   conversion raw -> mV se fait dans le firmware comme sur une puce reelle.
+#   La DLL Windows de ce jour ne connait pas ce correctif : analogReadMilliVolts
+#   y reste inoperante tant que build_libqemu-esp32-windows.sh n'a pas rejoue.
 #
 # ==================== A chaque reconstruction ====================
 # 1. s'assurer que l'arbre qemu/ est commité (arbre propre) ;
@@ -40,3 +44,13 @@
 # 5. valider avec les tests diag headless d'EspSimu :
 #      ESPSIMU_DIAG=1 ./espsimu --diag-autostart <firmware.bin>
 #    avant de considerer le nouveau .so comme bon.
+#
+# ==================== Validation du 2026-10-24 ====================
+# - qemu standalone : firmware .pio/build/full (analogReadMilliVolts IO25) :
+#   plus aucune erreur 'adc_cali: ... default vref didn't set' ;
+#   rampe IO25 (ADC2 CH8) monotone 128 -> 3025 mV pour raw 0 -> 3840 (LUT IDF
+#   au-delà de raw 2880), rampe IO35 (ADC1 CH7) monotone 142 -> 2915 mV,
+#   offsets IDF adc2/adc1_vref_atten_offset[3] respectes (128 / 142 a raw 0).
+# - diag app : ESPSIMU_DIAG=1 ./espsimu --diag-autostart
+#   testEspSimu/.pio/build/full/firmware.factory.bin : rafales uart0 de "128\n"
+#   toutes les ~110 ms, aucune trace adc_cali.
