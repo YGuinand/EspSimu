@@ -242,6 +242,29 @@ void MainWindow::demarrageDiagnostic(const QString &firmware, const QString &fic
         horlogeReset->start(8000);
     }
 
+    // ESPSIMU_DIAG_OFFON=1 : cycles extinction/relancement (power off/on),
+    // equivalent headless du bouton Power de la fenetre carte. Deja deux
+    // cycles a t=6/9 s puis 12/15 s (apres le boot initial) : reproduit le
+    // banc "mise hors tension puis sous tension".
+    if (qEnvironmentVariable("ESPSIMU_DIAG_OFFON") == "1") {
+        QTimer::singleShot(6000, this, [this]() {
+            qDebug() << "Diagnostic: extinction (power off)";
+            modele.stopEsp32();
+        });
+        QTimer::singleShot(9000, this, [this]() {
+            qDebug() << "Diagnostic: relance (power on)";
+            modele.startEsp32();
+        });
+        QTimer::singleShot(12000, this, [this]() {
+            qDebug() << "Diagnostic: extinction (power off)";
+            modele.stopEsp32();
+        });
+        QTimer::singleShot(15000, this, [this]() {
+            qDebug() << "Diagnostic: relance (power on)";
+            modele.startEsp32();
+        });
+    }
+
     // Fermeture automatique pour les essais en batch (ESPSIMU_DIAG_AUTOCLOSE=1
     // → 50 s par defaut, ou une valeur en millisecondes, ex. ESPSIMU_DIAG_AUTOCLOSE=180000)
     QString autoclose = qEnvironmentVariable("ESPSIMU_DIAG_AUTOCLOSE");
