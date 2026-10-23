@@ -1,0 +1,42 @@
+# Tracabilite des bibliotheques QEMU utilisees par EspSimu
+#
+# modele.cpp charge 3rdparty/qemu/lib/libqemu-xtensa.so par dlopen relatif a
+# l'executable. Ce fichier relie chaque binaire livre a la revision du fork
+# QEMU qui l'a produit : c'est le seul pont de versions entre le depot qemu/
+# et le depot EspSimu, il doit etre re-ecrit a chaque reconstruction.
+#
+# Depot source     : qemu/ (workspace), fork de https://github.com/lcgamboa/qemu
+# Scripts de build : qemu/build_libqemu-esp32.sh          (Linux)
+#                    qemu/build_libqemu-esp32-windows.sh  (DLL Windows)
+#
+# ==================== Revision QEMU (Linux) ====================
+# Source buildee le 2026-10-23 : arbre git qemu/ PROPRE au commit
+#   52301a8a75c19972d0c1ed29780e7de6043bc54e (2026-10-23 10:46)
+#   "Reset LEDC au reset systeme : purge imputee de l'ancienne consigne PWM"
+# Tag pose au moment du build : libqemu-esp32-2026-10-23 (sur ce commit)
+#   -> toute reconstruction incrementale depuis ce tag partage cette source.
+#
+# ==================== Artefacts livres ====================
+# Path                Copie le            Build
+# libqemu-xtensa.so   2026-10-23 22:00:31 Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus)
+# libqemu-riscv32.so  2026-10-23 22:00:31 Linux    riscv32   (42.4 Mo, idem)
+# libqemu-xtensa.dll  2026-10-21 10:16    Windows  xtensa    (etat source anterieur, non trace)
+# libqemu-riscv32.dll 2026-10-21 10:16    Windows  riscv32   (etat source anterieur, non trace)
+#
+# Note : le `.so` xtensa precedent (23 oct 10:43) pesait 67.7 Mo contre
+# 45.3 Mo pour celui-ci, meme script de build ; taille anterieure a
+# traiter comme un artefact du build debug du 21-22 oct, sans valeur.
+#
+# Les DLL Windows restent a mettre en accord a la prochaine execution de
+# build_libqemu-esp32-windows.sh : alors taguer + re-ecrire ce fichier
+# (hash source complet au lancement du script + heure de copie).
+#
+# ==================== A chaque reconstruction ====================
+# 1. s'assurer que l'arbre qemu/ est commité (arbre propre) ;
+# 2. copier le nouvel artefact du build dans 3rdparty/qemu/lib/ ;
+# 3. taguer le depot qemu : git tag libqemu-esp32-AAAA-MM-JJ <hash-source> ;
+# 4. reecrire ce fichier (hash complet au lancement du script, tag pose,
+#    heure de copie des artefacts) ;
+# 5. valider avec les tests diag headless d'EspSimu :
+#      ESPSIMU_DIAG=1 ./espsimu --diag-autostart <firmware.bin>
+#    avant de considerer le nouveau .so comme bon.
