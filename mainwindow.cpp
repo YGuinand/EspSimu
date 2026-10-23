@@ -220,11 +220,17 @@ void MainWindow::demarrageDiagnostic(const QString &firmware, const QString &fic
         return;
     }
     qDebug() << "Diagnostic: demarrage ESP32 avec" << firmware;
-    // ESPSIMU_DIAG_JACK=1 : fiche jack posee, equivalent headless du bouton jack
-    // de la fenetre gamelle (permet les bancs de suivi de ligne sans UI).
+    // ESPSIMU_DIAG_JACK=1 : fiche jack posee au demarrage puis retiree a 3 s,
+    // equivalent headless du bouton jack de la fenetre gamelle. C'est le retrait
+    // (contact revenu au repos : IO23 tiree haute par le pull-up) qui demarre
+    // la gamelle dans le firmware suivi ; la pose seule la laisse en attente.
     if (qEnvironmentVariable("ESPSIMU_DIAG_JACK") == "1") {
         modele.metJack(true);
         qDebug() << "Diagnostic: jack pose";
+        QTimer::singleShot(3000, this, [this]() {
+            modele.metJack(false);
+            qDebug() << "Diagnostic: jack retire (depart gamelle)";
+        });
     }
     modele.startEsp32();
 
