@@ -30,6 +30,7 @@ SOURCES += main.cpp\
     gamel.cpp \
     oscillo.cpp \
     piste.cpp \
+    parametres.cpp \
     xmlopensavedata.cpp \
     apropos.cpp
 
@@ -49,6 +50,7 @@ HEADERS  += mainwindow.h \
     modele.h \
     oscillo.h \
     piste.h \
+    parametres.h \
     xmlopensavedata.h \
     apropos.h
 

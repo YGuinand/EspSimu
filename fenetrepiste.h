@@ -65,6 +65,10 @@ public:
     explicit FenetrePiste(Modele &m, QWidget *parent = 0);
     ~FenetrePiste();
 
+    // Fichier d'initialisation (voir parametres.h) : au demarrage, charger la
+    // derniere piste utilisee si elle existe encore.
+    void chargePisteRecent();
+
 private:
     Ui::FenetrePiste *ui;
 

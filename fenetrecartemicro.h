@@ -20,12 +20,21 @@ public:
     explicit FenetreCarteMicro(Modele &m, QWidget *parent = 0);
     ~FenetreCarteMicro();
 
+    // Fichier d'initialisation (voir parametres.h) : au demarrage, charger le
+    // dernier firmware utilise s'il existe encore (charge, pas demarre :
+    // l'utilisateur actionne ensuite Power pour lancer l'ESP32).
+    void chargeFirmwareRecent();
+
 private:
     Ui::FenetreCarteMicro *ui;
 
     Modele *modele;
 
     LcdScreenView lcd;
+
+    // UI a jour apres un firmware accepte : chemin affiche, bouton/menu
+    // Recharger actives (utilise par Ouvrir, Recharger et chargeFirmwareRecent).
+    void afficheFirmwareCharge(const QString &fichier);
 
 private slots:
     void on_an0Dial_valueChanged(int value);

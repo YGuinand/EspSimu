@@ -54,6 +54,10 @@ public:
     explicit Gamel(Modele &m, QWidget *parent = 0);
     ~Gamel();
 
+    // Fichier d'initialisation (voir parametres.h) : au demarrage, charger la
+    // derniere gamelle utilisee si elle existe encore.
+    void chargeGamelleRecent();
+
 private:
     Ui::Gamel *ui;
 

@@ -24,6 +24,8 @@ Generated files are gitignored and must not be committed: `moc_*`, `ui_*.h`, `qr
 
 ESP32 backend quirk: `modele.cpp` loads `3rdparty/qemu/lib/libqemu-xtensa.so` relative to the executable's directory (`QCoreApplication::applicationDirPath()`). The binary in `build/Desktop_Debug/` cannot find it there — the app prints "echec chargement QEMU" and still runs, but ESP32 features are unavailable. To run with ESP32 support, place the binary next to the repo's `3rdparty/` directory so `<exeDir>/3rdparty/qemu/lib/libqemu-xtensa.so` resolves.
 
+Initialization file: at startup the app reads `espsimu.ini` **next to the executable** (`parametres.*`, file is created on first save; gitignored at repo root). It stores the last loaded ESP32 firmware, the last gamelle `.gml` (fenetre Gamel) and the last piste `.pis` (fenetre Piste); each is reloaded at the next launch if the file still exists (loaded, not started — Power turns the ESP32 on).
+
 ## Translations
 
 `espsimu_en.ts` / `espsimu_it.ts` (Qt Linguist). `.qm` files are produced by `lrelease` and gitignored; no codegen step is wired into the build.

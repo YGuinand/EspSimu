@@ -1,7 +1,10 @@
 #include "gamel.h"
 #include "ui_gamel.h"
+#include "parametres.h"
 
+#include <QFile>
 #include <QFileDialog>
+#include <QDebug>
 #include <QGraphicsProxyWidget>
 
 Gamel::Gamel(Modele &m, QWidget *parent) :
@@ -416,6 +419,8 @@ void Gamel::on_saveButton_clicked()
     if (!f.isEmpty()) {
         fichier = f;
         modele->saveGamelData(fichier);
+        // Fichier d'initialisation : memorise pour le prochain demarrage
+        Parametres::setGamelleRecent(fichier);
     }
 #endif
 }
@@ -442,9 +447,26 @@ void Gamel::on_openButton_clicked()
     if (!f.isEmpty()) {
         fichier = f;
         modele->openData(fichier);
+        // Fichier d'initialisation : memorise pour le prochain demarrage
+        Parametres::setGamelleRecent(fichier);
     }
 #endif
 }
+
+// Recharge, au demarrage de l'application, la derniere gamelle utilisee
+// telle qu'elle a ete sauvegardee dans espsimu.ini. Ignorée si le fichier
+// a disparu ; un fichier illisible est simplement ignore par openData.
+// La fenetre Gamel, connectee au signal openNew du modele, mettra son
+// contenu a jour au premier affichage.
+void Gamel::chargeGamelleRecent()
+{
+    QString f = Parametres::getGamelleRecent();
+    if (f.isEmpty() || !QFile::exists(f)) return;
+    fichier = f;
+    modele->openData(f);
+    qDebug() << "Gamelle rechargee depuis l'ini:" << f;
+}
+
 
 void Gamel::on_motPinsButton_clicked()
 {

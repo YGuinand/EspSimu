@@ -1,5 +1,6 @@
 #include "fenetrecartemicro.h"
 #include "ui_fenetrecartemicro.h"
+#include "parametres.h"
 
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -15,6 +16,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QFont>
 
@@ -279,6 +281,15 @@ void FenetreCarteMicro::on_boutonPower_toggled(bool checked)
     }
     ui->ledPower->setChecked(checked);
 }
+// UI a jour apres un firmware accepte : chemin affiche, bouton/menu
+// Recharger actives.
+void FenetreCarteMicro::afficheFirmwareCharge(const QString &fichier)
+{
+    ui->fichier->setText(fichier);
+    ui->pushButtonRefresh->setEnabled(true);
+    emit refreshEnabled(true);
+}
+
 void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
 {
     // Dossier de départ : celui du fichier précédemment sélectionné, s'il existe
@@ -294,10 +305,10 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
 
     // Le nom n'est affiche que si le firmware est accepte
     if (modele->loadEsp32Firmware(fichier)) {
-        ui->fichier->setText(fichier);
+        afficheFirmwareCharge(fichier);
         qDebug() << "Firmware ESP32 charge:" << fichier;
-        ui->pushButtonRefresh->setEnabled(true);
-        emit refreshEnabled(true);
+        // Fichier d'initialisation : memorise pour le prochain demarrage
+        Parametres::setFirmwareRecent(fichier);
     } else {
         QMessageBox::warning(this, "EspSimu",
                              "Firmware ESP32 refuse. Utilisez firmware.bin / firmware.factory.bin d'un build PlatformIO (dossier .pio/build/...) ou une image flash de 2, 4, 8 ou 16 Mo.");
@@ -312,8 +323,23 @@ void FenetreCarteMicro::on_pushButtonRefresh_clicked()
     if (!modele->loadEsp32Firmware(fichier)) {
         QMessageBox::warning(this, "EspSimu",
                              "Impossible de recharger le firmware sélectionné.");
+    } else {
+        Parametres::setFirmwareRecent(fichier);
     }
 }
+
+// Recharge, au demarrage de l'application, le dernier firmware utilise
+// tel qu'il a ete sauvegarde dans espsimu.ini. Ignoré si le fichier a
+// disparu ou est refuse par loadEsp32Firmware.
+void FenetreCarteMicro::chargeFirmwareRecent()
+{
+    QString fichier = Parametres::getFirmwareRecent();
+    if (fichier.isEmpty() || !QFile::exists(fichier)) return;
+    if (!modele->loadEsp32Firmware(fichier)) return;
+    afficheFirmwareCharge(fichier);
+    qDebug() << "Firmware ESP32 recharge depuis l'ini:" << fichier;
+}
+
 
 void FenetreCarteMicro::set_bp0Pressed()
 {

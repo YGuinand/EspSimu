@@ -40,6 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Recharger_le_programme, SIGNAL(triggered()), micro, SLOT(on_pushButtonRefresh_clicked()));
     connect(micro, SIGNAL(refreshEnabled(bool)), ui->action_Recharger_le_programme, SLOT(setEnabled(bool)));
 
+    // Fichier d'initialisation : recharger au demarrage le dernier firmware
+    // utilise s'il existe (charge, pas demarre ; Power lance l'ESP32).
+    micro->chargeFirmwareRecent();
+
     oscillos = new FenetreOscillos(modele);
     subWindow2 = new QMdiSubWindow;
     subWindow2->setWidget(oscillos);
@@ -61,6 +65,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Gamelle, SIGNAL(triggered()), subWindow3, SLOT(show()));
     connect(ui->action_Gamelle, SIGNAL(triggered()), subWindow3, SLOT(setFocus()));
 
+    // Fichier d'initialisation : recharger la derniere gamelle utilisee
+    // si elle existe (chargee, non affichee : la fenetre Gamel est masquee).
+    gamel->chargeGamelleRecent();
+
     piste = new FenetrePiste(modele);
     subWindow4 = new QMdiSubWindow;
     subWindow4->setWidget(piste);
@@ -69,6 +77,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->action_Piste, SIGNAL(triggered()), subWindow4, SLOT(show()));
     connect(ui->action_Piste, SIGNAL(triggered()), subWindow4, SLOT(setFocus()));
+
+    // Fichier d'initialisation : recharger la derniere piste utilisee si
+    // elle existe, au lieu de la piste par defaut (piste001.pis embarquee).
+    piste->chargePisteRecent();
 
     terminal = new FenetreTerminal(modele);
     subWindow5 = new QMdiSubWindow;

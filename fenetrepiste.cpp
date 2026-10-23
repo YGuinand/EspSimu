@@ -3,8 +3,11 @@
 
 #include "piste.h"
 #include "modele.h"
+#include "parametres.h"
 
+#include <QFile>
 #include <QFileDialog>
+#include <QDebug>
 
 FenetrePiste::FenetrePiste(Modele &m, QWidget *parent) :
     QFrame(parent),
@@ -211,6 +214,8 @@ void FenetrePiste::on_toolButtonOpen_clicked()
         fichier = f;
         modele->getPiste().openData(fichier);
         drawPiste();
+        // Fichier d'initialisation : memorise pour le prochain demarrage
+        Parametres::setPisteRecent(fichier);
     }
 #endif
 }
@@ -230,9 +235,26 @@ void FenetrePiste::on_toolButtonSave_clicked()
     if (!f.isEmpty()) {
         fichier = f;
         modele->getPiste().saveData(fichier);
+        // Fichier d'initialisation : memorise pour le prochain demarrage
+        Parametres::setPisteRecent(fichier);
     }
 #endif
 }
+
+// Recharge, au demarrage de l'application, la derniere piste utilisee telle
+// qu'elle a ete sauvegardee dans espsimu.ini, en lieu et place de la piste
+// par defaut (piste001.pis embarquee). Ignorée si le fichier a disparu ;
+// un fichier illisible est simplement ignore par openData.
+void FenetrePiste::chargePisteRecent()
+{
+    QString f = Parametres::getPisteRecent();
+    if (f.isEmpty() || !QFile::exists(f)) return;
+    fichier = f;
+    modele->getPiste().openData(f);
+    drawPiste();
+    qDebug() << "Piste rechargee depuis l'ini:" << f;
+}
+
 
 void FenetrePiste::on_toolButtonEdit_toggled(bool checked)
 {
