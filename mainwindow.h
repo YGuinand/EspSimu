@@ -35,7 +35,10 @@ public:
     // QT_QPA_PLATFORM=offscreen), puis enchaine des reset toutes les 8 s
     // (apres le premier tour de loop) pour reproduire et mesurer le lag
     // post-reset. Fermeture auto si ESPSIMU_DIAG_AUTOCLOSE=1.
-    void demarrageDiagnostic(const QString &firmware);
+    // --gamelle <fichier.gml> pre-charge la gamelle (cablage/capteurs/hacheurs)
+    // avant le firmware, pour reproduire le scénario complet sans passer par
+    // les dialogues.
+    void demarrageDiagnostic(const QString &firmware, const QString &fichierGamelle = QString());
 
 private:
     Ui::MainWindow *ui;

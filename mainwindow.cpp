@@ -5,6 +5,7 @@
 
 #include <QMdiSubWindow>
 #include <QTextCodec>
+#include <QFile>
 #include <QScrollBar>
 #include <QTimer>
 #include <QCloseEvent>
@@ -202,8 +203,18 @@ void MainWindow::organiser()
 }
 
 // ==================== Mode diagnostic ====================
-void MainWindow::demarrageDiagnostic(const QString &firmware)
+void MainWindow::demarrageDiagnostic(const QString &firmware, const QString &fichierGamelle)
 {
+    // Gamelle pre-chargee depuis la CLI (--gamelle) : equivalent de
+    // "Charger les donnees d'une gamelle" dans fenetre Gamel (modele->openData)
+    if (!fichierGamelle.isEmpty()) {
+        if (QFile::exists(fichierGamelle)) {
+            modele.openData(fichierGamelle);
+            qDebug() << "Diagnostic: gamelle chargee" << fichierGamelle;
+        } else {
+            qWarning() << "Diagnostic: gamelle absente" << fichierGamelle;
+        }
+    }
     if (!modele.loadEsp32Firmware(firmware)) {
         qWarning() << "Diagnostic: impossible de charger le firmware" << firmware;
         return;
@@ -213,17 +224,33 @@ void MainWindow::demarrageDiagnostic(const QString &firmware)
 
     // Reset toutes les 8 s : le premier tombe apres le premier tour(s) de loop
     // (rampe PWM ~1.7 s par tour), les suivants re-exposent le phenomene. 5 cycles.
-    QTimer *horlogeReset = new QTimer(this);
-    connect(horlogeReset, &QTimer::timeout, this, [this, horlogeReset, n = 0]() mutable {
-        qDebug() << "Diagnostic: reset automatique";
-        modele.resetEsp32();
-        if (++n >= 5) horlogeReset->stop();
-    });
-    horlogeReset->start(8000);
+    // ESPSIMU_DIAG_NORESET=1 : pas de reset auto (session longue sans reset,
+    // pour reproduire un usage normal tel que l'utilisateur le voit).
+    if (qEnvironmentVariable("ESPSIMU_DIAG_NORESET") != "1") {
+        QTimer *horlogeReset = new QTimer(this);
+        connect(horlogeReset, &QTimer::timeout, this, [this, horlogeReset, n = 0]() mutable {
+            qDebug() << "Diagnostic: reset automatique";
+            modele.resetEsp32();
+            if (++n >= 5) horlogeReset->stop();
+        });
+        horlogeReset->start(8000);
+    }
 
-    // Fermeture automatique pour les essais en batch (ESPSIMU_DIAG_AUTOCLOSE=1)
-    if (qEnvironmentVariable("ESPSIMU_DIAG_AUTOCLOSE") == "1")
-        QTimer::singleShot(50000, this, [this]() { close(); });
+    // Fermeture automatique pour les essais en batch (ESPSIMU_DIAG_AUTOCLOSE=1
+    // → 50 s par defaut, ou une valeur en millisecondes, ex. ESPSIMU_DIAG_AUTOCLOSE=180000)
+    QString autoclose = qEnvironmentVariable("ESPSIMU_DIAG_AUTOCLOSE");
+    if (!autoclose.isEmpty() && autoclose != "0") {
+        int ms;
+        if (autoclose == "1") {
+            // forme historique : ESPSIMU_DIAG_AUTOCLOSE=1 -> 50 s
+            ms = 50000;
+        } else {
+            bool ok = false;
+            ms = autoclose.toInt(&ok);
+            if (!ok || ms <= 0) ms = 50000;
+        }
+        QTimer::singleShot(ms, this, [this]() { close(); });
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
