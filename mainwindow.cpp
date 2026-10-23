@@ -220,6 +220,12 @@ void MainWindow::demarrageDiagnostic(const QString &firmware, const QString &fic
         return;
     }
     qDebug() << "Diagnostic: demarrage ESP32 avec" << firmware;
+    // ESPSIMU_DIAG_JACK=1 : fiche jack posee, equivalent headless du bouton jack
+    // de la fenetre gamelle (permet les bancs de suivi de ligne sans UI).
+    if (qEnvironmentVariable("ESPSIMU_DIAG_JACK") == "1") {
+        modele.metJack(true);
+        qDebug() << "Diagnostic: jack pose";
+    }
     modele.startEsp32();
 
     // Reset toutes les 8 s : le premier tombe apres le premier tour(s) de loop
