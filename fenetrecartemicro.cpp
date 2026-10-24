@@ -336,12 +336,17 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
     } else {
         // Le backend sait precisement pourquoi : afficher son message apres la
         // regle generale (les deux seuls formats universellement acceptes).
-        QString msg = "Firmware ESP32 refuse. Utilisez firmware.bin / firmware.factory.bin "
+        // RichText pour le gras sur firmware.factory.bin : le detail backend est
+        // echappe pour que le chemin du dossier ne soit pas pris pour du HTML,
+        // et le separateur devient <br> (les \n ne se rendent pas en RichText).
+        const QString detail = modele->getErreurEsp32();
+        QString msg = "Firmware ESP32 refuse. Utilisez firmware.bin / <b>firmware.factory.bin</b> "
                       "d'un build PlatformIO (dossier .pio/build/...) ou une image flash "
                       "de 2, 4, 8 ou 16 Mo.";
-        const QString detail = modele->getErreurEsp32();
-        if (!detail.isEmpty()) msg += "\n\n" + detail;
-        QMessageBox::warning(this, "EspSimu", msg);
+        if (!detail.isEmpty()) msg += "<br><br>" + detail.toHtmlEscaped();
+        QMessageBox boite(QMessageBox::Warning, "EspSimu", msg, QMessageBox::Ok, this);
+        boite.setTextFormat(Qt::RichText);
+        boite.exec();
     }
 }
 
