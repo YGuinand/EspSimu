@@ -12,6 +12,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QComboBox>
 #include <QLabel>
 #include <QMessageBox>
 #include <QDebug>
@@ -116,14 +117,24 @@ static QString choisirFirmware(QWidget *parent, const QString &repertoireDepart)
     for (int col = 1; col < proxy->columnCount(); ++col)
         view->hideColumn(col);
 
-    // Barre de navigation : dossier courant + bouton remonter (en haut)
+    // Barre de navigation : disque + dossier courant + bouton remonter (en haut)
     QHBoxLayout *navLayout = new QHBoxLayout;
     QLabel *label = new QLabel(QObject::tr("Dossier :"));
     QLineEdit *pathEdit = new QLineEdit;
     pathEdit->setReadOnly(true);
     QPushButton *btnUp = new QPushButton(QStringLiteral("\u2191")); // flèche vers le haut
     btnUp->setToolTip(QObject::tr("Remonter au dossier parent"));
+
+    // Selecteur de disque : sous Windows les lecteurs sont des branches
+    // paralleles de la racine et QDir::cdUp() s'arrete a la racine du disque ;
+    // sans ce selecteur, on reste prisonnier du disque de depart.
+    QComboBox *driveBox = new QComboBox(&dialog);
+    const QFileInfoList disques = QDir::drives();
+    for (const QFileInfo &disque : disques)
+        driveBox->addItem(disque.absoluteFilePath());
+
     navLayout->addWidget(label);
+    navLayout->addWidget(driveBox);
     navLayout->addWidget(pathEdit);
     navLayout->addWidget(btnUp);
     layout->addLayout(navLayout);
@@ -148,6 +159,19 @@ static QString choisirFirmware(QWidget *parent, const QString &repertoireDepart)
             view->scrollTo(proxyIdx);
         }
     };
+
+    // Pre-selection du disque du dossier de depart, avant la connexion
+    // (pour ne pas declencher la navigation a l'ouverture).
+    for (int i = 0; i < driveBox->count(); ++i) {
+        if (currentRoot.startsWith(driveBox->itemText(i)))
+            driveBox->setCurrentIndex(i);
+    }
+    QObject::connect(driveBox, &QComboBox::currentIndexChanged, [&](int idx) {
+        if (idx < 0)
+            return;
+        currentRoot = driveBox->itemText(idx);
+        refreshView();
+    });
 
     QString resultat;
 
