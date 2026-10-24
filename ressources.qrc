@@ -64,5 +64,6 @@
     </qresource>
     <qresource prefix="/">
         <file>piste001.pis</file>
+        <file alias="boot_app0.bin">boot_app0.bin</file>
     </qresource>
 </RCC>

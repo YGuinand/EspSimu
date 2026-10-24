@@ -83,7 +83,8 @@ Modele::Modele()
     });
 
     connect(esp32, &Esp32Backend::error,
-            this, [](const QString &msg) {
+            this, [this](const QString &msg) {
+                dernierErreurEsp32 = msg;
                 qDebug() << "Modele ESP32 erreur:" << msg;
             });
 

@@ -211,6 +211,7 @@ protected :
     bool esp32EnCours;
     bool esp32Initialise;
     QString firmwareSelection;   // fichier .bin reellement accepte par le dernier chargement
+    QString dernierErreurEsp32;  // texte de la derniere erreur emise par le backend ESP32
 
     // === PWM ESP32 (50 Hz) ===
     QTimer        *pwmTimer;
@@ -235,6 +236,9 @@ public:
     enum { NB_MAX_CAPT_IR = 12 };
     Modele();
     ~Modele();
+    // Erreur la plus recente emise par le backend ESP32 (affichage cible dans l'UI,
+    // sinon elle n'atteint que qDebug) — vide si aucune erreur ne s'est produite.
+    const QString &getErreurEsp32() const { return dernierErreurEsp32; }
     LcdScreen &getLcd() {  return lcd;  }
     LedCNX &getLedA6() {  return ledA6;  }
     LedCNX &getLed2()  {  return led2;   }

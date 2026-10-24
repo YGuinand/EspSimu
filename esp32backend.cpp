@@ -244,6 +244,11 @@ static bool isFlashSize(qint64 size)
 static QString findBootApp0(const QString &dir)
 {
     if (QFileInfo::exists(dir + "/boot_app0.bin")) return dir + "/boot_app0.bin";
+    // Ressource embarquee (octets canoniques de la partition OTA vide 8 Ko) :
+    // PlatformIO ne copie pas boot_app0.bin dans le dossier de build et le
+    // fallback ~/.platformio n'existe que sur une machine ou PlatformIO est
+    // installe — sans cette ressource, firmware.bin etait refuse sous Windows.
+    if (QFile::exists(":/boot_app0.bin")) return ":/boot_app0.bin";
     const QString pioPackages = QDir::homePath() + "/.platformio/packages";
     const QStringList fw = QDir(pioPackages).entryList(QStringList() << "framework-arduinoespressif32*",
                                                       QDir::Dirs);
@@ -322,10 +327,16 @@ bool Esp32Backend::prepareFlashImage(const QString &binPath, QByteArray &img)
         const QString boot = dir + "/bootloader.bin";
         const QString part = dir + "/partitions.bin";
         const QString app0 = findBootApp0(dir);
-        if (!QFileInfo::exists(boot) || !QFileInfo::exists(part) || app0.isEmpty()) {
-            emit error("Firmware application seul : bootloader.bin, partitions.bin et "
-                       "boot_app0.bin sont requis (dossier de build PlatformIO), "
-                       "ou fournissez une image flash complete / firmware.factory.bin.");
+        const QString manquant = !QFileInfo::exists(boot)  ? QString("bootloader.bin")
+                                 : !QFileInfo::exists(part) ? QString("partitions.bin")
+                                 : app0.isEmpty()           ? QString("boot_app0.bin")
+                                                            : QString();
+        if (!manquant.isEmpty()) {
+            emit error(QString("Firmware application seul : fichier %1 introuvable (dossier %2). "
+                               "Chargez le firmware depuis le dossier de build PlatformIO "
+                               "(.pio/build/...) ou fournissez une image flash complete "
+                               "/ firmware.factory.bin.")
+                           .arg(manquant, dir));
             return false;
         }
         if (!placeInImage(img, boot, OFFSET_BOOTLOADER) ||

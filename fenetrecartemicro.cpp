@@ -334,8 +334,14 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
         // Fichier d'initialisation : memorise pour le prochain demarrage
         Parametres::setFirmwareRecent(fichier);
     } else {
-        QMessageBox::warning(this, "EspSimu",
-                             "Firmware ESP32 refuse. Utilisez firmware.bin / firmware.factory.bin d'un build PlatformIO (dossier .pio/build/...) ou une image flash de 2, 4, 8 ou 16 Mo.");
+        // Le backend sait precisement pourquoi : afficher son message apres la
+        // regle generale (les deux seuls formats universellement acceptes).
+        QString msg = "Firmware ESP32 refuse. Utilisez firmware.bin / firmware.factory.bin "
+                      "d'un build PlatformIO (dossier .pio/build/...) ou une image flash "
+                      "de 2, 4, 8 ou 16 Mo.";
+        const QString detail = modele->getErreurEsp32();
+        if (!detail.isEmpty()) msg += "\n\n" + detail;
+        QMessageBox::warning(this, "EspSimu", msg);
     }
 }
 
@@ -345,8 +351,10 @@ void FenetreCarteMicro::on_pushButtonRefresh_clicked()
     if (fichier.isEmpty()) return;
     // Carte en cours, la reprogrammation + redemarrage sont geres par loadEsp32Firmware
     if (!modele->loadEsp32Firmware(fichier)) {
-        QMessageBox::warning(this, "EspSimu",
-                             "Impossible de recharger le firmware sélectionné.");
+        const QString detail = modele->getErreurEsp32();
+        QMessageBox::warning(this, "EspSimu", detail.isEmpty()
+                             ? "Impossible de recharger le firmware sélectionné."
+                             : detail);
     } else {
         Parametres::setFirmwareRecent(fichier);
     }
