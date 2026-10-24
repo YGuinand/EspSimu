@@ -462,9 +462,11 @@ void Esp32Backend::runQemuThread()
     EspDiag::demarrerEchantillonneur();
     qDebug() << "Esp32Backend: qemu_main_loop...";
     p_qemu_main_loop();
+    EspDiag::mark("runQemu : main-loop SORTI");
     qDebug() << "Esp32Backend: qemu_cleanup...";
     EspDiag::arreterEchantillonneur();
     p_qemu_cleanup();
+    EspDiag::mark("runQemu : cleanup fini");
     m_ready = false;
     running = false;
     emit stopped();
@@ -529,22 +531,29 @@ void Esp32Backend::shutdown()
     if (!running) return;
 
     qDebug() << "Esp32Backend: shutdown (arret definitif)";
+    EspDiag::mark("backend shutdown : debut");
 
     if (p_system_shutdown) {
         p_system_shutdown(SHUTDOWN_CAUSE_HOST_UI);
+        EspDiag::mark("backend : shutdown demande a QEMU");
     }
 
     if (qemuThread) {
         if (!qemuThread->wait(5000)) {
+            EspDiag::mark("backend : wait(5000) TIMEOUT -> terminate");
             qWarning() << "Esp32Backend: QEMU ne repond pas, terminate force";
             qemuThread->terminate();
             qemuThread->wait(1000);
+            EspDiag::mark("backend : terminate + wait(1000) fait");
+        } else {
+            EspDiag::mark("backend : wait(5000) ok, thread QEMU arret");
         }
         delete qemuThread;
         qemuThread = nullptr;
     }
     EspDiag::arreterEchantillonneur();
     running = false;
+    EspDiag::mark("backend shutdown : fin");
 }
 
 // ==================== Firmware effectivement charge ====================

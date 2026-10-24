@@ -2,6 +2,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "diagnostic.h"
 
 #include <QMdiSubWindow>
 #include <QTextCodec>
@@ -9,6 +10,7 @@
 #include <QScrollBar>
 #include <QTimer>
 #include <QCloseEvent>
+#include <QApplication>
 #include <QThread>
 #include <QProgressDialog>
 
@@ -304,7 +306,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     // Deuxieme passage : on ferme pour de vrai
     if (m_closing) {
+        EspDiag::mark("close pass2 : accept + quit");
         event->accept();
+        // Quitter explicitement : la QProgressDialog d'arret, jamais fermee
+        // (WA_DeleteOnClose), reste alors la seule fenetre visible et
+        // quitOnLastWindowClosed ne declenche jamais — l'app restait vivante
+        // indefiniment (event loop en ppoll, thread QEMU attache, TERM ignore
+        // par le handler de signal installe par la lib QEMU).
+        QApplication::quit();
         return;
     }
 
@@ -313,6 +322,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     m_closing = true;
 
     qDebug() << "Fermeture : arret de l'ESP32...";
+    EspDiag::mark("close pass1 : ignore + popup");
 
     QProgressDialog *progress = new QProgressDialog("Fermeture en cours...",
                                                     nullptr, 0, 0, this);
@@ -325,7 +335,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     // Laisser la popup s'afficher, PUIS arreter l'ESP32
     QTimer::singleShot(200, this, [this]() {
-        modele.stopEsp32();
-        close();   // relance closeEvent, mais m_closing=true -> accepte
+        // Fermeture de la fenetre = fin de l'application : arret complet du
+        // thread QEMU (shutdownEsp32 demande l'arret de la main-loop et
+        // l'attend), pas une simple pause — cette derniere reste reservee au
+        // bouton Power.
+        EspDiag::mark("close timer : appelle shutdownEsp32");
+        modele.shutdownEsp32();
+        EspDiag::mark("close timer : shutdownEsp32 rendu, close()");
+        close();   // relance closeEvent, mais m_closing=true -> accepte + quit()
     });
 }

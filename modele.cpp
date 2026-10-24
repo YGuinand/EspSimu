@@ -802,10 +802,12 @@ void Modele::resetEsp32()
 void Modele::shutdownEsp32()
 {
     if (!esp32) return;
+    EspDiag::mark("shutdownEsp32 : debut");
     pwmTimer->stop();
     esp32->shutdown();
     esp32Initialise = false;
     esp32EnCours = false;
+    EspDiag::mark("shutdownEsp32 : fin");
 }
 
 void Modele::onEsp32Gpio(int pin, bool level)
