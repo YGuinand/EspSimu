@@ -29,7 +29,7 @@ Modele::Modele()
     fdcPin = -1;
     fdcForce = false;
     for (int i=0; i<3; i++) bpEnfonce[i] = false;
-    potCode = 0;
+    potMV = 0;
 
     moteurG = new MoteurCNX(*this, "PWM moteur gauche");
     moteurD = new MoteurCNX(*this, "PWM moteur droit");
@@ -143,11 +143,11 @@ void Modele::setBouton(int numero, bool enfonce)
     if (esp32EnCours) esp32->setDigitalPin(Esp32Pins::pinLogique(BP_GPIO[numero]), enfonce);
 }
 
-// Potentiometre sur IO25 (ADC2 canal 8 = entree 16 de QEMU), 0..3,3 V -> 0..4095
+// Potentiometre sur IO25 (ADC2 canal 8 = entree 16 de QEMU), injecte en millivolts
 void Modele::setPotAN0Value(double value)
 {
-    potCode = (int)(value / VCC_CARTE * 4095.0);
-    if (esp32EnCours) esp32->setAnalogPin(16, potCode);
+    potMV = (int)(value * 1000.0 + 0.5);          // 0..3300 mV (tension reelslement vue par le SAR)
+    if (esp32EnCours) esp32->setAnalogPinMV(16, potMV);
 }
 
 void Modele::appuyeReset()
@@ -220,14 +220,14 @@ void Modele::appliqueCaptIrEsp32(CaptIrCNX *c, bool force)
     const Esp32Pins::EntreeJ2 &e = Esp32Pins::ENTREES_J2[j2];
     double v = qBound(0.0, c->getSrc(), VCC_CARTE);
     int niveau = (v > VCC_CARTE / 2.0) ? 1 : 0;
-    int adc = (int)(v / VCC_CARTE * 4095.0 + 0.5);
+    int mv = (int)(v * 1000.0 + 0.5);      // tension injectee en millivolts
     if (force || niveau != c->nivEnvoye) {
         esp32->setDigitalPin(Esp32Pins::pinLogique(e.gpio), niveau != 0);
         c->nivEnvoye = niveau;
     }
-    if (e.adc >= 0 && (force || adc != c->adcEnvoye)) {
-        esp32->setAnalogPin(e.adc, adc);
-        c->adcEnvoye = adc;
+    if (e.adc >= 0 && (force || mv != c->mvEnvoye)) {
+        esp32->setAnalogPinMV(e.adc, mv);
+        c->mvEnvoye = mv;
     }
 }
 
@@ -237,7 +237,7 @@ void Modele::liberePinEsp32(int indexJ2)
     if (indexJ2<0 || indexJ2>=Esp32Pins::NB_ENTREES_J2) return;
     appliqueContactEsp32(indexJ2, false);
     int adc = Esp32Pins::ENTREES_J2[indexJ2].adc;
-    if (adc>=0 && esp32 && esp32->isMachineReady()) esp32->setAnalogPin(adc, 0);
+    if (adc>=0 && esp32 && esp32->isMachineReady()) esp32->setAnalogPinMV(adc, 0);
 }
 
 // (Re)positionne toutes les entrees J2 : au demarrage de la machine, apres un reset.
@@ -257,7 +257,7 @@ void Modele::appliquePinsEsp32()
     for (int i=0; i<3; i++) {
         esp32->setDigitalPin(Esp32Pins::pinLogique(BP_GPIO[i]), bpEnfonce[i]);
     }
-    esp32->setAnalogPin(16, potCode);
+    esp32->setAnalogPinMV(16, potMV);
 }
 
 bool Modele::jackConnecte(int index)

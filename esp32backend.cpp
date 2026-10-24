@@ -173,7 +173,7 @@ bool Esp32Backend::resolveSymbols()
     // --- Fonctions QEMU principales ---
     p_register_callbacks = (void(*)(void*))               DL_SYM(libHandle, "qemu_picsimlab_register_callbacks");
     p_set_pin            = (void(*)(int,int))             DL_SYM(libHandle, "qemu_picsimlab_set_pin");
-    p_set_apin           = (void(*)(int,int))             DL_SYM(libHandle, "qemu_picsimlab_set_apin");
+    p_set_apin           = (void(*)(int,int))             DL_SYM(libHandle, "qemu_picsimlab_set_apin_mv");
     p_uart_receive       = (void(*)(int,const uint8_t*,int)) DL_SYM(libHandle, "qemu_picsimlab_uart_receive");
     p_get_internals      = (uint32_t*(*)(int))            DL_SYM(libHandle, "qemu_picsimlab_get_internals");
     p_flash_dump         = (int(*)(int64_t,void*,int))    DL_SYM(libHandle, "qemu_picsimlab_flash_dump");
@@ -200,7 +200,7 @@ bool Esp32Backend::resolveSymbols()
     // --- Verifications des symboles essentiels ---
     if (!p_register_callbacks) { emit error("Symbole manquant: qemu_picsimlab_register_callbacks"); return false; }
     if (!p_set_pin)            { emit error("Symbole manquant: qemu_picsimlab_set_pin");            return false; }
-    if (!p_set_apin)           { emit error("Symbole manquant: qemu_picsimlab_set_apin");           return false; }
+    if (!p_set_apin)           { emit error("Symbole manquant: qemu_picsimlab_set_apin_mv");         return false; }
     if (!p_uart_receive)       { emit error("Symbole manquant: qemu_picsimlab_uart_receive");       return false; }
     if (!p_get_internals)      { emit error("Symbole manquant: qemu_picsimlab_get_internals");      return false; }
     if (!p_flash_dump)         { emit error("Symbole manquant: qemu_picsimlab_flash_dump");         return false; }
@@ -555,9 +555,10 @@ void Esp32Backend::setDigitalPin(int logicalPin, bool level)
     if (p_bql_unlock) p_bql_unlock();
 }
 
-void Esp32Backend::setAnalogPin(int channel, int value)
+// Tension injectee sur une entree analogique en millivolts (QEMU borne 0..3300)
+void Esp32Backend::setAnalogPinMV(int channel, int mV)
 {
-    if (p_set_apin && m_ready) p_set_apin(channel, value);
+    if (p_set_apin && m_ready) p_set_apin(channel, mV);
 }
 
 void Esp32Backend::sendUart(int uartId, const QByteArray &data)

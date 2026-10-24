@@ -77,12 +77,12 @@ private :
 
 public :
     std::function<void()> onChange;   // appele apres chaque evaluation de la sortie
-    int nivEnvoye, adcEnvoye;         // dernieres valeurs transmises a QEMU (-1 = jamais)
+    int nivEnvoye, mvEnvoye;          // dernieres valeurs transmises a QEMU (-1 = jamais)
     int getJ2Pin() const {  return j2Pin;  }
-    void setJ2Pin(int p) {  j2Pin = p;  nivEnvoye = -1;  adcEnvoye = -1;  }
+    void setJ2Pin(int p) {  j2Pin = p;  nivEnvoye = -1;  mvEnvoye = -1;  }
     void evalue(Piste *p = NULL);
     void initData() {  x = 0;  y = -4.5;  h = 5;  pullUp = true;  resD = 270;  resT = 33000;  noComp = true;  compSup = true;  resC = 1000;  vSeuil = VCC_CARTE / 2.0;  preCalcul();  evalue();  }
-    CaptIrCNX() { j2Pin = -1;  nivEnvoye = -1;  adcEnvoye = -1;  initData(); }
+    CaptIrCNX() { j2Pin = -1;  nivEnvoye = -1;  mvEnvoye = -1;  initData(); }
     bool getPullUp() {  return pullUp;  }
     void setPullUp(bool pu) {  pullUp = pu;  evalue();  }
     double getRd() {  return resD;  }
@@ -195,7 +195,7 @@ protected :
     void liberePinEsp32(int indexJ2);
     void setBouton(int numero, bool enfonce);
     bool bpEnfonce[3];   // etat des boutons BP0..BP2
-    int potCode;         // derniere valeur (12 bits) du potentiometre
+    int potMV;           // derniere tension injectee (mV) du potentiometre
     MoteurCNX *moteurG, *moteurD;
     bool pwm1aGauche;
     std::vector<CaptIrCNX *> tabCaptIR;

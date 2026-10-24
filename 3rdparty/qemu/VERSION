@@ -9,31 +9,51 @@
 # Scripts de build : qemu/build_libqemu-esp32.sh          (Linux)
 #                    qemu/build_libqemu-esp32-windows.sh  (DLL Windows)
 #
-# ==================== Revision QEMU (Linux) ====================
-# Source buildee le 2026-10-24 (ninja incremental) : arbre git qemu/ dont le
-#   seul diff au moment du build a ensuite forme le commit
-#   5800d6fda6263d5ee9a60c7bd058476e77af27f0 (2026-10-24 00:41)
-#   "eFuse : calibration usine ADC (Vref BLK0) gravee par defaut"
-#   (arbre PROPRE depuis ce commit ; le .so reproduit son contenu exact).
-# Tag pose au moment du build : libqemu-esp32-2026-10-24 (sur ce commit)
-#   -> toute reconstruction incrementale depuis ce tag partage cette source.
+# ==================== Revision QEMU (Linux xtensa) ====================
+# Source buildee le 2026-10-24 (ninja incremental + relink rsp) : commit
+#   ccf33ab6f97138eb664b7dae87eff8ce64a04ef4 (2026-10-24 15:00)
+#   "ADC : caracteristique d'usine inverse + duree de conversion SAR"
+#   (arbre git PROPRE a ce commit au moment du build : le .so reproduit son
+#   contenu exact).
+# Tag pose au moment du build : libqemu-esp32-2026-10-24-2 (sur ce commit)
 #
 # ==================== Artefacts livres ====================
 # Path                Copie le            Build
-# libqemu-xtensa.so   2026-10-24 00:43    Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus)
+# libqemu-xtensa.so   2026-10-24 14:48    Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus)
 # libqemu-riscv32.so  2026-10-23 22:00    Linux    riscv32   (42.4 Mo, commit 52301a8a75, non reconstruit)
 # libqemu-xtensa.dll  2026-10-21 10:16    Windows  xtensa    (etat source anterieur, non trace)
 # libqemu-riscv32.dll 2026-10-21 10:16    Windows  riscv32   (etat source anterieur, non trace)
 #
-# Contenu fonctionnel introduit par libqemu-esp32-2026-10-24 :
-#   calibration usine ADC gravee dans les eFuse (champ ADC_VREF, BLK0 w4
-#   bits [12:8] = +2 pas -> 1114 mV). Sans elle, IDF5 (LINE FITTING) passait
-#   par la branche default_vref que le coeur Arduino ne renseigne pas :
-#   adc_cali_create_scheme_line_fitting() renvoyait ESP_ERR_INVALID_ARG et
-#   analogReadMilliVolts() restait bloquee a 0. Depuis cette lib, la
-#   conversion raw -> mV se fait dans le firmware comme sur une puce reelle.
-#   La DLL Windows de ce jour ne connait pas ce correctif : analogReadMilliVolts
-#   y reste inoperante tant que build_libqemu-esp32-windows.sh n'a pas rejoue.
+# ==================== API d'injection analogique ====================
+# Rupture d'API validee avec l'application (2026-10-24) :
+#   qemu_picsimlab_set_apin_mv(int chn, int mv) remplace
+#   qemu_picsimlab_set_apin(int chn, int counts) — tensions en millivolts,
+#   bornees 0..3300 par la lib ; index de canal inchangé
+#   (ADC1 CH0..7 -> 0..7, ADC2 CH8/CH9 (IO25/IO26) -> 16/17).
+# L'ancien symbole n'existe plus dans le .so : une lib anterieure fait
+# echouer le chargement ESP32 de l'app ("Symbole manquant:
+# qemu_picsimlab_set_apin_mv") — garde-fou voulu. Les DLL Windows du
+# 2026-10-21 ne connaissent donc NI ce correctif NI la nouvelle API : la
+# partie ESP32 est inutilisable sous Windows tant que
+# build_libqemu-esp32-windows.sh n'a pas rejoue.
+#
+# ==================== Contenu fonctionnel (libqemu-esp32-2026-10-24-2) ====
+# ADC modele dans hw/misc/esp32_sens.c :
+#   - caracteristique d'usine INVERSE du schema LINE_FITTING d'IDF v5.5.4
+#     (vref eFuse 1114 mV) : injection mV -> raw brut que livrerait la puce,
+#     que la calibration ligne du firmware relit (analogReadMilliVolts = tension
+#     injectee, aux arrondis pres, sur toute la plage) ;
+#   - 4 attenuations distinctes (zone morte 75/78/107/142 mV ADC1,
+#     63/66/89/128 ADC2 ; LUT bilineaire IDF 11 dB au-dela de raw 2880),
+#     attenuation et resolution (9..12 bits) relues dans les registres SENS
+#     a chaque conversion ;
+#   - duree de conversion : done releve apres (SAMPLE_CYCLE + bits + 4)*
+#     (CLK_DIV+1) cycles RTC_FAST (10 MHz) = 5.0 us en config IDF5 par
+#     defaut (borne datasheet 200 ksp/s) ; MEAS_STATUS occupe pendant la
+#     conversion (attente IDF sans dormir).
+# Plus les apports du tag precedent (libqemu-esp32-2026-10-24) : eFuse
+# ADC_VREF gravee par defaut (1114 mV) — sinon adc_cali LINE FITTING
+# renvoyait ESP_ERR_INVALID_ARG et analogReadMilliVolts restait a 0.
 #
 # ==================== A chaque reconstruction ====================
 # 1. s'assurer que l'arbre qemu/ est commité (arbre propre) ;
@@ -45,12 +65,19 @@
 #      ESPSIMU_DIAG=1 ./espsimu --diag-autostart <firmware.bin>
 #    avant de considerer le nouveau .so comme bon.
 #
-# ==================== Validation du 2026-10-24 ====================
-# - qemu standalone : firmware .pio/build/full (analogReadMilliVolts IO25) :
-#   plus aucune erreur 'adc_cali: ... default vref didn't set' ;
-#   rampe IO25 (ADC2 CH8) monotone 128 -> 3025 mV pour raw 0 -> 3840 (LUT IDF
-#   au-delà de raw 2880), rampe IO35 (ADC1 CH7) monotone 142 -> 2915 mV,
-#   offsets IDF adc2/adc1_vref_atten_offset[3] respectes (128 / 142 a raw 0).
-# - diag app : ESPSIMU_DIAG=1 ./espsimu --diag-autostart
-#   testEspSimu/.pio/build/full/firmware.factory.bin : rafales uart0 de "128\n"
-#   toutes les ~110 ms, aucune trace adc_cali.
+# ==================== Validation du 2026-10-24 (carac. usine + latence) ====
+# - Harnais QEMU direct (dlopen libqemu-xtensa.so + firmware fwmv analogRead
+#   MillVolts sur IO35 ADC1/IO25 ADC2) : rampe mV injectee, relecture mV :
+#   identite 500/1000/1500/2000/2500/3000 mV sur les deux ADC ; zone morte
+#   0/40/100/139/142 -> 142 mV (ADC1) et 0/40/100 -> 128 (ADC2) ; 142 -> 142
+#   front exact ; 150 -> 150 ; saturation : 3140 -> 3140, >= 3145 -> plateau
+#   3145 (raw 4095). Conversions lancees et completes, cadence firmware
+#   intacte (done releve apres ~5 us, attente IDF non bloquante).
+# - diag app ESPSIMU_DIAG=1 ./espsimu --diag-autostart
+#   testEspSimu/.pio/build/full/firmware.factory.bin (binaire a la racine du
+#   depot pour trouver 3rdparty/) : qemu_init + machine prete t=0.15 s,
+#   rafales uart0 "128\n" toutes les ~110 ms (IO25 a 0 mV injecte -> zone
+#   morte ADC2 attendue), aucune anomalie diag, aucun "Symbole manquant". NOTE : le
+#   segfault signal SIGSEGV a la fermeture GUI (thread RIP=0) existe depuis
+#   avant (core du 2026-10-22 23:18, meme signature) — deco de la
+#   destruction Qt, pas lie a la lib ADC.

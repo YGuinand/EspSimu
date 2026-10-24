@@ -35,7 +35,7 @@ namespace Esp32Pins {
         int broche;          // numero de broche sur J2
         const char *signal;  // nom du signal sur le schema
         int gpio;            // GPIO ESP32 correspondant
-        int adc;             // canal ADC1 (index pour setAnalogPin), -1 si la broche n'est pas sur ADC1
+        int adc;             // canal ADC1 (index pour setAnalogPinMV, tension injectee en mV), -1 si pas sur ADC1
     };
     // adc : canal ADC1 (CH0=IO36, CH3=IO39, CH4=IO32, CH5=IO33, CH6=IO34, CH7=IO35)
     constexpr EntreeJ2 ENTREES_J2[] = {
@@ -75,7 +75,7 @@ public:
 
     // ==================== UI -> QEMU ====================
     void setDigitalPin(int logicalPin, bool level);
-    void setAnalogPin(int channel, int value);
+    void setAnalogPinMV(int channel, int mV);  // entree analogique en millivolts (0..3300, borne par QEMU)
     void sendUart(int uartId, const QByteArray &data);
 
     // ==================== Introspection QEMU ====================
