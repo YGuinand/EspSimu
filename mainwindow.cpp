@@ -22,6 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Version automatique depuis le .pro (APP_VERSION) : le titre statique
+    // de mainwindow.ui ne porte pas de numero (ajoute ici).
+    setWindowTitle(tr("Simulateur de carte ESP32 v%1")
+                     .arg(QString::fromLatin1(APP_VERSION)));
+
 //    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 //    QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 

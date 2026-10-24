@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Simulateur de carte ESP32 v2.01</string>
+   <string>Simulateur de carte ESP32</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">

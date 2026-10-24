@@ -11,6 +11,18 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = espsimu
 TEMPLATE = app
 
+# ================================================================
+# Version de l'application : source unique, diffusee deux fois
+#   - dans la ressource de l'exe Windows (espsimu_resource.rc)
+#   - dans tout le C++ via la macro APP_VERSION (litteral "2.01"),
+#     utilisee par mainwindow.cpp (titre fenetre principale) et
+#     apropos.cpp (jeton %APPVERSION% de la fenetre A propos)
+# ================================================================
+APP_VERSION = 2.01
+
+win32: VERSION = $${APP_VERSION}
+DEFINES += APP_VERSION=\\\"$${APP_VERSION}\\\"
+
 CONFIG += rtti
 CONFIG += static
 
