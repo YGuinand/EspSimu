@@ -78,7 +78,8 @@ protected:
             if (sourceIdx.isValid()) {
                 QFileInfo info = static_cast<const QFileSystemModel *>(sourceModel())->fileInfo(sourceIdx);
                 const QString name = info.fileName();
-                if ((info.isFile() && name == QLatin1String("firmware.bin")) ||
+                if ((info.isFile() && (name == QLatin1String("firmware.bin") ||
+                                       name == QLatin1String("firmware.factory.bin"))) ||
                     (info.isDir() && (name == QLatin1String("build") || name == QLatin1String(".pio")))) {
                     QFont font;
                     font.setBold(true);
@@ -336,14 +337,18 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
     } else {
         // Le backend sait precisement pourquoi : afficher son message apres la
         // regle generale (les deux seuls formats universellement acceptes).
-        // RichText pour le gras sur firmware.factory.bin : le detail backend est
-        // echappe pour que le chemin du dossier ne soit pas pris pour du HTML,
-        // et le separateur devient <br> (les \n ne se rendent pas en RichText).
+        // RichText post-traite : tout est echappe d'abord (le chemin du detail
+        // ne doit jamais etre pris pour du HTML), puis CHAQUE mention de
+        // firmware.factory.bin (message general ET detail backend) passe en
+        // gras, et les retours a la ligne deviennent <br>.
         const QString detail = modele->getErreurEsp32();
-        QString msg = "Firmware ESP32 refuse. Utilisez firmware.bin / <b>firmware.factory.bin</b> "
+        QString msg = "Firmware ESP32 refuse. Utilisez firmware.bin / firmware.factory.bin "
                       "d'un build PlatformIO (dossier .pio/build/...) ou une image flash "
                       "de 2, 4, 8 ou 16 Mo.";
-        if (!detail.isEmpty()) msg += "<br><br>" + detail.toHtmlEscaped();
+        if (!detail.isEmpty()) msg += "\n\n" + detail;
+        msg = msg.toHtmlEscaped();
+        msg.replace("firmware.factory.bin", "<b>firmware.factory.bin</b>");
+        msg.replace("\n", "<br>");
         QMessageBox boite(QMessageBox::Warning, "EspSimu", msg, QMessageBox::Ok, this);
         boite.setTextFormat(Qt::RichText);
         boite.exec();
