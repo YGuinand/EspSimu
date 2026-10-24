@@ -26,6 +26,8 @@ ESP32 backend quirk: `modele.cpp` loads `3rdparty/qemu/lib/libqemu-xtensa.so` re
 
 Initialization file: at startup the app reads `espsimu.ini` **next to the executable** (`parametres.*`, file is created on first save; gitignored at repo root). It stores the last loaded ESP32 firmware, the last gamelle `.gml` (fenetre Gamel) and the last piste `.pis` (fenetre Piste); each is reloaded at the next launch if the file still exists (loaded, not started — Power turns the ESP32 on).
 
+Window-close semantics (2026-10-24): closing the MainWindow ends the application. `MainWindow::closeEvent` runs in two passes (pass 1 ignores + shows a modal progress, pass 2 accepts); the delayed pass calls `Modele::shutdownEsp32()` — full QEMU main-loop stop (shutdown request exits `qemu_main_loop` immediately, `qemu_cleanup` ~10 ms, then thread join) — followed by an explicit `QApplication::quit()`. Do not rely on `quitOnLastWindowClosed`: the progress dialog would otherwise remain the last visible window and the app would hang with the QEMU thread still attached (historical "RIP=0" teardown crashes came from forced kills of that hung state; the QEMU lib also installs its own SIGTERM handler). The Power button keeps pause semantics (`stopEsp32`, thread alive). The whole chain is instrumented with `EspDiag::mark` (`ESPSIMU_DIAG=1`).
+
 ## Translations
 
 `espsimu_en.ts` / `espsimu_it.ts` (Qt Linguist). `.qm` files are produced by `lrelease` and gitignored; no codegen step is wired into the build.
