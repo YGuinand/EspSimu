@@ -21,8 +21,8 @@
 # Path                Copie le            Build
 # libqemu-xtensa.so   2026-10-24 14:48    Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus)
 # libqemu-riscv32.so  2026-10-23 22:00    Linux    riscv32   (42.4 Mo, commit 52301a8a75, non reconstruit)
-# libqemu-xtensa.dll  2026-10-21 10:16    Windows  xtensa    (etat source anterieur, non trace)
-# libqemu-riscv32.dll 2026-10-21 10:16    Windows  riscv32   (etat source anterieur, non trace)
+# libqemu-xtensa.dll  2026-10-24 15:23    Windows  xtensa    (49.6 Mo, commit ccf33ab6f9 ci-dessus : eFuse + modele ADC + API _mv)
+# libqemu-riscv32.dll 2026-10-24 15:23    Windows  riscv32   (46.6 Mo, meme commit ; device C3 inchangé, API counts conservee)
 #
 # ==================== API d'injection analogique ====================
 # Rupture d'API validee avec l'application (2026-10-24) :
@@ -32,10 +32,14 @@
 #   (ADC1 CH0..7 -> 0..7, ADC2 CH8/CH9 (IO25/IO26) -> 16/17).
 # L'ancien symbole n'existe plus dans le .so : une lib anterieure fait
 # echouer le chargement ESP32 de l'app ("Symbole manquant:
-# qemu_picsimlab_set_apin_mv") — garde-fou voulu. Les DLL Windows du
-# 2026-10-21 ne connaissent donc NI ce correctif NI la nouvelle API : la
-# partie ESP32 est inutilisable sous Windows tant que
-# build_libqemu-esp32-windows.sh n'a pas rejoue.
+# qemu_picsimlab_set_apin_mv") — garde-fou voulu. Les DLL Windows
+# reconstruites le 2026-10-24 15:23 (build_libqemu-esp32-windows.sh, meme
+# commit) portent eFuse + modele ADC + API _mv ; elles doivent etre
+# associees a un exe croise reconstruit aussi : tout espsimu.exe anterieur
+# a la rupture cherche encore qemu_picsimlab_set_apin et echouera
+# ("Symbole manquant") avec la DLL neuve. Le build/Windows_Cross du
+# 15:22 est cible. Le paquet deployable final est assemble par
+# ./paquet-windows.sh (a rejouer apres ce croise).
 #
 # ==================== Contenu fonctionnel (libqemu-esp32-2026-10-24-2) ====
 # ADC modele dans hw/misc/esp32_sens.c :
