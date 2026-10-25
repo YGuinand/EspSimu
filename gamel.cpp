@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QGraphicsProxyWidget>
+#include <QMessageBox>
 
 Gamel::Gamel(Modele &m, QWidget *parent) :
     QFrame(parent),
@@ -63,12 +64,15 @@ Gamel::Gamel(Modele &m, QWidget *parent) :
     connect(focusItem, SIGNAL(moved()), this, SLOT(moveCapteur()));
     connect(modele, SIGNAL(fdcChange()), this, SLOT(fdcChange()));
     connect(modele, SIGNAL(captCNYChange()), this, SLOT(afficheDataTest()));
+    connect(modele, SIGNAL(batterieChange()), this, SLOT(viewBatterie()));
+    connect(modele, SIGNAL(batterieVide()), this, SLOT(batterieVide()));
 }
 
 void Gamel::changePinsInUse()
 {
     remplirComboJ2(*ui->jackPin, modele->getJackPinIndex());
     remplirComboJ2(*ui->fdcPin, modele->getFdcPinIndex());
+    remplirComboJ2(*ui->pontPin, modele->getPontPinIndex(), true);
     if (modele->nbCaptIr()>0) remplirComboJ2(*ui->cnyPin, modele->getCaptIr(captIrIndex)->getJ2Pin());
 }
 
@@ -148,6 +152,24 @@ void Gamel::viewModele()
     ui->doubleRdson->blockSignals(true);
     ui->doubleRdson->setValue(modele->getRdson());
     ui->doubleRdson->blockSignals(false);
+
+    // batterie
+    ui->comboModeBatterie->blockSignals(true);
+    ui->comboModeBatterie->setCurrentIndex((int)modele->getBatterie().getMode());
+    ui->comboModeBatterie->blockSignals(false);
+    ui->doubleRs->blockSignals(true);
+    ui->doubleRs->setValue(modele->getBatterie().getRs());
+    ui->doubleRs->blockSignals(false);
+    ui->doublePontR1->blockSignals(true);
+    ui->doublePontR1->setValue(modele->getPont().getR1()/1000.0);
+    ui->doublePontR1->blockSignals(false);
+    ui->doublePontR2->blockSignals(true);
+    ui->doublePontR2->setValue(modele->getPont().getR2()/1000.0);
+    ui->doublePontR2->blockSignals(false);
+    remplirComboJ2(*ui->pontPin, modele->getPontPinIndex(), true);
+    ui->labelSchemaPinPont->setText(ui->pontPin->currentText());
+    majEtatBatterie();
+    viewBatterie();
 
     // moteur gauche
     ui->doubleRmotG->blockSignals(true);
@@ -266,7 +288,7 @@ Gamel::~Gamel()
 }
 
 // Liste des entrees du connecteur J2 : la broche courante en premier, puis NC, puis les broches libres
-void Gamel::remplirComboJ2(QComboBox &c, int indexCourant)
+void Gamel::remplirComboJ2(QComboBox &c, int indexCourant, bool analogiqueSeulement)
 {
     std::vector<QString> tab;
     std::vector<int> tabIndex;
@@ -279,6 +301,8 @@ void Gamel::remplirComboJ2(QComboBox &c, int indexCourant)
     }
     c.addItem(Connexion::NCString, QVariant(-1));
     for (unsigned int j=0; j<tab.size(); j++) {
+        // Pont diviseur : seules les broches analogiques (ADC1) sont proposees
+        if (analogiqueSeulement && Esp32Pins::ENTREES_J2[tabIndex[j]].adc < 0) continue;
         c.addItem(tab[j], QVariant(tabIndex[j]));
     }
     c.setCurrentIndex(0);
@@ -627,6 +651,82 @@ void Gamel::afficheDataTest()
 
     ui->labelV0->setText(QLocale().toString(c->getV0(), 'f', 3)+QString(" V"));
     ui->labelVs->setText(QLocale().toString(c->getVs(), 'f', 3)+QString(" V"));
+}
+
+void Gamel::viewBatterie()
+{
+    // Etat instantane de la batterie : tension aux bornes, courant tire, charge
+    Batterie &batterie = modele->getBatterie();
+    ui->labelVPile->setText(QLocale().toString(batterie.getTension(), 'f', 3)+QString(" V"));
+    ui->labelIPile->setText(QLocale().toString(batterie.getCourant(), 'f', 3)+QString(" A"));
+    // Curseur de charge : mis a jour par le modele sauf quand l'utilisateur le tient en main
+    if (!ui->sliderCharge->isSliderDown()) {
+        ui->sliderCharge->blockSignals(true);
+        ui->sliderCharge->setValue((int)(batterie.getSoc() + 0.5));
+        ui->sliderCharge->blockSignals(false);
+    }
+    ui->labelChargeVal->setText(QLocale().toString(batterie.getSoc(), 'f', 0)+QString(" %"));
+}
+
+void Gamel::batterieVide()
+{
+    // Mode batterie : SOC arrive a 0, le modele a coupe l'alimentation de la carte ;
+    // l'utilisateur recharge avec le curseur de charge puis remet le Power
+    QMessageBox boite(QMessageBox::Warning, tr("Batterie déchargée"),
+                      tr("Batterie complètement déchargée : la carte a été mise hors tension.\n"
+                         "Rechargez la batterie (curseur « Charge » de l'onglet Batterie), "
+                         "puis remettez la carte sous tension."),
+                      QMessageBox::Ok, this);
+    boite.exec();
+}
+
+void Gamel::majEtatBatterie()
+{
+    // Le reglage "Tension de batterie" ne sert qu'en "tension constante" (tension
+    // imposee) et en "+ Rs" (tension a vide) ; en mode batterie, la tension a vide
+    // vient de la courbe E(SOC) — grise. De meme, la Rs n'intervient qu'en
+    // "tension constante + Rs" et en mode batterie, et le curseur de charge
+    // n'a de sens qu'en mode batterie (la decharge se produit, le SOC evolue).
+    int mode = (int)modele->getBatterie().getMode();
+    ui->labelVbat->setEnabled(mode != Batterie::MODE_BATTERIE);
+    ui->doubleVbat->setEnabled(mode != Batterie::MODE_BATTERIE);
+    ui->labelRs->setEnabled(mode != Batterie::TENSION_CONSTANTE);
+    ui->doubleRs->setEnabled(mode != Batterie::TENSION_CONSTANTE);
+    ui->sliderCharge->setEnabled(mode == Batterie::MODE_BATTERIE);
+}
+
+void Gamel::on_comboModeBatterie_currentIndexChanged(int index)
+{
+    modele->setModeBatterie(index);
+    majEtatBatterie();
+}
+
+void Gamel::on_doubleRs_valueChanged(double )
+{
+    modele->setRsBatterie(ui->doubleRs->value());
+}
+
+void Gamel::on_sliderCharge_valueChanged(int value)
+{
+    modele->setSocBatterie(value);
+}
+
+void Gamel::on_pontPin_currentIndexChanged(int index)
+{
+    int pinIndex = ui->pontPin->itemData(index).toInt();
+    modele->pontConnecte(pinIndex);
+    changePinsInUse();
+    ui->labelSchemaPinPont->setText(ui->pontPin->currentText());
+}
+
+void Gamel::on_doublePontR1_valueChanged(double value)
+{
+    modele->getPont().setR1(value * 1000.0);
+}
+
+void Gamel::on_doublePontR2_valueChanged(double value)
+{
+    modele->getPont().setR2(value * 1000.0);
 }
 
 void Gamel::fdcChange()

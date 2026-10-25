@@ -633,22 +633,69 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1906"/>
+        <location filename="gamel.ui" line="1865"/>
         <source>Rendement de la transmission</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1922"/>
+        <location filename="gamel.ui" line="1905"/>
+        <location filename="gamel.ui" line="1982"/>
+        <source>Batterie</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="1908"/>
+        <location filename="gamel.ui" line="1968"/>
+        <source>Modélisation de la batterie</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="1955"/>
+        <source>Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="1972"/>
+        <source>Tension constante</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="1938"/>
+        <source>Tension constante et résistance série</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="1994"/>
+        <source>Rs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="2065"/>
+        <source>Résistance série de la batterie</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="2036"/>
+        <source>Tension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="2063"/>
+        <source>Courant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="1881"/>
         <source> %</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2024"/>
+        <location filename="gamel.ui" line="2357"/>
         <source>Vue de dessus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2092"/>
+        <location filename="gamel.ui" line="2425"/>
         <source>Paramètres électriques</source>
         <translation type="unfinished"></translation>
     </message>
@@ -673,7 +720,7 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2256"/>
+        <location filename="gamel.ui" line="2592"/>
         <source>Paramètres géométriques</source>
         <translation type="unfinished"></translation>
     </message>
@@ -693,7 +740,7 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2387"/>
+        <location filename="gamel.ui" line="2723"/>
         <source>test sur ligne blanche</source>
         <translation type="unfinished"></translation>
     </message>
@@ -727,6 +774,26 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="gamel.ui" line="2036"/>
+        <source>Charge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="2106"/>
+        <source>Pont diviseur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="2148"/>
+        <source>R haute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="2141"/>
+        <source>R basse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="gamel.cpp" line="415"/>
         <location filename="gamel.cpp" line="439"/>
         <location filename="gamel.cpp" line="441"/>
@@ -741,6 +808,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="gamel.cpp" line="441"/>
         <source>Charger les données d&apos;une gamelle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.cpp" line="664"/>
+        <source>Batterie déchargée</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.cpp" line="665"/>
+        <source>Batterie complètement déchargée : la carte a été mise hors tension.
+Rechargez la batterie (curseur « Charge » de l'onglet Batterie), puis remettez la carte sous tension.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

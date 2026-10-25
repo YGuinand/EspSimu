@@ -2,6 +2,8 @@
 #define MODELE_H
 
 #include "connexion.h"
+#include "batterie.h"
+#include "pontdiv.h"
 #include "lcdscreen.h"
 #include "xmlopensavedata.h"
 #include "piste.h"
@@ -148,7 +150,7 @@ protected :
 
     double res, induc, kphi, i0;
     double inertie;
-    double a,b,c,don,doff,f,g,hoff;
+    double a,b,don,doff,f,g,hoff;
 
     double im, vm;
 
@@ -159,8 +161,9 @@ protected :
 public :
     MoteurCNX(Modele &m, const QString &nom);
     void preCalcul();
-    void modifieRatio(double ratio, double dt);
+    void modifieRatio(double ratio, double dt, double vappl);
     double getVitesse() {  return vm;  }
+    double getCourant() {  return im;  }
     void reset() {  vm = 0.0;  im = 0.0;  }
 
     virtual const QString getNameParam(int /* n */) { return cnxName; }
@@ -192,6 +195,7 @@ protected :
     int jackPin, fdcPin;   // index dans Esp32Pins::ENTREES_J2 (-1 = non connecte)
     void appliqueContactEsp32(int indexJ2, bool haut);
     void appliqueCaptIrEsp32(CaptIrCNX *c, bool force = false);
+    void appliquePontDivEsp32(bool force = false);   // sortie du pont diviseur vers QEMU
     void liberePinEsp32(int indexJ2);
     void setBouton(int numero, bool enfonce);
     bool bpEnfonce[3];   // etat des boutons BP0..BP2
@@ -204,6 +208,8 @@ protected :
     double x, y, theta, ct, st;
     double voie;
     double vbat, masse, kroul, reduc, rayon, rendement, rdson, vf;
+    Batterie batterie;   // modele d'alimentation de la gamelle (onglet Batterie, docs/etude-batterie.md)
+    PontDiv pont;        // pont diviseur : sonde de la tension batterie vers une entree analogique J2
 
     // === ESP32 ===
     Esp32Backend *esp32;
@@ -226,6 +232,8 @@ protected :
 signals :
     void fdcChange();
     void captCNYChange();
+    void batterieChange();
+    void batterieVide();   // mode batterie : SOC arrive a 0, alimentation coupee (popup recharge)
     void deplaceGamel(double, double, double);
     void cnxMotChange();
     void backlightChanged(int r, int g, int b, int alpha);
@@ -259,6 +267,14 @@ public:
     void appliquePinsEsp32();
     int getJackPinIndex() {  return jackPin;  }
     int getFdcPinIndex() {  return fdcPin;  }
+
+    // === Pont diviseur de tension : sonde de la tension batterie vers une entree
+    // analogique (ADC1) du connecteur J2. Non connecte par defaut (-1). ===
+    PontDiv &getPont() {  return pont;  }
+    void pontDeconnecte() {  pontConnecte(-1);  }
+    bool pontConnecte(int index);
+    bool pontConnecte(const QString &name) { return pontConnecte(j2NameToIndex(name)); }
+    int getPontPinIndex() {  return pont.getJ2Pin();  }
     bool isPwm1aGauche() {  return pwm1aGauche;  }
     void setPwm1aGauche(bool gauche = true);
 
@@ -284,7 +300,7 @@ public:
     void setVoie(double val) {  voie = val;  }
 
     double getVbat() {  return vbat;  }
-    void setVbat(double val) {  vbat = val;  moteurG->preCalcul();  moteurD->preCalcul();  }
+    void setVbat(double val) {  vbat = val;  moteurG->preCalcul();  moteurD->preCalcul();  rafraichitBatterie();  }
     double getMasse() {  return masse;  }
     void setMasse(double val) {  masse = val;  moteurG->preCalcul();  moteurD->preCalcul();  }
     double getKroul() {  return kroul;  }
@@ -299,6 +315,16 @@ public:
     void setVf(double val) {  vf = val;  moteurG->preCalcul();  moteurD->preCalcul();  }
     double getRdson() {  return rdson;  }
     void setRdson(double val) {  rdson = val;  moteurG->preCalcul();  moteurD->preCalcul();  }
+
+    // === Batterie (voir docs/etude-batterie.md) ===
+    Batterie &getBatterie() {  return batterie;  }
+    void setModeBatterie(int mode);
+    void setRsBatterie(double rs);
+    void setSocBatterie(double soc);   // charge restante (0..100 %) : curseur de l'onglet Batterie
+    double courantCapteurs();   // courant tire par les capteurs IR (A)
+    double courantBatterie(double ratioG, double ratioD);   // courant total tire de la batterie (A)
+    double evalueBatterie(double ratioG, double ratioD, double dt);   // tension instantanee (V) + decharge dt, memorisee pour l'UI
+    void rafraichitBatterie();   // rafraichit l'etat affiche avec le dernier courant connu + notifie l'UI
 
     double getCosTheta() {  return ct;  }
     double getSinTheta() {  return st;  }

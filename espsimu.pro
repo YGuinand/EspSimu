@@ -14,11 +14,11 @@ TEMPLATE = app
 # ================================================================
 # Version de l'application : source unique, diffusee deux fois
 #   - dans la ressource de l'exe Windows (espsimu_resource.rc)
-#   - dans tout le C++ via la macro APP_VERSION (litteral "2.01"),
+#   - dans tout le C++ via la macro APP_VERSION (litteral "2.10"),
 #     utilisee par mainwindow.cpp (titre fenetre principale) et
 #     apropos.cpp (jeton %APPVERSION% de la fenetre A propos)
 # ================================================================
-APP_VERSION = 2.01
+APP_VERSION = 2.10
 
 win32: VERSION = $${APP_VERSION}
 DEFINES += APP_VERSION=\\\"$${APP_VERSION}\\\"
@@ -47,6 +47,8 @@ SOURCES += main.cpp\
     apropos.cpp
 
 HEADERS  += mainwindow.h \
+    batterie.h \
+    pontdiv.h \
     connexion.h \
     diagnostic.h \
     esp32backend.h \

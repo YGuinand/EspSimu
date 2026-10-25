@@ -7,6 +7,9 @@
 // Tension d'alimentation de la carte (ESP32) : niveau haut des entrees, pull-ups, capteurs IR
 constexpr double VCC_CARTE = 3.3;
 
+// Tension directe de la diode emettrice IR d'un CNY70 (alimentee depuis le 3,3 V de la carte)
+constexpr double VF_CNY = 1.25;
+
 // Source de tension avec impedance : modele electrique d'un element raccorde a la carte
 // (LED, contact, capteur IR, hacheur).
 class Connexion {

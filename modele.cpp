@@ -186,7 +186,7 @@ QString Modele::j2Name(int index)
 bool Modele::j2Utilise(int index) const
 {
     if (index<0) return false;
-    if (index==jackPin || index==fdcPin) return true;
+    if (index==jackPin || index==fdcPin || index==pont.getJ2Pin()) return true;
     for (const CaptIrCNX *c : tabCaptIR) {
         if (c->getJ2Pin()==index) return true;
     }
@@ -232,6 +232,25 @@ void Modele::appliqueCaptIrEsp32(CaptIrCNX *c, bool force)
     }
 }
 
+// Sortie du pont diviseur vers QEMU : tension au point milieu (R2/(R1+R2))
+// injectee en millivolts sur l'entree ADC1 du connecteur J2 choisie, pour que le
+// firmware mesure la tension batterie. Comme pour les CNY70, la valeur est
+// bornee a VCC_CARTE (au-dela, la diode d'entree sature et l'ADC lit haut).
+void Modele::appliquePontDivEsp32(bool force)
+{
+    int j2 = pont.getJ2Pin();
+    if (j2<0 || j2>=Esp32Pins::NB_ENTREES_J2) return;
+    if (!esp32 || !esp32->isMachineReady()) return;
+    const Esp32Pins::EntreeJ2 &e = Esp32Pins::ENTREES_J2[j2];
+    if (e.adc < 0) return;   // broche non analogique : rien a injecter
+    double v = qBound(0.0, pont.evalue(batterie.getTension()), VCC_CARTE);
+    int mv = (int)(v * 1000.0 + 0.5);      // tension injectee en millivolts
+    if (force || mv != pont.mvEnvoye) {
+        esp32->setAnalogPinMV(e.adc, mv);
+        pont.mvEnvoye = mv;
+    }
+}
+
 // Broche J2 devenue libre : niveau bas et tension nulle
 void Modele::liberePinEsp32(int indexJ2)
 {
@@ -253,6 +272,7 @@ void Modele::appliquePinsEsp32()
         if (!j2Utilise(i)) liberePinEsp32(i);
     }
     for (CaptIrCNX *c : tabCaptIR) appliqueCaptIrEsp32(c, true);
+    appliquePontDivEsp32(true);   // sonde de tension batterie (pont diviseur)
 
     // Boutons et potentiometre : etat memorise, repris au demarrage et apres un reset
     for (int i=0; i<3; i++) {
@@ -282,6 +302,19 @@ bool Modele::fdcConnecte(int index)
     fdcPin = index;
     if (ancien>=0) liberePinEsp32(ancien);
     if (fdcPin>=0) appliqueContactEsp32(fdcPin, fdc.niveauHaut());
+    return true;
+}
+
+bool Modele::pontConnecte(int index)
+{
+    if (index>=Esp32Pins::NB_ENTREES_J2) return false;
+    if (index>=0 && j2Utilise(index) && index!=pont.getJ2Pin()) return false;
+    if (index==pont.getJ2Pin()) return true;
+    int ancien = pont.getJ2Pin();
+    pont.setJ2Pin(index);
+    pont.mvEnvoye = -1;                       // force la poussera complet au prochain envoi
+    if (ancien>=0) liberePinEsp32(ancien);    // broche libre : tension nulle
+    if (pont.getJ2Pin()>=0) appliquePontDivEsp32(true);   // pousser tout de suite si la machine est prete
     return true;
 }
 
@@ -346,6 +379,16 @@ void Modele::saveGamelData(const QString &fichier)
     creation(doc, niv1, "voie", voie);
     creation(doc, niv1, "scotch", CaptIrCNX::getRefScotch());
     creation(doc, niv1, "moquette", CaptIrCNX::getRefMoquette());
+    // batterie
+    niv1 = creation(doc, gamelNode, "batterie");
+    creation(doc, niv1, "mode", (int)batterie.getMode());
+    creation(doc, niv1, "rs", batterie.getRs());
+    creation(doc, niv1, "soc", batterie.getSoc());
+    // pont diviseur : sonde de la tension batterie vers une entree analogique J2
+    niv1 = creation(doc, gamelNode, "pont");
+    creation(doc, niv1, "r1", pont.getR1());
+    creation(doc, niv1, "r2", pont.getR2());
+    creation(doc, niv1, "connexion", (pont.getJ2Pin()<0)?"NULL":j2Name(pont.getJ2Pin()));
     niv1 = creation(doc, gamelNode, "moteur_g");
     creation(doc, niv1, "res", moteurG->getRes());
     creation(doc, niv1, "induc", moteurG->getInduc());
@@ -408,6 +451,14 @@ void Modele::decode(const QString &obj, const QString &num, const QString &attr,
         else if (attr=="voie") voie = val.toDouble();
         else if (attr=="scotch") CaptIrCNX::setRefScotch(val.toDouble());
         else if (attr=="moquette") CaptIrCNX::setRefMoquette(val.toDouble());
+    }  else if (obj=="batterie") {
+        if (attr=="mode") setModeBatterie(val.toInt());
+        else if (attr=="rs") setRsBatterie(val.toDouble());
+        else if (attr=="soc") setSocBatterie(val.toDouble());
+    }  else if (obj=="pont") {
+        if (attr=="r1") pont.setR1(val.toDouble());
+        else if (attr=="r2") pont.setR2(val.toDouble());
+        else if (attr=="connexion") pontConnecte(val);
     }  else if (obj=="moteur_g") {
         if (attr=="res") moteurG->setRes(val.toDouble());
         else if (attr=="induc") moteurG->setInduc(val.toDouble());
@@ -427,6 +478,7 @@ void Modele::initialise()
 {
     jackDeconnecte();
     fdcDeconnecte();
+    pontDeconnecte();
     while (nbCaptIr()>0) deleteCaptIr(0);
 }
 
@@ -517,6 +569,69 @@ void Modele::setPwm1aGauche(bool gauche)
     emit cnxMotChange();
 }
 
+// ============================================================
+// === Batterie d'alimentation (onglet Batterie, docs/etude-batterie.md) ===
+// ============================================================
+
+// Courant tire par les capteurs IR (A) : la diode emettrice de chaque CNY70 est
+// alimentee depuis le 3,3 V de la carte (chute VF_CNY, puis resistance Rd du capteur)
+double Modele::courantCapteurs()
+{
+    double i = 0.0;
+    for (CaptIrCNX *c : tabCaptIR) {
+        if (c->getRd() > 1e-6) i += (VCC_CARTE - VF_CNY) / c->getRd();
+    }
+    return i;
+}
+
+// Courant total tire de la batterie (A) : moteurs (ratio * im du pas precedent),
+// capteurs IR et carte ESP32 sous tension. Carte hors tension : aucun courant.
+double Modele::courantBatterie(double ratioG, double ratioD)
+{
+    if (!esp32EnCours) return 0.0;
+    double i = ratioG * moteurG->getCourant() + ratioD * moteurD->getCourant();
+    i += courantCapteurs();
+    i += Batterie::COURANT_CARTE;
+    return i;
+}
+
+// Tension instantanee aux bornes de la batterie (V) : applique la chute dans la
+// resistance serie selon le mode, integre la decharge pendant dt (mode batterie),
+// et memorise l'etat pour l'affichage de l'UI. Appellee avant la mise a jour des
+// moteurs : le courant du pas precedent sert au calcul de la chute (schema
+// explicite, ventilation a une iteration de retard).
+double Modele::evalueBatterie(double ratioG, double ratioD, double dt)
+{
+    return batterie.evalue(vbat, courantBatterie(ratioG, ratioD), dt);
+}
+
+// Rafraichit l'etat batterie affiche avec le dernier courant connu (0 si la carte
+// est hors tension — utile au repos) et notifie l'UI.
+void Modele::rafraichitBatterie()
+{
+    batterie.evalue(vbat, batterie.getCourant(), 0.0);
+    emit batterieChange();
+}
+
+void Modele::setModeBatterie(int mode)
+{
+    if (mode < Batterie::TENSION_CONSTANTE || mode > Batterie::MODE_BATTERIE) return;
+    batterie.setMode((Batterie::Mode)mode);
+    rafraichitBatterie();
+}
+
+void Modele::setRsBatterie(double rs)
+{
+    batterie.setRs(rs);
+    rafraichitBatterie();
+}
+
+void Modele::setSocBatterie(double soc)
+{
+    batterie.setSoc(soc);
+    rafraichitBatterie();
+}
+
 double CaptIrCNX::ReflexionMoquette = 0.1;
 double CaptIrCNX::ReflexionScotch = 0.9;
 
@@ -587,7 +702,7 @@ MoteurCNX::MoteurCNX(Modele &m, const QString &nom)
 
 void MoteurCNX::preCalcul()
 {
-    double vbat = modele->getVbat(), masse = modele->getMasse(), kroul = modele->getKroul();
+    double masse = modele->getMasse(), kroul = modele->getKroul();
     double reduc =modele->getReduc(), rayon = modele->getRayon() * 1e-3, rendement = modele->getRendement();
     double rdson = modele->getRdson(), vf = modele->getVf();
     double inertiekgm2 = inertie * 1e-7 + masse * rayon * rayon / reduc / reduc;
@@ -595,7 +710,6 @@ void MoteurCNX::preCalcul()
 
     a = rayon * rayon * kroul * 9.81 * masse / ( inertiekgm2 * reduc * reduc ) * 1e3;
     b = rayon * kphiNmA * rendement / ( inertiekgm2 * reduc ) * 1e3;
-    c = vbat / induc;
     don = (res + rdson) / induc;
     doff = res / induc;
     f = reduc * kphiNmA / ( induc * rayon ) * 1e-3;
@@ -603,16 +717,17 @@ void MoteurCNX::preCalcul()
     hoff = - vf / induc;
 }
 
-void MoteurCNX::modifieRatio(double ratio, double dt)
+void MoteurCNX::modifieRatio(double ratio, double dt, double vappl)
 {
-    // Modele moyenne : tension appliquee = ratio * Vbat
+    // Modele moyenne : tension appliquee aux bornes du hacheur = vappl
     // (valable car frequence PWM >> constantes de temps du moteur)
     if (dt <= 0.0) return;
 
     double di, dv;
+    double cv = vappl / induc;
 
     // Moyenne des equations ON / OFF ponderee par le rapport cyclique
-    di = ratio         * (c    - don  * im - f * vm)
+    di = ratio         * (cv   - don  * im - f * vm)
          + (1.0 - ratio) * (hoff - doff * im - f * vm);
 
     dv = b * im - a - g * vm;
@@ -772,6 +887,10 @@ void Modele::stopEsp32()
     // Pause (le thread QEMU reste vivant)
     esp32->pause();
     esp32EnCours = false;
+
+    // Carte hors tension : plus aucun courant tire de la batterie (affichage onglet Batterie)
+    batterie.evalue(vbat, 0.0, 0.0);
+    emit batterieChange();
 }
 
 void Modele::resetEsp32()
@@ -832,6 +951,14 @@ void Modele::updatePwm()
 {
     if (!esp32EnCours || !esp32) return;
 
+    // Batterie completement dechargee (mode batterie) : coupure d'alimentation et
+    // notification de l'UI (popup signalant la necessite de recharger)
+    if (batterie.getMode() == Batterie::MODE_BATTERIE && batterie.getSoc() <= 0.0) {
+        stopEsp32();
+        emit batterieVide();
+        return;
+    }
+
     // Calcul du dt reel
     qint64 maintenant = pwmChrono->elapsed();
     double dt = (maintenant - pwmDernierTemps) / 1000.0;
@@ -871,7 +998,14 @@ void Modele::updatePwm()
     // Duty en pourcentage (0..100), -1 si indisponible
     float duty1 = esp32->pwmDuty(ch1);
     float duty2 = esp32->pwmDuty(ch2);
-    if (duty1 < 0.0f || duty2 < 0.0f) return;
+    if (duty1 < 0.0f || duty2 < 0.0f) {
+        // Pas (encore) de PWM pont-moteur (application non demarree) : la carte est
+        // alimentee, la decharge et l'affichage batterie continuent (moteurs a 0 :
+        // courant carte + capteurs IR uniquement)
+        batterie.evalue(vbat, courantBatterie(0.0, 0.0), dt);
+        emit batterieChange();
+        return;
+    }
     double ratio1 = qBound(0.0, duty1 / 100.0, 1.0);
     double ratio2 = qBound(0.0, duty2 / 100.0, 1.0);
 
@@ -885,9 +1019,14 @@ void Modele::updatePwm()
         ratioD = ratio1;   // moteurD = PWM1 = canal 0
     }
 
+    // Batterie : tension instantanee appliquee aux hacheurs (mode choisi dans
+    // l'onglet Batterie ; le courant du pas precedent sert au calcul de la chute Rs
+    // et le dt reel integre la decharge en mode batterie)
+    double vappl = evalueBatterie(ratioG, ratioD, dt);
+
     // Faire avancer les moteurs
-    if (moteurG) moteurG->modifieRatio(ratioG, dt);
-    if (moteurD) moteurD->modifieRatio(ratioD, dt);
+    if (moteurG) moteurG->modifieRatio(ratioG, dt, vappl);
+    if (moteurD) moteurD->modifieRatio(ratioD, dt, vappl);
 
     // Mettre a jour la position du gamel
     double dl = 0.5 * (moteurD->getVitesse() + moteurG->getVitesse()) * dt;
@@ -908,6 +1047,9 @@ void Modele::updatePwm()
 
     // Collision avec un obstacle : fin de course
     miseAJourFdc();
+
+    // Mise a jour de l'UI batterie (tension aux bornes, courant tire)
+    emit batterieChange();
 }
 
 // ============================================================================
@@ -935,4 +1077,8 @@ void Modele::updateIrSensors()
         // Envoyer la valeur vers QEMU si elle a change (niveau digital + analogique)
         appliqueCaptIrEsp32(c, false);
     }
+
+    // Pont diviseur : la tension batterie bouge a 50 Hz (updatePwm), les changements
+    // de la sortie du pont vers QEMU sont pousses ici a la cadence 1 kHz
+    appliquePontDivEsp32();
 }

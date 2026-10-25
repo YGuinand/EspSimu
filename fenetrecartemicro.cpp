@@ -248,6 +248,13 @@ FenetreCarteMicro::FenetreCarteMicro(Modele &m, QWidget *parent) :
     // Connexion du retroeclairage RGB
     connect(modele, &Modele::backlightChanged, &lcd, &LcdScreenView::setBacklightColor);
 
+    // Batterie dechargee (mode batterie) : le modele a deja coupe l'alimentation,
+    // le bouton Power repasse a OFF (le slot on_boutonPower_toggled(false) met
+    // aussi a jour la led ; stopEsp32 ne refere plus rien).
+    connect(modele, &Modele::batterieVide, this, [this]() {
+        ui->boutonPower->setChecked(false);
+    });
+
     ui->lcd->setScene(lcd.getScene());
 
     ui->ledA6_2->setColor(LedAlpha::JAUNE);

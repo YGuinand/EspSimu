@@ -83,7 +83,10 @@ private:
 
     void changePinsInUse();
 
-    void remplirComboJ2(QComboBox &c, int indexCourant);
+    // Onglet Batterie : grisage de la Rs suivant le mode d'alimentation choisi
+    void majEtatBatterie();
+
+    void remplirComboJ2(QComboBox &c, int indexCourant, bool analogiqueSeulement = false);
 
     double changeRepX(double x) { return x*echelle-delta; }
     double changeRepY(double y) { return -y*echelle-delta; }
@@ -146,12 +149,20 @@ private slots:
     void on_doubleKphiD_valueChanged(double );
     void on_doubleInertieD_valueChanged(double );
     void on_doubleI0motD_valueChanged(double );
+    void on_comboModeBatterie_currentIndexChanged(int index);
+    void on_doubleRs_valueChanged(double );
+    void on_sliderCharge_valueChanged(int value);
+    void on_pontPin_currentIndexChanged(int index);
+    void on_doublePontR1_valueChanged(double );
+    void on_doublePontR2_valueChanged(double );
 
     void fdcClick(bool );
 
 public slots :
     void viewModele();
     void viewCaptIrModele();
+    void viewBatterie();
+    void batterieVide();   // mode batterie : SOC a 0, coupure faite par le modele (popup recharge)
     void moveCapteur();
     void fdcChange();
     void afficheDataTest();
