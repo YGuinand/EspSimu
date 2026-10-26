@@ -93,3 +93,12 @@ QMAKE_LFLAGS  += -O3
     QMAKE_LFLAGS += -rdynamic
 }
 
+# build wasm (POC A) : pas de QEMU embarque — stub Esp32Backend ni dlopen,
+# ni libs natives ; Qt += inchangé (xml/svg/core5compat/charts dispos dans le kit).
+wasm {
+    SOURCES -= esp32backend.cpp
+    SOURCES += esp32backend_stub.cpp
+    LIBS -= -ldl -lpthread -lglib-2.0 -lpixman-1 -lz -lgcrypt -lm
+    QMAKE_LFLAGS -= -rdynamic
+}
+
