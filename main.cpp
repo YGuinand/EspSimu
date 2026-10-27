@@ -1,18 +1,8 @@
 #include "mainwindow.h"
 #include <QApplication>
-#ifdef __EMSCRIPTEN__
-#include <cstdlib>
-#endif
 
 int main(int argc, char *argv[])
 {
-#ifdef __EMSCRIPTEN__
-    // POC C M2 (wasm) : pas d'ENV navigateur exportable simplement, on force
-    // le diagnostic EspDiag identiquement a ESPSIMU_DIAG=1 du desktop et la
-    // longue phase PWM sans reset automatique (ESPSIMU_DIAG_NORESET=1).
-    setenv("ESPSIMU_DIAG", "1", 1);          // no-op si deja present
-    setenv("ESPSIMU_DIAG_NORESET", "1", 1);
-#endif
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":/images/micropro.png"));
 

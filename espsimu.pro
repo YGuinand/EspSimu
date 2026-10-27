@@ -137,12 +137,16 @@ wasm {
     QMAKE_LFLAGS += -sASYNCIFY=1
     QMAKE_LFLAGS += -sASYNCIFY_IMPORTS=ffi_call_js
 
-    # knobs wasm mkspec (wasm.prf) : memoire / pool chính thức Qt
+    # knobs wasm mkspec (wasm.prf) : memoire figee / pool de threads Qt
     QT_WASM_FIXED_MEMORY      = 1
     QT_WASM_INITIAL_MEMORY    = 2560MB
     QT_WASM_PTHREAD_POOL_SIZE = 8
 
     QMAKE_LFLAGS += -sFORCE_FILESYSTEM
     QMAKE_LFLAGS += -sALLOW_TABLE_GROWTH
+
+    # POC C : le espsimu.html regenere par la regle de link du kit ne passe pas
+    # les arguments de l'URL a qtLoad — re-patch idempotent apres chaque link.
+    QMAKE_POST_LINK += python3 $$PWD/patch-html-qargs.py $$OUT_PWD/espsimu.html
 }
 
