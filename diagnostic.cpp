@@ -29,6 +29,17 @@ typedef int64_t (*t_qemu_clock_get_ns)(int);
 typedef bool    (*t_qemu_clock_has_timers)(int);
 typedef int64_t (*t_qemu_clock_deadline_ns_all)(int, int);
 
+// POC C M4 (wasm) : QEMU 10.1 est lie statiquement dans le module (pas de
+// dlsym) — declaration des trois symboles de timer.h du fork en linkage
+// C ; wasm-ld les tire de libqemuutil.a au besoin.
+#ifdef __EMSCRIPTEN__
+extern "C" {
+int64_t qemu_clock_get_ns(int type);
+bool    qemu_clock_has_timers(int type);
+int64_t qemu_clock_deadline_ns_all(int type, int attr_mask);
+}
+#endif
+
 #define QEMU_CLOCK_VIRTUAL   1
 #define QEMU_TIMER_ATTR_ALL  0xffffffff
 
@@ -329,6 +340,15 @@ void init(void *libHandle)
         d.p_timersActifs   = (t_qemu_clock_has_timers)      DIAG_SYM(libHandle, "qemu_clock_has_timers");
         d.p_echeance       = (t_qemu_clock_deadline_ns_all) DIAG_SYM(libHandle, "qemu_clock_deadline_ns_all");
     }
+#ifdef __EMSCRIPTEN__
+    else {
+        // POC C M4 (wasm) : lien statique dans le module, pas de dlsym —
+        // adressage direct des symboles C (mêmes typedefs).
+        d.p_tempsVirtuelNs = (t_qemu_clock_get_ns)          &qemu_clock_get_ns;
+        d.p_timersActifs   = (t_qemu_clock_has_timers)      &qemu_clock_has_timers;
+        d.p_echeance       = (t_qemu_clock_deadline_ns_all) &qemu_clock_deadline_ns_all;
+    }
+#endif
     trace(QString("ACTIF (temps virtuel : %1, etat timers : %2)")
               .arg(d.p_tempsVirtuelNs ? "disponible" : "NON RESOLU")
               .arg(d.p_timersActifs ? "dispo" : "absent"));

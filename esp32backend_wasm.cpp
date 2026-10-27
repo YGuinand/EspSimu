@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QMetaObject>
 #include <QCoreApplication>
+#include <QElapsedTimer>
 
 // ==================== Symboles QEMU lies statiquement ====================
 // Signatures verrouillees par l'audit llvm-nm de libqemu-all.a (M1/M2 POC C)
@@ -550,6 +551,21 @@ void Esp32Backend::emitGpioDir(int pin, int value)
 void Esp32Backend::emitUartTx(int id, int value)
 {
     QMetaObject::invokeMethod(this, [this, id, value]() {
+        // POC C M4 : mesure du debit UART livre a l'UI (fenetre de 2 s), tracee
+        // uniquement en mode diagnostic (ESPSIMU_DIAG=1) comme le reste d'EspDiag.
+        static qint64 s_octets = 0;
+        static QElapsedTimer s_epoch;
+        if (EspDiag::actif()) {
+            if (!s_epoch.isValid()) s_epoch.start();
+            ++s_octets;   // un appel = un octet livre a la queue UI
+            if (s_epoch.elapsed() >= 2000) {
+                const double secs = s_epoch.elapsed() / 1000.0;
+                qDebug("M4 debit UART: %lld octets livre en %.1f s (%.1f Ko/s)",
+                       (long long)s_octets, secs, s_octets / 1024.0 / secs);
+                s_epoch.restart();
+                s_octets = 0;
+            }
+        }
         emit uartTx(id, static_cast<char>(value));
     }, Qt::QueuedConnection);
 }
