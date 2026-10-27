@@ -93,12 +93,56 @@ QMAKE_LFLAGS  += -O3
     QMAKE_LFLAGS += -rdynamic
 }
 
-# build wasm (POC A) : pas de QEMU embarque — stub Esp32Backend ni dlopen,
-# ni libs natives ; Qt += inchangé (xml/svg/core5compat/charts dispos dans le kit).
+# build wasm : branche POC A (stub) puis POC C (backend QEMU-wasm statique).
+# POC C M2 : le module embarque QEMU 10.1 wasm (emcc 4.0.7) produit par M1 —
+#   - libqemu-all.a : tous les .o de la cible qemu-system-xtensa.js
+#     (system_main.c.o EXCLU, pas de main() QEMU en collision) + libqemuutil + libfdt ;
+#   - deps ktock transposees : exactement la liste du link meson M1
+#     (libffi, libglib-2.0, libpcre2-8, libz — ni gio, ni pixman) ;
+#   - drapeaux emcc : memoire partagee FIXE (SAB pthreads, croissance
+#     interdite), FORCE_FILESYSTEM (MEMFS pour /bios + /espsimu_flash.bin),
+#     pool de workers > 4 (qemu_init cree plusieurs threads internes) ;
+#     ni ASYNCIFY ni PROXY_TO_PTHREAD (main() reste le thread Qt).
 wasm {
-    SOURCES -= esp32backend.cpp
-    SOURCES += esp32backend_stub.cpp
+    # pas de libs natives desktop (dlopen/pthread explicites, gcrypt…) :
+    # pthread arrive par -pthread, dl n'existe pas sur wasm.
     LIBS -= -ldl -lpthread -lglib-2.0 -lpixman-1 -lz -lgcrypt -lm
     QMAKE_LFLAGS -= -rdynamic
+
+    SOURCES -= esp32backend.cpp
+    SOURCES += esp32backend_wasm.cpp
+    RESOURCES += wasmroms.qrc
+
+    QEMU_WASM_HOME = /home/yves/tmp/qemu-wasm-407
+    QEMU_WASM_OUT  = $${QEMU_WASM_HOME}/out
+    # 1) objets reels du link meson M1, DANS L'ORDRE DE LA REGLE c_LINKER
+    #    (liste generee dans /tmp/opencode/qemu-objs.txt). Lie en brut :
+    #    les .init_array (registres de types QEMU, constructors de modules)
+    #    ne s'activent que si l'objet fait partie du link final — un .a
+    #    archive ne tire un objet que si un symbole est reference, ce qui
+    #    casse les types QOM referencees uniquement par chaine ("parent").
+    QEMU_OBJ_FILES = $$cat(/tmp/opencode/qemu-objs.txt, lines)
+    for(o, QEMU_OBJ_FILES) {
+        LIBS += $${QEMU_WASM_OUT}/$${o}
+    }
+    # 2) archives en fin, dans le groupe meson (replication du lien M1).
+    LIBS += -Wl,--start-group
+    LIBS += $${QEMU_WASM_OUT}/libqemuutil.a
+    LIBS += $${QEMU_WASM_OUT}/subprojects/dtc/libfdt/libfdt.a
+    LIBS += -L$${QEMU_WASM_HOME}/target/lib -lglib-2.0 -lffi -lpcre2-8 -lz
+    LIBS += -Wl,--end-group
+
+    # coroutine wasm de QEMU 10.1 : emscripten_fiber_swap exige l'instrumentation
+    # async (replication des drapeaux meson M1 : -sASYNCIFY=1 + import ffi_call_js)
+    QMAKE_LFLAGS += -sASYNCIFY=1
+    QMAKE_LFLAGS += -sASYNCIFY_IMPORTS=ffi_call_js
+
+    # knobs wasm mkspec (wasm.prf) : memoire / pool chính thức Qt
+    QT_WASM_FIXED_MEMORY      = 1
+    QT_WASM_INITIAL_MEMORY    = 2560MB
+    QT_WASM_PTHREAD_POOL_SIZE = 8
+
+    QMAKE_LFLAGS += -sFORCE_FILESYSTEM
+    QMAKE_LFLAGS += -sALLOW_TABLE_GROWTH
 }
 
