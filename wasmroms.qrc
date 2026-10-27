@@ -3,9 +3,4 @@
         <file alias="esp32-v3-rom.bin">pc-bios/esp32-v3-rom.bin</file>
         <file alias="esp32-v3-rom-app.bin">pc-bios/esp32-v3-rom-app.bin</file>
     </qresource>
-    <qresource prefix="/dev">
-        <!-- POC C M2 uniquement : firmware de test precharge (le chargement
-             utilisateur passe par le flux M3 getOpenFileContent -> MEMFS) -->
-        <file alias="firmware_merged.bin">testdev/firmware_merged.bin</file>
-    </qresource>
 </RCC>

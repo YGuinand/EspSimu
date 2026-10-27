@@ -324,6 +324,32 @@ void FenetreCarteMicro::afficheFirmwareCharge(const QString &fichier)
 
 void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
 {
+#ifdef __EMSCRIPTEN__
+    // POC C M3 (wasm) : le dialogue natif maison (QFileSystemModel sur les
+    // dossiers de la machine hote) n'a pas de sens sous wasm — la seule
+    // exposition utile est le "file chooser" du navigateur (recette POC A
+    // validee : getOpenFileContent -> callback nom + contenu). Le contenu
+    // arrive en memoire : on l'ecrit dans le MEMFS puis on reprend le flux
+    // desktop (accepteFirmware -> loadEsp32Firmware -> start).
+    QFileDialog::getOpenFileContent(
+        "Firmwares (*.bin *.factory.bin)",
+        [this](const QString &fn, const QByteArray &data) {
+            if (fn.isEmpty() || data.isEmpty()) return;   // annulation
+            // Chemin fixe dans le MEMFS conteneur (Emscripten FORCE_FILESYSTEM)
+            const QString chemin = QStringLiteral("/espsimu_upload.bin");
+            QFile f(chemin);
+            if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate) ||
+                f.write(data) != data.size()) {
+                qWarning() << "Ecriture MEMFS impossible:" << chemin;
+                return;
+            }
+            f.close();
+            qDebug() << "Firmware recupere du navigateur:" << fn << "->" << chemin
+                     << "(" << data.size() << "octets)";
+            accepteFirmware(chemin);   // nom affiche = chemin MEMFS du POC M3
+        });
+    return;
+#endif
     // Dossier de départ : celui du fichier précédemment sélectionné, s'il existe
     QString repertoireDepart = ui->fichier->text();
     if (!repertoireDepart.isEmpty()) {
@@ -335,6 +361,11 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
     QString fichier = choisirFirmware(this, repertoireDepart);
     if (fichier.isEmpty()) return;
 
+    accepteFirmware(fichier);
+}
+
+void FenetreCarteMicro::accepteFirmware(const QString &fichier)
+{
     // Le nom n'est affiche que si le firmware est accepte
     if (modele->loadEsp32Firmware(fichier)) {
         afficheFirmwareCharge(fichier);

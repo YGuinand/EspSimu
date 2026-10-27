@@ -36,6 +36,11 @@ private:
     // Recharger actives (utilise par Ouvrir, Recharger et chargeFirmwareRecent).
     void afficheFirmwareCharge(const QString &fichier);
 
+    // Code commun d'acceptation d'un firmware : chargement modele + UI +
+    // memorisation ini, ou message de refus detaille (utilise par le flux
+    // desktop et le flux wasm du POC C M3).
+    void accepteFirmware(const QString &fichier);
+
 private slots:
     void on_an0Dial_valueChanged(int value);
     void on_an0SpinBox_valueChanged(double );
