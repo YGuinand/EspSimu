@@ -335,8 +335,12 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
         "Firmwares (*.bin *.factory.bin)",
         [this](const QString &fn, const QByteArray &data) {
             if (fn.isEmpty() || data.isEmpty()) return;   // annulation
-            // Chemin fixe dans le MEMFS conteneur (Emscripten FORCE_FILESYSTEM)
-            const QString chemin = QStringLiteral("/espsimu_upload.bin");
+            // Le nom d'origine est conserve (repertoire MEMFS dedie, FORCE
+            // _FILESYSTEM) : la preparation d'image dispatche sur le nom
+            // (firmware.factory.bin -> offset 0) et la taille (image flash).
+            const QString rep = QStringLiteral("/espsimu_upload");
+            QDir().mkpath(rep);
+            const QString chemin = rep + QChar('/') + QFileInfo(fn).fileName();
             QFile f(chemin);
             if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate) ||
                 f.write(data) != data.size()) {
