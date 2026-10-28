@@ -9,6 +9,20 @@
 # Scripts de build : qemu/build_libqemu-esp32.sh          (Linux)
 #                    qemu/build_libqemu-esp32-windows.sh  (DLL Windows)
 #
+# ==================== Strategie de versionnement (decision 2026-10-28) =====
+# Deux arbres QEMU coexistent, volontairement :
+#   - desktop (Linux/Windows) : lignée 9.2.2 (branche picsimlab-esp32) —
+#     meme base que la branche esp-develop d'Espressif (9.2.2, release
+#     esp-develop-9.2.2-20260417). Leurs correctifs peripheriques (TWAI,
+#     SDMMC S3, interrupts C3, GDMA...) s'absorbent par cherry-pick
+#     unitaire au fil des besoins de fidelite, sans suivi wholesale.
+#   - wasm : portage 10.1 (branche poc-b) — un cran devant Espressif,
+#     porte par nous ; portage API 10.1 deja commite (jalons M1-M4).
+# Unification sur 10.x : au jour ou Espressif rebase esp-develop sur 10.x
+# (leur cadence : tous les 1-2 ans). La migration desktop reutilisera le
+# portage poc-b (deja ecrit) et recuperera leurs peripheriques sur la
+# nouvelle base. Principe : suivre Espressif, ne pas le preceder.
+#
 # ==================== Revision QEMU-wasm (bundle statique) ====================
 # Le portage wasm n'est PAS une lib partagee : QEMU 10.1 est lie statiquement
 # dans espsimu.wasm au link de l'app (bloc wasm du espsimu.pro). Trace :
