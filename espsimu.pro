@@ -113,15 +113,25 @@ wasm {
     SOURCES += esp32backend_wasm.cpp
     RESOURCES += wasmroms.qrc
 
-    QEMU_WASM_HOME = /home/yves/tmp/qemu-wasm-407
+    # Surcharge possible sans editer le .pro : QEMU_WASM_HOME=<arbre> qmake ...
+    # (arbre de build QEMU-wasm, produit par recettes-wasm/m1-emsdk407.sh de
+    # la branche poc-b du depot qemu/)
+    QEMU_WASM_HOME = $$(QEMU_WASM_HOME)
+    isEmpty(QEMU_WASM_HOME): QEMU_WASM_HOME = /home/yves/tmp/qemu-wasm-407
     QEMU_WASM_OUT  = $${QEMU_WASM_HOME}/out
     # 1) objets reels du link meson M1, DANS L'ORDRE DE LA REGLE c_LINKER
-    #    (liste generee dans /tmp/opencode/qemu-objs.txt). Lie en brut :
+    #    (liste regenerable par recettes-wasm/gen-objs-list.sh du depot
+    #    qemu/ branche poc-b — 668 objets : la regle en compte 669, moins
+    #    system_main.c.o dont le main() est replique par le backend).
+    #    Lie en brut :
     #    les .init_array (registres de types QEMU, constructors de modules)
     #    ne s'activent que si l'objet fait partie du link final — un .a
     #    archive ne tire un objet que si un symbole est reference, ce qui
     #    casse les types QOM referencees uniquement par chaine ("parent").
-    QEMU_OBJ_FILES = $$cat(/tmp/opencode/qemu-objs.txt, lines)
+    #    Copie canonique : a cote de l'arbre out (defaut), surcharge par env.
+    QEMU_OBJS_LIST = $$(QEMU_OBJS_LIST)
+    isEmpty(QEMU_OBJS_LIST): QEMU_OBJS_LIST = $${QEMU_WASM_HOME}/qemu-objs.txt
+    QEMU_OBJ_FILES = $$cat($${QEMU_OBJS_LIST}, lines)
     for(o, QEMU_OBJ_FILES) {
         LIBS += $${QEMU_WASM_OUT}/$${o}
     }
