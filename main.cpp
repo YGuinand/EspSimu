@@ -6,6 +6,17 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":/images/micropro.png"));
 
+#ifdef __EMSCRIPTEN__
+    // wasm : pas d'environnement POSIX — les qargs de la forme CLE=VALEUR
+    // alimentent l'environnement avant toute lecture getenv (EspDiag
+    // s'active dans le navigateur via ?qargs=ESPSIMU_DIAG%3D1).
+    const QStringList envArgs = a.arguments();
+    for (const QString &envArg : envArgs) {
+        const int eq = envArg.indexOf('=');
+        if (eq > 0) qputenv(envArg.left(eq).toUtf8(), envArg.mid(eq + 1).toUtf8());
+    }
+#endif
+
     MainWindow w;
     w.show();
 

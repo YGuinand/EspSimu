@@ -37,6 +37,9 @@ extern "C" {
 int64_t qemu_clock_get_ns(int type);
 bool    qemu_clock_has_timers(int type);
 int64_t qemu_clock_deadline_ns_all(int type, int attr_mask);
+// cadence de la boucle principale QEMU (util/main-loop.c, portage wasm) :
+// ~57 000 it/s en marche, ~200 it/s en pause (throttle 5 ms)
+extern uint64_t qemu_picsimlab_mainloop_iters;
 }
 #endif
 
@@ -105,6 +108,9 @@ struct Diagnostic {
     t_qemu_clock_get_ns          p_tempsVirtuelNs = nullptr;
     t_qemu_clock_has_timers      p_timersActifs   = nullptr;
     t_qemu_clock_deadline_ns_all p_echeance       = nullptr;
+    const uint64_t              *p_iters          = nullptr;  // wasm : cadence boucle
+    quint64 itersLogVal = 0;            // valeur au dernier log de cadence
+    qint64  itersDernierLogW = 0;       // mur du dernier log de cadence
 
     qint64 vOrigin = -1;                // temps virtuel de reference (1er ech. > 0)
     qint64 wT0 = -1;                    // temps mur de reference (init)
@@ -235,6 +241,23 @@ static void boucleEchantillonnage()
         qint64 w = d.chrono.nsecsElapsed();
         qint64 v = tempsVirtuel();
 
+        // Cadence de la boucle principale QEMU (wasm, log toutes les 2 s) :
+        // ~57 000 it/s en marche attendus, ~200 it/s en pause (throttle
+        // main_loop_wait) — sinon charge CPU persistante apres Power OFF.
+        if (d.p_iters) {
+            const quint64 it = *d.p_iters;
+            if (d.itersDernierLogW == 0) {
+                d.itersDernierLogW = w;
+                d.itersLogVal = it;
+            } else if (w - d.itersDernierLogW >= 2000 * NS_PAR_MS) {
+                const double dt = (w - d.itersDernierLogW) / 1e9;
+                qDebug("M4 boucle principale : %.0f it/s (pause=%s)",
+                       (double)(it - d.itersLogVal) / dt, d.pauseVM ? "oui" : "non");
+                d.itersDernierLogW = w;
+                d.itersLogVal = it;
+            }
+        }
+
         Rafale r; qint64 egoWall = -1, egoVirt = -1; bool ferme = false;
 
         d.mutex.lock();
@@ -347,6 +370,7 @@ void init(void *libHandle)
         d.p_tempsVirtuelNs = (t_qemu_clock_get_ns)          &qemu_clock_get_ns;
         d.p_timersActifs   = (t_qemu_clock_has_timers)      &qemu_clock_has_timers;
         d.p_echeance       = (t_qemu_clock_deadline_ns_all) &qemu_clock_deadline_ns_all;
+        d.p_iters          = &qemu_picsimlab_mainloop_iters;
     }
 #endif
     trace(QString("ACTIF (temps virtuel : %1, etat timers : %2)")

@@ -27,20 +27,27 @@
 # Le portage wasm n'est PAS une lib partagee : QEMU 10.1 est lie statiquement
 # dans espsimu.wasm au link de l'app (bloc wasm du espsimu.pro). Trace :
 # Source   : depot qemu/ branche poc-b (rebase de la lignée esp-picsimlab sur
-#            qemu v10.1.0 + portage wasm) — etat ayant servi le build M1 :
-#            commit 025123ed42 (tag qemu : qemu-wasm-10.1-m1). Recettes de
-#            build archivees dans la branche : recettes-wasm/ (m1-emsdk407.sh,
+#            qemu v10.1.0 + portage wasm) — etat du build M1 : commit
+#            025123ed42 (tag qemu : qemu-wasm-10.1-m1) ; fix charge CPU du
+#            2026-10-28 : commit ee98225746 (throttle du main_loop_wait en
+#            pause, util/main-loop.c — objet dans libqemuutil.a, PAS dans la
+#            liste des 668 : archive --start-group). Recettes de build
+#            archivees dans la branche : recettes-wasm/ (m1-emsdk407.sh,
 #            Containerfile, gen-objs-list.sh, driver407.mjs, README).
 # Build    : /home/yves/tmp/qemu-wasm-407 (surchargeable, QEMU_WASM_HOME) ;
 #            emcc 4.0.7 exact (contrainte du kit Qt), meson 1.5.0.
 # Link app : 668 objets meson (moins system_main.c.o) + groupe archives ;
 #            -sASYNCIFY=1 -sASYNCIFY_IMPORTS=ffi_call_js ; knobs wasm.prf.
 # Kit      : Qt 6.11.2 wasm_multithread (patch FIXED_MEMORY du wasm.prf).
-# Livrable de reference (POC C menage, 2026-10-27) :
-#            espsimu.wasm 37 978 396 oct.
-#            sha256 f678056ae64f8c7ecee33b76cbba0052d7b335af10a9dfcd8fc85a6037670186
-# Validation : jalons POC C M1-M4 (boot UI, flux firmware navigateur, temps
-#            virtuel 1:1, debit UART UI 15 Ko/s) — voir etude-faisabilite-wasm.md.
+# Livrable de reference (fix charge CPU pause, 2026-10-28) :
+#            espsimu.wasm 37 982 678 oct.
+#            sha256 2583e23a45b0b63e481475b99e3af4d5bb9f3a8e519ff23b6753125c8ac0baec
+# Validation : Playwright firefox headless + EspDiag (?qargs=ESPSIMU_DIAG=1,
+#            pont qargs->env) : firmware_merged.bin, marche 23-36k it/s
+#            (compteur qemu_picsimlab_mainloop_iters), Power OFF -> 197-198
+#            it/s (throttle 5 ms, contre ~33 000 avant : facteur ~170),
+#            reprise -> retour marche, firmware reboote. Historique M1-M4 :
+#            etude-faisabilite-wasm.md.
 # Discipline identique au desktop : reecrire cette section a chaque
 # reconstruction QEMU-wasm.
 #
