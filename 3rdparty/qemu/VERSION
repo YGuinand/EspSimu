@@ -9,6 +9,27 @@
 # Scripts de build : qemu/build_libqemu-esp32.sh          (Linux)
 #                    qemu/build_libqemu-esp32-windows.sh  (DLL Windows)
 #
+# ==================== Revision QEMU-wasm (bundle statique) ====================
+# Le portage wasm n'est PAS une lib partagee : QEMU 10.1 est lie statiquement
+# dans espsimu.wasm au link de l'app (bloc wasm du espsimu.pro). Trace :
+# Source   : depot qemu/ branche poc-b (rebase de la lignée esp-picsimlab sur
+#            qemu v10.1.0 + portage wasm) — etat ayant servi le build M1 :
+#            commit 025123ed42 (tag qemu : qemu-wasm-10.1-m1). Recettes de
+#            build archivees dans la branche : recettes-wasm/ (m1-emsdk407.sh,
+#            Containerfile, gen-objs-list.sh, driver407.mjs, README).
+# Build    : /home/yves/tmp/qemu-wasm-407 (surchargeable, QEMU_WASM_HOME) ;
+#            emcc 4.0.7 exact (contrainte du kit Qt), meson 1.5.0.
+# Link app : 668 objets meson (moins system_main.c.o) + groupe archives ;
+#            -sASYNCIFY=1 -sASYNCIFY_IMPORTS=ffi_call_js ; knobs wasm.prf.
+# Kit      : Qt 6.11.2 wasm_multithread (patch FIXED_MEMORY du wasm.prf).
+# Livrable de reference (POC C menage, 2026-10-27) :
+#            espsimu.wasm 37 978 396 oct.
+#            sha256 f678056ae64f8c7ecee33b76cbba0052d7b335af10a9dfcd8fc85a6037670186
+# Validation : jalons POC C M1-M4 (boot UI, flux firmware navigateur, temps
+#            virtuel 1:1, debit UART UI 15 Ko/s) — voir etude-faisabilite-wasm.md.
+# Discipline identique au desktop : reecrire cette section a chaque
+# reconstruction QEMU-wasm.
+#
 # ==================== Revision QEMU (Linux xtensa) ====================
 # Source buildee le 2026-10-28 (rejeu complet des deux scripts de generation
 #   depuis l'arbre git PROPRE a ccf33ab6f97138eb664b7dae87eff8ce64a04ef4 —
