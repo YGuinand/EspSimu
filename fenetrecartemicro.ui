@@ -415,7 +415,7 @@ QCheckBox::indicator:checked {
         </size>
        </property>
        <property name="toolTip">
-        <string>A6</string>
+        <string notr="true">IO4</string>
        </property>
        <property name="styleSheet">
         <string notr="true">LedAlpha {
@@ -457,7 +457,7 @@ QCheckBox::indicator:checked {
         </size>
        </property>
        <property name="toolTip">
-        <string>A6</string>
+        <string notr="true">IO2</string>
        </property>
        <property name="styleSheet">
         <string notr="true">LedAlpha {
@@ -627,7 +627,7 @@ QCheckBox::indicator:checked {
         </size>
        </property>
        <property name="toolTip">
-        <string>BP2</string>
+        <string notr="true">BP1 (IO12)</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
@@ -673,7 +673,7 @@ QCheckBox::indicator:checked {
         </size>
        </property>
        <property name="toolTip">
-        <string>BP3</string>
+        <string notr="true">BP2 (IO15)</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
@@ -725,7 +725,7 @@ QCheckBox::indicator:checked {
         </size>
        </property>
        <property name="toolTip">
-        <string>BP1</string>
+        <string notr="true">BP0 (IO14)</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
@@ -792,7 +792,7 @@ QCheckBox::indicator:checked {
           </size>
          </property>
          <property name="toolTip">
-          <string>AN0</string>
+          <string notr="true">IO25</string>
          </property>
          <property name="maximum">
           <number>3300</number>
@@ -831,7 +831,7 @@ QCheckBox::indicator:checked {
         </font>
        </property>
        <property name="toolTip">
-        <string>AN0</string>
+        <string notr="true">IO25</string>
        </property>
        <property name="suffix">
         <string> V</string>
@@ -916,7 +916,7 @@ QCheckBox::indicator:checked {
         </size>
        </property>
        <property name="toolTip">
-        <string>Verrouiller BP2</string>
+        <string>Verrouiller BP1</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QCheckBox::indicator {
@@ -956,7 +956,7 @@ QCheckBox::indicator:unchecked {
         </size>
        </property>
        <property name="toolTip">
-        <string>Verrouiller BP1</string>
+        <string>Verrouiller BP0</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QCheckBox::indicator {
@@ -996,7 +996,7 @@ QCheckBox::indicator:unchecked {
         </size>
        </property>
        <property name="toolTip">
-        <string>Verrouiller BP3</string>
+        <string>Verrouiller BP2</string>
        </property>
        <property name="styleSheet">
         <string notr="true">QCheckBox::indicator {
