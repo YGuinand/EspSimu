@@ -2,7 +2,7 @@
 # Assemble le zip de livraison wasm depuis un build.
 #
 # Usage : livraison-wasm/make-dist.sh [rep_build_wasm]
-#         (defaut : ../build/Wasm_Debug relatif a ce script)
+#         (defaut : ../build/Wasm relatif a ce script)
 #
 # Produit : build/espsimu-wasm.zip  (non versionne) + le staging verifiable
 # dans build/espsimu-wasm-dist/. Le sha256 du wasm est relit dans
@@ -10,7 +10,7 @@
 
 set -eu
 
-SRC=${1:-"$(dirname "$0")/../build/Wasm_Debug"}
+SRC=${1:-"$(dirname "$0")/../build/Wasm"}
 RACINE=$(cd "$(dirname "$0")/.." && pwd)
 STAGE="$RACINE/build/espsimu-wasm-dist"
 ZIP="$RACINE/build/espsimu-wasm.zip"
