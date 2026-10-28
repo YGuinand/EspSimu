@@ -10,6 +10,23 @@
 #                    qemu/build_libqemu-esp32-windows.sh  (DLL Windows)
 #
 # ==================== Revision QEMU (Linux xtensa) ====================
+# Source buildee le 2026-10-28 (rejeu complet des deux scripts de generation
+#   depuis l'arbre git PROPRE a ccf33ab6f97138eb664b7dae87eff8ce64a04ef4 —
+#   aucun commit depuis le tag libqemu-esp32-2026-10-24-2 ; preuve de
+#   reproducibilite de la chaine de livraison apres l'epoque POC wasm) :
+#   - libqemu-xtensa.so  : BIT-EXACTE au livrable du 24 oct. (45 285 152 oct.,
+#     cmp sans aucun octet different) ;
+#   - libqemu-xtensa.dll : BIT-EXACTE (49 644 688 oct., sha256 e1f36928...)
+#   - libqemu-riscv32.dll: BIT-EXACTE (46 582 810 oct., sha256 9f9b12f9...)
+#   - libqemu-riscv32.so : reproduit a 8 octets pres (offset 41, note de build
+#     horodatee) — artefact non charge par l'app (xtensa = ESP32) ; copie
+#     quand meme a 2026-10-28 11:04 pour que le livrable reflète le rejeu.
+#   Smoke runtime Linux avec les artefacts du jour (diag autostart, firmware
+#   .pio/build/full/firmware.factory.bin) : boot complet, rafales mur=virt,
+#   0 periode figee, teardown propre sur SIGTERM (main-loop sorti, cleanup
+#   fini). Tag pose au moment du rejeu : libqemu-esp32-2026-10-28 (mem
+#   commit). Historique ci-dessous inchange.
+#
 # Source buildee le 2026-10-24 (ninja incremental + relink rsp) : commit
 #   ccf33ab6f97138eb664b7dae87eff8ce64a04ef4 (2026-10-24 15:00)
 #   "ADC : caracteristique d'usine inverse + duree de conversion SAR"
@@ -19,10 +36,10 @@
 #
 # ==================== Artefacts livres ====================
 # Path                Copie le            Build
-# libqemu-xtensa.so   2026-10-24 14:48    Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus)
-# libqemu-riscv32.so  2026-10-23 22:00    Linux    riscv32   (42.4 Mo, commit 52301a8a75, non reconstruit)
-# libqemu-xtensa.dll  2026-10-24 15:23    Windows  xtensa    (49.6 Mo, commit ccf33ab6f9 ci-dessus : eFuse + modele ADC + API _mv)
-# libqemu-riscv32.dll 2026-10-24 15:23    Windows  riscv32   (46.6 Mo, meme commit ; device C3 inchangé, API counts conservee)
+# libqemu-xtensa.so   2026-10-28 11:04    Linux    xtensa    (45.3 Mo, HEAD tracte ci-dessus ; rejeu bit-exact)
+# libqemu-riscv32.so  2026-10-28 11:04    Linux    riscv32   (42.4 Mo, commit 52301a8a75 puis rejeu ccf33ab6f9 a 8 oct. pres, non chargee par l'app)
+# libqemu-xtensa.dll  2026-10-28 11:04    Windows  xtensa    (49.6 Mo, commit ccf33ab6f9 ci-dessus : eFuse + modele ADC + API _mv ; rejeu du 28 oct. bit-exact)
+# libqemu-riscv32.dll 2026-10-28 11:04    Windows  riscv32   (46.6 Mo, meme commit ; device C3 inchangee, API counts conservee ; rejeu du 28 oct. bit-exact)
 #
 # ==================== API d'injection analogique ====================
 # Rupture d'API validee avec l'application (2026-10-24) :
