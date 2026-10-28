@@ -18,7 +18,7 @@ TEMPLATE = app
 #     utilisee par mainwindow.cpp (titre fenetre principale) et
 #     apropos.cpp (jeton %APPVERSION% de la fenetre A propos)
 # ================================================================
-APP_VERSION = 2.10
+APP_VERSION = 2.11
 
 win32: VERSION = $${APP_VERSION}
 DEFINES += APP_VERSION=\\\"$${APP_VERSION}\\\"
