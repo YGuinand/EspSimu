@@ -228,6 +228,14 @@ FenetreCarteMicro::FenetreCarteMicro(Modele &m, QWidget *parent) :
 
     modele = &m;
 
+#ifdef __EMSCRIPTEN__
+    // wasm : Recharger rouvre le file chooser (copie MEMFS figée — voir
+    // on_pushButtonRefresh_clicked), d'ou le tooltip adapte.
+    ui->pushButtonRefresh->setToolTip(
+        "Recharger le fichier (re-choisir le firmware reconstruit : le "
+        "navigateur ne peut pas relire votre disque sans dialogue)");
+#endif
+
     connect(ui->bp0, SIGNAL(pressed()), modele, SLOT(appuyeBP0()));
     connect(ui->bp1, SIGNAL(pressed()), modele, SLOT(appuyeBP1()));
     connect(ui->bp2, SIGNAL(pressed()), modele, SLOT(appuyeBP2()));
@@ -399,6 +407,17 @@ void FenetreCarteMicro::accepteFirmware(const QString &fichier)
 
 void FenetreCarteMicro::on_pushButtonRefresh_clicked()
 {
+#ifdef __EMSCRIPTEN__
+    // wasm : le fichier affiché est une copie MEMFS figée au moment de
+    // l'upload — la relecture directe donnerait les mêmes octets (le
+    // navigateur ne peut pas relire le disque sans dialogue, pas d'API de
+    // ré-acquisition silencieuse sur Firefox). Recharger rouvre donc le
+    // file chooser : re-uploader le firmware reconstruit rejoue le flux
+    // Ouvrir (accepteFirmware -> loadEsp32Firmware : reprogrammation de la
+    // flash + redémarrage immédiat si la carte tourne).
+    on_pushButtonOuvrir_clicked();
+    return;
+#endif
     QString fichier = ui->fichier->text();
     if (fichier.isEmpty()) return;
     // Carte en cours, la reprogrammation + redemarrage sont geres par loadEsp32Firmware

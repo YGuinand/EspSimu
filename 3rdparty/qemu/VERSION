@@ -39,15 +39,21 @@
 # Link app : 668 objets meson (moins system_main.c.o) + groupe archives ;
 #            -sASYNCIFY=1 -sASYNCIFY_IMPORTS=ffi_call_js ; knobs wasm.prf.
 # Kit      : Qt 6.11.2 wasm_multithread (patch FIXED_MEMORY du wasm.prf).
-# Livrable de reference (fix charge CPU pause, 2026-10-28) :
-#            espsimu.wasm 37 982 678 oct.
-#            sha256 2583e23a45b0b63e481475b99e3af4d5bb9f3a8e519ff23b6753125c8ac0baec
+# Livrable de reference (fix Recharger wasm, 2026-10-28) :
+#            espsimu.wasm 37 982 429 oct.
+#            sha256 4aa683641f2f70371571f3b5d513653f72a226b6870da2e49f3a189431de01fe
+#            (precedent : fix charge CPU pause, sha256 2583e23a..., 37 982 678
+#            oct.) — meme fix throttle inclus.
 # Validation : Playwright firefox headless + EspDiag (?qargs=ESPSIMU_DIAG=1,
 #            pont qargs->env) : firmware_merged.bin, marche 23-36k it/s
 #            (compteur qemu_picsimlab_mainloop_iters), Power OFF -> 197-198
 #            it/s (throttle 5 ms, contre ~33 000 avant : facteur ~170),
 #            reprise -> retour marche, firmware reboote. Historique M1-M4 :
 #            etude-faisabilite-wasm.md.
+#            Fix Recharger wasm : le bouton rouvre le file chooser (la copie
+#            MEMFS de l'upload est figee — pas de relecture disque possible
+#            dans le navigateur) -> re-upload du firmware reconstruit ->
+#            reprogrammation + reset valides deux cycles de suite.
 # Discipline identique au desktop : reecrire cette section a chaque
 # reconstruction QEMU-wasm.
 #
