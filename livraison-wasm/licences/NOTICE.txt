@@ -1,0 +1,28 @@
+EspSimu — notice de licences du livrable WebAssembly
+=====================================================
+
+Ce livrable combine trois œuvres :
+
+1. EspSimu (code applicatif Qt/C++, page hôte, scripts de livraison)
+   Licence : MIT — voir LICENSE-EspSimu-MIT.txt.
+   Sources : dépôt EspSimu (https://github.com/YGuinand/EspSimu).
+
+2. QEMU 10.1 (portage WebAssembly, lié statiquement dans espsimu.wasm)
+   Licence : GNU GPL version 2 (seulement) — voir LICENSE-QEMU-GPL-2.0.txt.
+   Sources du portage : https://github.com/YGuinand/EspSimu_qemu
+   (branche poc-b). La distribution du binaire combiné est assortie aux
+   obligations GPL-2.0 pour la partie QEMU : le code source complet du
+   portage est publiquement accessible à l'adresse ci-dessus.
+
+3. Qt 6.11 (bibliothèques open source, liaison statique)
+   Licence : GNU LGPL version 3 — voir LICENSE-Qt-LGPL-3.0.txt.
+   Conformément à l'article 4 de la LGPL-3.0 (liaison statique) :
+   - les sources de l'application (Corresponding Application Code) et la
+     recette de build qmake permettant de relinker le livrable avec une
+     version modifiée de Qt sont fournies dans le dépôt EspSimu ;
+   - ce livrable est accompagné des textes GPL-3.0 (via le texte LGPL-3.0,
+     qui y renvoie) et LGPL-3.0 ;
+   - Qt est compilé ici depuis les sources officielles non modifiées.
+
+Qt est également redistribuable sous GPL-3.0 ; le choix LGPL-3.0 est retenu
+ici pour ce livrable.
