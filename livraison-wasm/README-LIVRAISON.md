@@ -14,6 +14,7 @@ livrable autonome — il se sert et s'exécute tel quel, sans installation.
 | `qtloader.js`       | chargement/démarrage de l'application Qt              |
 | `qtlogo.svg`        | écran de chargement                                   |
 | `serve-wasm.py`     | serveur local avec les en-têtes requis (COOP/COEP)    |
+| `.htaccess`         | configuration Apache équivalente (à déposer tel quel) |
 | `licences/`         | textes de licence et notices                          |
 
 ## Lancement
@@ -31,6 +32,28 @@ posés par le serveur sont obligatoires : le simulateur est multi-thread et le
 navigateur ne fournit `SharedArrayBuffer` qu'aux pages ainsi isolées. Un
 hébergeur statique sans en-têtes personnalisables (GitHub Pages, p. ex.)
 n'est pas utilisable tel quel.
+
+## Hébergement Apache
+
+Le dossier livré contient un `.htaccess` prêt à l'emploi (en-têtes
+COOP/COEP, anti-cache, MIME `application/wasm`). Prérequis : `mod_headers`
+activé et, pour un `.htaccess`, `AllowOverride FileInfo` sur ce répertoire ;
+sinon recopier les directives dans le VirtualHost.
+
+Deux contraintes à ne pas oublier :
+
+- **HTTPS obligatoire** : `SharedArrayBuffer` n'existe que dans un contexte
+  sécurisé (`https://…` ou `http://localhost`) — un `http://serveur.lan/`
+  refusera les threads wasm même avec les bons en-têtes.
+- **Paire js/wasm cohérente** : le `Cache-Control: no-cache` du `.htaccess`
+  fait revalider les fichiers à chaque chargement (réponse `304`, pas de
+  re-téléchargement du wasm) — un `espsimu.js` ancien ne peut plus se
+  marier avec un `espsimu.wasm` neuf. Variante à cache agressif : un
+  dossier par version avec `max-age=31536000, immutable` et bascule par
+  lien symbolique.
+
+Vérification après déploiement : la console du navigateur doit afficher
+`crossOriginIsolated: true` sur la page.
 
 ## Navigateurs
 

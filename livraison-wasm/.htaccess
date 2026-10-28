@@ -1,0 +1,24 @@
+# EspSimu wasm — a deposer tel quel dans le dossier du livrable sur Apache
+# (ou recopier ces directives dans le VirtualHost).
+#
+# Requis : mod_headers charge ; pour un .htaccess, AllowOverride FileInfo
+# sur ce repertoire.
+#
+# Rappels :
+#   - SharedArrayBuffer (threads wasm) exige l'isolement cross-origin
+#     ci-dessous ET un contexte securise : HTTPS, ou http://localhost.
+#   - espsimu.js et espsimu.wasm doivent toujours voyager en paire
+#     coherente : le no-cache fait revalider les fichiers a chaque
+#     chargement (reponse 304, pas de re-telechargement) — un espsimu.js
+#     ancien ne peut plus se marier avec un espsimu.wasm neuf.
+
+<IfModule mod_headers.c>
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header set Cross-Origin-Embedder-Policy "require-corp"
+    Header set Cache-Control "no-cache"
+</IfModule>
+
+# MIME correct pour la compilation streaming du wasm.
+<IfModule mod_mime.c>
+    AddType application/wasm .wasm
+</IfModule>

@@ -33,6 +33,7 @@ mkdir -p "$STAGE/licences"
 cp "$SRC/espsimu.html" "$SRC/espsimu.js" "$SRC/espsimu.wasm" \
    "$SRC/qtloader.js" "$SRC/qtlogo.svg" "$STAGE/"
 cp "$(dirname "$0")/serve-wasm.py" "$STAGE/"
+cp "$(dirname "$0")/.htaccess" "$STAGE/"
 sed -e "s/@SH256@/$SH256/" -e "s/@TAILLE@/$TAILLE/" \
     "$(dirname "$0")/README-LIVRAISON.md" > "$STAGE/README-LIVRAISON.md"
 cp "$(dirname "$0")"/licences/* "$STAGE/licences/"
