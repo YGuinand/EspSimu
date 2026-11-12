@@ -66,6 +66,38 @@
 # reconstruction QEMU-wasm.
 #
 # ==================== Revision QEMU (Linux xtensa) ====================
+# Source buildee le 2026-11-03 (build complet depuis l'arbre git PROPRE a
+#   ccf33ab6f97138eb664b7dae87eff8ce64a04ef4 — aucun commit depuis le tag
+#   libqemu-esp32-2026-10-28 ; meme code source que le livrable du 28 oct.,
+#   seule la toolchain Fedora a avance). Deux deviations locales de chaine,
+#   code generé QEMU in change :
+#   - gcc 16 (snapshot 2026-08-19) plus sever : la libfdt vendue
+#     (subprojects/dtc, sous-module) degager -Werror sur un const abandonné
+#     de memchr (fdt_overlay.c:461) -> rejeu avec
+#     --extra-cflags='-fPIC -Wno-error=discarded-qualifiers'
+#     (copie du script dans /tmp, depot qemu/ non modifié) ;
+#   - graphe -latomic : meson resolve libatomic sur l'archive STATIQUE
+#     /usr/lib/gcc/x86_64-redhat-linux/16/libatomic.a (non-PIC, symbole
+#     casch libat_compare_exchange_16_i1) -> R_X86_64_32 impossible dans un
+#     .so ; au relink du .so seulement, le token est substitué par
+#     -l:libatomic.so.1 (partagée, /usr/lib64) — l'exe qemu-system-* du
+#     build standard prend l'archive statique sans incident (non-PIE).
+#   Artifacts (sha256) :
+#   - libqemu-xtensa.so  : 44 806 464 oct.,
+#     4a967bc673adbef98c3dd465821c6baa41ab6c3e82a4d15119dbe1faed984b71 —
+#     PAS bit-exacte au livrable du 28 oct. (outil. differente, libatomic
+#     partagée au link) ; meme ABI (qemu_picsimlab_set_apin_mv , ancien
+#     symbole counts bien absent).
+#   - libqemu-riscv32.so : 41 932 256 oct.,
+#     67ae2268f55659403d43fbc90b3bd32f95d08a23696a34ad5a943a3f8bbb3a7c —
+#     artefact non charge par l'app (xtensa = ESP32) ; copies quand meme
+#     par la recette.
+#   VALIDATION DIAG NON FAITE sur ces artefacts : le firmware de smoke test
+#   (testEspSimu/.pio/build/full/firmware.factory.bin) n'est pas present sur
+#   la machine de ce build — a rejouer avant livraison :
+#     ESPSIMU_DIAG=1 ./espsimu --diag-autostart <firmware.bin>
+#   Tag pose au moment du build : libqemu-esp32-2026-11-03 (mem commit).
+#
 # Source buildee le 2026-10-28 (rejeu complet des deux scripts de generation
 #   depuis l'arbre git PROPRE a ccf33ab6f97138eb664b7dae87eff8ce64a04ef4 —
 #   aucun commit depuis le tag libqemu-esp32-2026-10-24-2 ; preuve de
@@ -96,6 +128,8 @@
 # libqemu-riscv32.so  2026-10-28 11:04    Linux    riscv32   (42.4 Mo, commit 52301a8a75 puis rejeu ccf33ab6f9 a 8 oct. pres, non chargee par l'app)
 # libqemu-xtensa.dll  2026-10-28 11:04    Windows  xtensa    (49.6 Mo, commit ccf33ab6f9 ci-dessus : eFuse + modele ADC + API _mv ; rejeu du 28 oct. bit-exact)
 # libqemu-riscv32.dll 2026-10-28 11:04    Windows  riscv32   (46.6 Mo, meme commit ; device C3 inchangee, API counts conservee ; rejeu du 28 oct. bit-exact)
+# libqemu-xtensa.so   2026-11-03 16:29    Linux    xtensa    (44.8 Mo, meme commit ccf33ab6f9 ; rebuild gcc 16 + libatomic partagee, section ci-dessus ; PAS bit-exacte au 28 oct.)
+# libqemu-riscv32.so  2026-11-03 16:29    Linux    riscv32   (41.9 Mo, idem ; non chargee par l'app)
 #
 # ==================== API d'injection analogique ====================
 # Rupture d'API validee avec l'application (2026-10-24) :
