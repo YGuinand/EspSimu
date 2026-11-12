@@ -39,27 +39,27 @@
 # Link app : 668 objets meson (moins system_main.c.o) + groupe archives ;
 #            -sASYNCIFY=1 -sASYNCIFY_IMPORTS=ffi_call_js ; knobs wasm.prf.
 # Kit      : Qt 6.11.2 wasm_multithread (patch FIXED_MEMORY du wasm.prf).
-# Livrable de référence (release wasm 2.11, 2026-10-28) :
-#            espsimu.wasm 37 982 400 oct.
-#            sha256 dcefa5007829f673d614a22038b6b5bca0cc68c691095b00fc354f95fab9a2df
-#            (précédents : fix Recharger 4aa68364..., 37 982 429 oct. ;
-#            fix charge CPU pause 2583e23a..., 37 982 678 oct.) — même fix
-#            throttle inclus. APP_VERSION 2.11 (bump utilisateur) cuite dans
-#            le binaire (mainwindow.cpp, apropos.cpp).
+# Livrable de référence (release wasm 2.20, 2026-11-12) :
+#            espsimu.wasm 37 986 543 oct.
+#            sha256 ecddf656efa98281c6e34e50413aefbd6aa201ffbf52fe1d9cdee5ac5d383062
+#            (précédent : release 2.11 dcefa500..., 37 982 400 oct. — mêmes
+#            objets QEMU-wasm (668, arbre /home/yves/tmp/qemu-wasm-407), bump
+#            APP_VERSION 2.11 -> 2.20 : +4 143 oct. de code app).
+#            APP_VERSION 2.20 cuite dans le binaire (mainwindow.cpp,
+#            apropos.cpp).
 # Validation : Playwright firefox headless + EspDiag (?qargs=ESPSIMU_DIAG=1,
-#            pont qargs->env) : firmware_merged.bin, marche 23-36k it/s
+#            pont qargs->env), 2026-11-12 : firmware_merged.bin (4 Mo) uploadé
+#            via le file chooser -> /espsimu_upload/firmware_merged.bin ->
+#            boot complet (machine prete ; app full : LCD Grove allumé, rampe
+#            duty=1000..8000 au terminal, IO26/27 à 3 V). Marche 28-43k it/s
 #            (compteur qemu_picsimlab_mainloop_iters), Power OFF -> 197-198
-#            it/s (throttle 5 ms, contre ~33 000 avant : facteur ~170),
-#            reprise -> retour marche, firmware reboote. Historique M1-M4 :
-#            etude-faisabilite-wasm.md.
-#            Fix Recharger wasm : le bouton rouvre le file chooser (la copie
-#            MEMFS de l'upload est figée — pas de relecture disque possible
-#            dans le navigateur) -> re-upload du firmware reconstruit ->
-#            reprogrammation + reset validés deux cycles de suite.
-#            Chromium : moteur validé (flux complet avec picker simulé — le
-#            picker natif showOpenFilePicker n'est pas interceptable en
-#            headless ; Qt l'utilise dès que l'API existe,
-#            qwasmlocalfileaccess.cpp).
+#            it/s (pause=oui, throttle 5 ms), reprise -> retour marche.
+#            Recharger x2 : re-upload -> reprogrammation + reset + reboot,
+#            sans trap. 0 periode figée, 0 symbole manquant. Historique
+#            M1-M4 et fix Recharger (2.11) : etude-faisabilite-wasm.md.
+#            Chromium : moteur aussi validé à la 2.11 (le picker natif
+#            showOpenFilePicker n'est pas interceptable en headless ; Qt
+#            l'utilise dès que l'API existe, qwasmlocalfileaccess.cpp).
 #            Livraison : livraison-wasm/make-dist.sh assemble
 #            build/espsimu-wasm.zip (vérifie le sha256 contre cette section).
 # Discipline identique au desktop : reecrire cette section a chaque
