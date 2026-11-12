@@ -22,6 +22,7 @@ LedAlpha::LedAlpha(QWidget *parent) :
     setScene(&gs);
     courantMax = 20e-3;
     courant = 0;
+    variation = 0;   // 0 : toute variation de courant met a jour l'opacite
 }
 
 void LedAlpha::setColor(Couleur c)

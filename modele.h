@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QMap>
+#include <math.h>
 #include <functional>
 
 // === ESP32 ===
@@ -132,15 +133,49 @@ protected :
     double vSeuil;
     double courantMax;   // courant pour opacite 100 % (affiche : 20 mA)
 
+    // Signal PWM LEDC memorise pour le rendu (voir setPwmSignal)
+    double pwmRapport;    // rapport cyclique (0.0 .. 1.0)
+    double pwmFrequence;  // frequence du signal (Hz)
+    bool   pwmClignote;   // true : rendu en clignotement (basse frequence)
+
 signals :
     void setCourant(double i);
 
 public :
-    LedCNX(double res=175, double seuil=1.5) {  courant=0;  vSeuil=seuil;  courantMax=20e-3;  setSrc(0, res);  }
+    // En dessous de cette frequence, l'oeil distingue les etats successifs du signal
+    // PWM : la led clignote reellement. Au-dessus, la persistance retinienne lisse le
+    // signal et la luminosite percue devient le rapport cyclique.
+    static constexpr double SEUIL_CLIGNOTEMENT_HZ = 100.0;
+
+    LedCNX(double res=175, double seuil=1.5) {  courant=0;  vSeuil=seuil;  courantMax=20e-3;
+        pwmRapport=0;  pwmFrequence=0;  pwmClignote=false;  setSrc(0, res);  }
     virtual void modifie(double v) {  courant=(v>vSeuil) ? (v-vSeuil)/getZ() : 0;  emit setCourant(courant); }
-    // PWM : la led brille a pleine intensite pendant le rapport cyclique, eteinte le reste.
-    // L'oeil fait la moyenne : luminosite percue = rapport cyclique (0.0 .. 1.0).
-    void setPwmDuty(double duty) {  courant=qBound(0.0, duty, 1.0)*courantMax;  emit setCourant(courant); }
+
+    // Applique un signal PWM LEDC a la led. Deux regimes selon la frequence :
+    //  - frequence >= SEUIL_CLIGNOTEMENT_HZ (et rapports cycliques extremes 0/1) :
+    //    luminosite percue = rapport cyclique (0.0 .. 1.0), etat continu ;
+    //  - frequence < SEUIL_CLIGNOTEMENT_HZ : la led clignote, son etat instantane
+    //    est evalue a 1 kHz par evalPwm() (appelee depuis Modele::updateLedPwm).
+    void setPwmSignal(double rapport, double frequence) {
+        pwmRapport = qBound(0.0, rapport, 1.0);
+        pwmFrequence = frequence;
+        pwmClignote = (frequence > 0.0 && frequence < SEUIL_CLIGNOTEMENT_HZ
+                       && pwmRapport > 0.0 && pwmRapport < 1.0);
+        if (!pwmClignote) {   // regime moyenne (ou tout/allume, tout/eteint)
+            courant = pwmRapport * courantMax;
+            emit setCourant(courant);
+        }
+    }
+    bool isPwmClignote() const {  return pwmClignote;  }
+    // Regime clignotement : etat instantane du signal a l'instant t (secondes, meme
+    // origine que pwmChrono). Allumee tant que la phase dans la periode est inferieure
+    // au rapport cyclique. Sans effet (rapide) dans le regime moyenne.
+    void evalPwm(double t) {
+        if (!pwmClignote) return;
+        double phase = fmod(t * pwmFrequence, 1.0);
+        double i = (phase < pwmRapport) ? courantMax : 0.0;
+        if (i != courant) {  courant = i;  emit setCourant(courant);  }
+    }
     double getCourant() {  return courant;  }
 };
 
@@ -226,7 +261,7 @@ protected :
     QMap<int,int>  pwmPinsPrec;   // dernier routage GPIO -> canal LEDC connu
     QMap<int,bool> m_gpioOutputLevels;  // dernier niveau digital connu par GPIO (pour l'oscillo)
 
-    // === Capteurs IR (1 kHz) ===
+    // === Capteurs IR + clignotement LED PWM (1 kHz) ===
     QTimer        *irTimer;
 
 signals :
@@ -370,6 +405,7 @@ public slots :
     void onEsp32Gpio(int pin, bool level);
     void updatePwm();   // 50 Hz : moteurs, odometrie, UI
     void updateIrSensors();  // 1 kHz : capteurs IR + envoi QEMU
+    void updateLedPwm();  // 1 kHz : clignotement des LED sous PWM basse frequence
 };
 
 #endif // MODELE_H

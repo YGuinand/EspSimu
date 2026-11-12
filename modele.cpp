@@ -100,6 +100,9 @@ Modele::Modele()
     // === Capteurs IR (1 kHz) ===
     irTimer = new QTimer(this);
     connect(irTimer, &QTimer::timeout, this, &Modele::updateIrSensors);
+    // La meme base de temps sert au clignotement des LED sous PWM basse frequence
+    // (les bascules doivent etre datees au ms pres, voir updateLedPwm)
+    connect(irTimer, &QTimer::timeout, this, &Modele::updateLedPwm);
 }
 
 Modele::~Modele()
@@ -880,9 +883,9 @@ void Modele::stopEsp32()
     moteurG->reset();
     moteurD->reset();
     ledA6.setValue(0.0);
-    ledA6.setPwmDuty(0.0);
+    ledA6.setPwmSignal(0.0, 0.0);
     led2.setValue(0.0);
-    led2.setPwmDuty(0.0);
+    led2.setPwmSignal(0.0, 0.0);
 
     // Pause (le thread QEMU reste vivant)
     esp32->pause();
@@ -935,12 +938,17 @@ void Modele::onEsp32Gpio(int pin, bool level)
     int gpio = pin - 1;
     m_gpioOutputLevels[gpio] = level;   // memorise le niveau digital pour l'oscillo
 
+    // Broche routee vers un signal LEDC (GPIO matrix) : le pad physique recoit la
+    // forme d'onde PWM, pas le registre de sortie digital. Ignorer les niveaux
+    // digitaux pour ne pas entrer en conflit avec le rendu PWM de la LED.
+    bool pwmRoute = pwmPinsPrec.contains(gpio);
+
     switch (pin) {
     case Esp32Pins::pinLogique(Esp32Pins::LED_VERTE):   // ledA6 (verte)
-        ledA6.setValue(level ? 5.0 : 0.0);
+        if (!pwmRoute) ledA6.setValue(level ? 5.0 : 0.0);
         break;
     case Esp32Pins::pinLogique(Esp32Pins::LED_JAUNE):   // led2 (jaune)
-        led2.setValue(level ? 5.0 : 0.0);
+        if (!pwmRoute) led2.setValue(level ? 5.0 : 0.0);
         break;
     default:
         break;
@@ -977,20 +985,24 @@ void Modele::updatePwm()
         pwmPinsPrec = pins;
     }
 
-    // LED verte (IO4) : sous PWM, la led brille a pleine intensite pendant le rapport
-    // cyclique et est eteinte le reste. L'oeil fait la moyenne : luminosite percue
+    // LED verte (IO4) : sous PWM LEDC, deux regimes selon la frequence configuree.
+    // Au-dessus de SEUIL_CLIGNOTEMENT_HZ, l'oeil fait la moyenne : luminosite percue
     // proportionnelle au rapport cyclique (0 % = eteinte, 100 % = pleine luminosite).
-    if (pins.contains(Esp32Pins::LED_VERTE)) {
-        float dutyLed = esp32->pwmDuty(pins.value(Esp32Pins::LED_VERTE));
+    // En dessous, la led clignote reellement (etat instantane evalue a 1 kHz par
+    // updateLedPwm).
+    int canalLed = pins.value(Esp32Pins::LED_VERTE, -1);
+    if (canalLed >= 0) {
+        float dutyLed = esp32->pwmDuty(canalLed);
         if (dutyLed >= 0.0f)
-            ledA6.setPwmDuty(dutyLed / 100.0);
+            ledA6.setPwmSignal(dutyLed / 100.0, esp32->pwmFreq(canalLed));
     }
 
     // LED jaune (IO2) : idem sous PWM
-    if (pins.contains(Esp32Pins::LED_JAUNE)) {
-        float dutyLed = esp32->pwmDuty(pins.value(Esp32Pins::LED_JAUNE));
+    canalLed = pins.value(Esp32Pins::LED_JAUNE, -1);
+    if (canalLed >= 0) {
+        float dutyLed = esp32->pwmDuty(canalLed);
         if (dutyLed >= 0.0f)
-            led2.setPwmDuty(dutyLed / 100.0);
+            led2.setPwmSignal(dutyLed / 100.0, esp32->pwmFreq(canalLed));
     }
 
     int ch1 = pins.value(26, 0);
@@ -1081,4 +1093,24 @@ void Modele::updateIrSensors()
     // Pont diviseur : la tension batterie bouge a 50 Hz (updatePwm), les changements
     // de la sortie du pont vers QEMU sont pousses ici a la cadence 1 kHz
     appliquePontDivEsp32();
+}
+
+// ============================================================================
+// updateLedPwm() : appelee a 1 kHz par irTimer (meme base de temps que les
+// capteurs IR, 50 fois plus vite que updatePwm).
+// Regime clignotement des LED (PWM LEDC de frequence < SEUIL_CLIGNOTEMENT_HZ) :
+// evalue l'etat instantane du signal, allumee/eteinte selon la phase dans la
+// periode. Sans effet dans le regime moyenne (luminosite fixee par updatePwm).
+// La cadence 1 kHz est necessaire pour dater les bascules : a 20 ms (pwmTimer),
+// un signal de 50 Hz serait echantillonne exactement a sa propre periode et
+// semblerait gele (aliasing).
+// ============================================================================
+void Modele::updateLedPwm()
+{
+    if (!esp32EnCours || !esp32) return;
+
+    // Temps ecoule depuis la mise sous tension (origine commune a toutes les LED)
+    double t = pwmChrono->elapsed() / 1000.0;
+    ledA6.evalPwm(t);
+    led2.evalPwm(t);
 }
