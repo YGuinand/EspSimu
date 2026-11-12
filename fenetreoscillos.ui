@@ -67,7 +67,7 @@
           <number>0</number>
          </property>
          <property name="maximum">
-          <number>99</number>
+          <number>160</number>
          </property>
          <property name="value">
           <number>29</number>
@@ -153,6 +153,12 @@ de temps</string>
         <widget class="QDial" name="baseTpsOscillo2">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>160</number>
          </property>
          <property name="value">
           <number>29</number>

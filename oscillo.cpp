@@ -46,6 +46,9 @@ Oscillo::Oscillo(QChartView *qp)
 
 void Oscillo::setBaseTemps(int d)
 {
+    // Echelle log : un cran de cadran = exp(0,085619911) = *1,089.
+    // d=0 -> dt=1 top 48 MHz (fenetre 5,2 microsecondes) ; d=160 ->
+    // dt=890203 tops (fenetre 4,64 s, soit 4,6 periodes d'un signal 1 Hz).
     dt = exp(0.085619911*d);
 
     unite = 1;
