@@ -14,11 +14,11 @@ TEMPLATE = app
 # ================================================================
 # Version de l'application : source unique, diffusee deux fois
 #   - dans la ressource de l'exe Windows (espsimu_resource.rc)
-#   - dans tout le C++ via la macro APP_VERSION (litteral "2.10"),
+#   - dans tout le C++ via la macro APP_VERSION (litteral "2.20"),
 #     utilisee par mainwindow.cpp (titre fenetre principale) et
 #     apropos.cpp (jeton %APPVERSION% de la fenetre A propos)
 # ================================================================
-APP_VERSION = 2.11
+APP_VERSION = 2.20
 
 win32: VERSION = $${APP_VERSION}
 DEFINES += APP_VERSION=\\\"$${APP_VERSION}\\\"
