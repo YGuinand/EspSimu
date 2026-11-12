@@ -55,7 +55,9 @@ compile_commands.json
 *_qmlcache.qrc
 
 /build/
-# binaire et artefacts runtime du simulateur
+# binaire et artefacts runtime du simulateur (nom selon plateforme :
+# espSimu sous Linux, EspSimu.exe sous Windows) ; l'ini est inchange
 /espsimu
+/espSimu
 /espsimu.ini
 /pc-bios

@@ -8,12 +8,19 @@ QT       += core gui xml svg core5compat charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = espsimu
+# Nom de l'executable selon la cible :
+#   - Windows : EspSimu.exe (majuscule/minuscule voulue, lancement de l'eleve)
+#   - Linux   : espSimu
+#   - wasm    : espsimu (noms des artefacts de livraison espsimu.html/.js/.wasm
+#               figes dans patch-html-qargs.py et livraison-wasm)
+win32: TARGET = EspSimu
+wasm: TARGET = espsimu
+!wasm:!win32: TARGET = espSimu
 TEMPLATE = app
 
 # ================================================================
 # Version de l'application : source unique, diffusee deux fois
-#   - dans la ressource de l'exe Windows (espsimu_resource.rc)
+#   - dans la ressource de l'exe Windows (rc generee par qmake : EspSimu_resource.rc)
 #   - dans tout le C++ via la macro APP_VERSION (litteral "2.20"),
 #     utilisee par mainwindow.cpp (titre fenetre principale) et
 #     apropos.cpp (jeton %APPVERSION% de la fenetre A propos)
@@ -155,8 +162,9 @@ wasm {
     QMAKE_LFLAGS += -sFORCE_FILESYSTEM
     QMAKE_LFLAGS += -sALLOW_TABLE_GROWTH
 
-    # POC C : le espsimu.html regenere par la regle de link du kit ne passe pas
-    # les arguments de l'URL a qtLoad — re-patch idempotent apres chaque link.
-    QMAKE_POST_LINK += python3 $$PWD/patch-html-qargs.py $$OUT_PWD/espsimu.html
+    # POC C : le html regenere par la regle de link du kit ne passe pas
+    # les arguments de l'URL a qtLoad — re-patch idempotent apres chaque link
+    # (nom du kit = $${TARGET}, espsimu pour le build wasm).
+    QMAKE_POST_LINK += python3 $$PWD/patch-html-qargs.py $$OUT_PWD/$${TARGET}.html
 }
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Assemble le paquet Windows deployable pour EspSimu :
-#   espsimu.exe
+#   EspSimu.exe
 # + toutes les dependances DLL recursives du sys-root MinGW (hors systeme Windows)
 # + plugins Qt (platforms, styles, imageformats, iconengines, netw. info, tls)
 # + pc-bios (ROM ESP32 : esp32-v3-rom*.bin)
@@ -23,8 +23,8 @@ OBJDUMP="${CROSS:-x86_64-w64-mingw32-}objdump"
 PKG="${1:-/tmp/espsimu-windows}"
 SIMU_HOME="$(cd "$(dirname "$0")" && pwd)"
 
-# exe : priorite a ESPSIMU_EXE, sinon celui du shadow-build crois� habituel
-EXE="${ESPSIMU_EXE:-$SIMU_HOME/build/Windows_Cross/release/espsimu.exe}"
+# exe : priorite a ESPSIMU_EXE, sinon celui du shadow-build croise habituel
+EXE="${ESPSIMU_EXE:-$SIMU_HOME/build/Windows_Cross/release/EspSimu.exe}"
 [ -f "$EXE" ] || { echo "ERREUR: $EXE introuvable (construisez d'abord l'exe croise, cf. AGENTS.md)"; exit 1; }
 echo "exe: $EXE"
 
