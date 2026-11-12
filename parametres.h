@@ -23,6 +23,13 @@ public:
     static void setPisteRecent(const QString &fichier);
     static QString getPisteRecent();
 
+    // Boite de dialogue d'ouverture du firmware (menu Fichier, coche/decoche) :
+    // boite fichier du systeme (true) ou boite simplifiee dediee aux firmwares
+    // (false). Defaut selon la plateforme : systeme sous Windows, simplifiee
+    // sous Linux ; le choix explicite memorise dans l'ini prime toujours.
+    static void setDialogueSysteme(bool systeme);
+    static bool getDialogueSysteme();
+
 private:
     // Cle "Section/dernier" du fichier d'initialisation : une section par
     // type de donnee.

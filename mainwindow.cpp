@@ -13,6 +13,9 @@
 #include <QApplication>
 #include <QThread>
 #include <QProgressDialog>
+#include <QSignalBlocker>
+
+#include "parametres.h"
 
 // #define VERSION_SANS_GAMELLE
 
@@ -100,6 +103,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     apropos = new Apropos();
     connect(ui->action_propos, SIGNAL(triggered()), SLOT(action_apropos()));
+
+    // Option de menu (cochee/decochee) : etat initial lu dans espsimu.ini.
+    // Signaux bloques pendant l'init : setChecked ne doit pas declencher la
+    // sauvegarde (l'ini n'est cree qu'a la premiere ecriture reelle).
+    {
+        QSignalBlocker bloqueur(ui->action_Dialogue_systeme);
+        ui->action_Dialogue_systeme->setChecked(Parametres::getDialogueSysteme());
+    }
 
     subWindow3->hide();
     subWindow4->hide();
@@ -194,6 +205,15 @@ void MainWindow::on_action_Mode_complet_triggered()
     disconnect(ui->action_Oscilloscopes, SIGNAL(triggered()), this, SLOT(organiser()));
     disconnect(micro, SIGNAL(estCache(bool)), this, SLOT(organiser()));
     disconnect(oscillos, SIGNAL(estCache(bool)), this, SLOT(organiser()));
+}
+
+// Menu Fichier : boite de dialogue fichier du systeme pour l'ouverture du
+// firmware (cochee) ou boite simplifiee dediee aux firmwares (decochee).
+// L'option est memorisee dans espsimu.ini ; FenetreCarteMicro la relit au
+// moment d'ouvrir (fenetrecartemicro.cpp).
+void MainWindow::on_action_Dialogue_systeme_toggled(bool checked)
+{
+    Parametres::setDialogueSysteme(checked);
 }
 
 void MainWindow::organiser()

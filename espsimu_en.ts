@@ -9,7 +9,7 @@
         <translation type="unfinished">About</translation>
     </message>
     <message>
-        <location filename="apropos.ui" line="125"/>
+        <location filename="apropos.ui" line="99"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -18,31 +18,14 @@ li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:14pt; font-weight:600;&quot;&gt;Simulateur de carte ESP32&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;Version 2.00&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;Version %APPVERSION%&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;Qt 6.5.1&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;;&quot;&gt;Yves Guinand&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;2010-2026 IUT de Cachan&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Simulateur de carte PIC&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Version 1.04 (27/03/2013)&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Yves Guinand&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;2010-2013&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;pour &lt;/span&gt;&lt;a href=&quot;http://www.iutenligne.net/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;iut en ligne&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;PIC Board Simulator&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Version 1.04 (03/27/2013)&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Yves Guinand&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;2010-2013&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;&lt;/span&gt;&lt;a href=&quot;http://www.iutenligne.net/&quot;&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline; color:#0057ae;&quot;&gt;iut en ligne&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="apropos.ui" line="163"/>
+        <location filename="apropos.ui" line="136"/>
         <source>Fermer</source>
         <translation type="unfinished">Close</translation>
     </message>
@@ -86,37 +69,10 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Contrast</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.ui" line="418"/>
-        <location filename="fenetrecartemicro.ui" line="460"/>
-        <source>A6</source>
-        <translation type="unfinished">A6</translation>
-    </message>
-    <message>
         <location filename="fenetrecartemicro.ui" line="549"/>
         <location filename="fenetrecartemicro.ui" line="586"/>
         <source>Ecran LCD</source>
         <translation type="unfinished">LCD screen</translation>
-    </message>
-    <message>
-        <location filename="fenetrecartemicro.ui" line="630"/>
-        <source>BP2</source>
-        <translation type="unfinished">PushButton2</translation>
-    </message>
-    <message>
-        <location filename="fenetrecartemicro.ui" line="676"/>
-        <source>BP3</source>
-        <translation type="unfinished">PushButton3</translation>
-    </message>
-    <message>
-        <location filename="fenetrecartemicro.ui" line="728"/>
-        <source>BP1</source>
-        <translation type="unfinished">PushButton1</translation>
-    </message>
-    <message>
-        <location filename="fenetrecartemicro.ui" line="795"/>
-        <location filename="fenetrecartemicro.ui" line="834"/>
-        <source>AN0</source>
-        <translation type="unfinished">AN0</translation>
     </message>
     <message>
         <location filename="fenetrecartemicro.ui" line="837"/>
@@ -139,12 +95,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Lock PushButton3</translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.cpp" line="100"/>
+        <location filename="fenetrecartemicro.cpp" line="377"/>
         <source>Choisir un firmware</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrecartemicro.cpp" line="102"/>
+        <location filename="fenetrecartemicro.cpp" line="379"/>
         <source>Firmware ESP32 (*.bin)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,20 +216,83 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.cpp" line="207"/>
-        <location filename="fenetrepiste.cpp" line="209"/>
-        <location filename="fenetrepiste.cpp" line="229"/>
+        <location filename="fenetrepiste.cpp" line="210"/>
+        <location filename="fenetrepiste.cpp" line="212"/>
+        <location filename="fenetrepiste.cpp" line="234"/>
         <source>Fichier PIS (*.pis)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.cpp" line="209"/>
+        <location filename="fenetrepiste.cpp" line="212"/>
         <source>Charger les données d&apos;une piste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="fenetrepiste.cpp" line="229"/>
+        <location filename="fenetrepiste.cpp" line="234"/>
         <source>Sauvegarder les données d&apos;une piste</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FenetreTerminal</name>
+    <message>
+        <location filename="fenetreterminal.cpp" line="110"/>
+        <source>Terminal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="115"/>
+        <source>Liaison série UART0 : les caractères tapés ici sont envoyés à l&apos;ESP32</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="118"/>
+        <source>LF (\n)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="119"/>
+        <source>CR (\r)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="120"/>
+        <source>CR+LF (\r\n)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="121"/>
+        <source>Aucune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="122"/>
+        <source>Caractères envoyés quand on appuie sur Entrée</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="125"/>
+        <source>Texte brut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="126"/>
+        <source>Séquences ANSI interprétées</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="127"/>
+        <source>Mode d&apos;affichage des séquences d&apos;échappement reçues</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="129"/>
+        <source>Effacer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetreterminal.cpp" line="132"/>
+        <source>Entrée envoie :</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -281,7 +300,7 @@ de Temps</source>
     <name>Gamel</name>
     <message>
         <location filename="gamel.ui" line="20"/>
-        <location filename="gamel.ui" line="1532"/>
+        <location filename="gamel.ui" line="1530"/>
         <source>Gamelle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -292,7 +311,7 @@ de Temps</source>
         <location filename="gamel.ui" line="569"/>
         <location filename="gamel.ui" line="669"/>
         <location filename="gamel.ui" line="699"/>
-        <location filename="gamel.ui" line="1021"/>
+        <location filename="gamel.ui" line="1019"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -361,9 +380,11 @@ de Temps</source>
     <message>
         <location filename="gamel.ui" line="203"/>
         <location filename="gamel.ui" line="346"/>
-        <location filename="gamel.ui" line="2120"/>
-        <location filename="gamel.ui" line="2156"/>
-        <location filename="gamel.ui" line="2192"/>
+        <location filename="gamel.ui" line="2122"/>
+        <location filename="gamel.ui" line="2164"/>
+        <location filename="gamel.ui" line="2453"/>
+        <location filename="gamel.ui" line="2492"/>
+        <location filename="gamel.ui" line="2528"/>
         <source> kOhms</source>
         <translation type="unfinished"></translation>
     </message>
@@ -376,6 +397,7 @@ de Temps</source>
         <location filename="gamel.ui" line="239"/>
         <location filename="gamel.ui" line="382"/>
         <location filename="gamel.ui" line="629"/>
+        <location filename="gamel.ui" line="2211"/>
         <source>NC</source>
         <translation type="unfinished"></translation>
     </message>
@@ -440,203 +462,204 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="745"/>
+        <location filename="gamel.ui" line="744"/>
         <source>GAUCHE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="792"/>
-        <location filename="gamel.ui" line="808"/>
+        <location filename="gamel.ui" line="791"/>
+        <location filename="gamel.ui" line="807"/>
         <source>Tension directe de diode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="795"/>
+        <location filename="gamel.ui" line="794"/>
         <source>Vf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="814"/>
-        <location filename="gamel.ui" line="1844"/>
-        <location filename="gamel.ui" line="2228"/>
+        <location filename="gamel.ui" line="813"/>
+        <location filename="gamel.ui" line="1980"/>
+        <location filename="gamel.ui" line="2564"/>
         <source> V</source>
         <translation type="unfinished"> V</translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="837"/>
-        <location filename="gamel.ui" line="853"/>
+        <location filename="gamel.ui" line="836"/>
+        <location filename="gamel.ui" line="852"/>
         <source>R drain-source du transistor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="840"/>
+        <location filename="gamel.ui" line="839"/>
         <source>Rdson</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="862"/>
-        <location filename="gamel.ui" line="1061"/>
-        <location filename="gamel.ui" line="1319"/>
+        <location filename="gamel.ui" line="861"/>
+        <location filename="gamel.ui" line="1059"/>
+        <location filename="gamel.ui" line="1317"/>
+        <location filename="gamel.ui" line="2071"/>
         <source> Ohms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="912"/>
+        <location filename="gamel.ui" line="911"/>
         <source>IO26
 (PWM1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="940"/>
+        <location filename="gamel.ui" line="939"/>
         <source>IO27
 (PWM2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="986"/>
+        <location filename="gamel.ui" line="984"/>
         <source>DROIT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="997"/>
+        <location filename="gamel.ui" line="995"/>
         <source>Moteurs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1000"/>
+        <location filename="gamel.ui" line="998"/>
         <source>Configuration des moteurs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1011"/>
+        <location filename="gamel.ui" line="1009"/>
         <source>Moteur gauche</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1042"/>
-        <location filename="gamel.ui" line="1300"/>
+        <location filename="gamel.ui" line="1040"/>
+        <location filename="gamel.ui" line="1298"/>
         <source>R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1087"/>
-        <location filename="gamel.ui" line="1345"/>
+        <location filename="gamel.ui" line="1085"/>
+        <location filename="gamel.ui" line="1343"/>
         <source>L</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1106"/>
-        <location filename="gamel.ui" line="1364"/>
+        <location filename="gamel.ui" line="1104"/>
+        <location filename="gamel.ui" line="1362"/>
         <source> mH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1134"/>
-        <location filename="gamel.ui" line="1392"/>
+        <location filename="gamel.ui" line="1132"/>
+        <location filename="gamel.ui" line="1390"/>
         <source>Kphi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1156"/>
-        <location filename="gamel.ui" line="1414"/>
+        <location filename="gamel.ui" line="1154"/>
+        <location filename="gamel.ui" line="1412"/>
         <source> mNm/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1182"/>
-        <location filename="gamel.ui" line="1440"/>
+        <location filename="gamel.ui" line="1180"/>
+        <location filename="gamel.ui" line="1438"/>
         <source>I à vide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1201"/>
-        <location filename="gamel.ui" line="1459"/>
+        <location filename="gamel.ui" line="1199"/>
+        <location filename="gamel.ui" line="1457"/>
         <source>A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1227"/>
-        <location filename="gamel.ui" line="1485"/>
+        <location filename="gamel.ui" line="1225"/>
+        <location filename="gamel.ui" line="1483"/>
         <source>Inertie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1246"/>
-        <location filename="gamel.ui" line="1504"/>
+        <location filename="gamel.ui" line="1244"/>
+        <location filename="gamel.ui" line="1502"/>
         <source> g.cm2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1286"/>
+        <location filename="gamel.ui" line="1284"/>
         <source>Moteur droit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1535"/>
+        <location filename="gamel.ui" line="1533"/>
         <source>Paramètres généraux</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1545"/>
+        <location filename="gamel.ui" line="1543"/>
         <source>Masse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1564"/>
+        <location filename="gamel.ui" line="1562"/>
         <source> kg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1590"/>
+        <location filename="gamel.ui" line="1588"/>
         <source>Voie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1606"/>
-        <location filename="gamel.ui" line="1805"/>
-        <location filename="gamel.ui" line="2281"/>
-        <location filename="gamel.ui" line="2320"/>
-        <location filename="gamel.ui" line="2359"/>
+        <location filename="gamel.ui" line="1604"/>
+        <location filename="gamel.ui" line="1803"/>
+        <location filename="gamel.ui" line="2617"/>
+        <location filename="gamel.ui" line="2656"/>
+        <location filename="gamel.ui" line="2695"/>
         <source> mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1637"/>
+        <location filename="gamel.ui" line="1635"/>
         <source>Réflexion infrarouge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1649"/>
+        <location filename="gamel.ui" line="1647"/>
         <source>Moquette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1694"/>
+        <location filename="gamel.ui" line="1692"/>
         <source>Scotch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1750"/>
+        <location filename="gamel.ui" line="1748"/>
         <source>Résistance au roulement</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1789"/>
+        <location filename="gamel.ui" line="1787"/>
         <source>Diamètre d&apos;une roue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1828"/>
+        <location filename="gamel.ui" line="1964"/>
         <source>Tension de batterie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1867"/>
+        <location filename="gamel.ui" line="1826"/>
         <source>Rapport de réduction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1883"/>
+        <location filename="gamel.ui" line="1842"/>
         <source> : 1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -647,23 +670,23 @@ de Temps</source>
     </message>
     <message>
         <location filename="gamel.ui" line="1905"/>
-        <location filename="gamel.ui" line="1982"/>
+        <location filename="gamel.ui" line="1943"/>
         <source>Batterie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="gamel.ui" line="1908"/>
-        <location filename="gamel.ui" line="1968"/>
+        <location filename="gamel.ui" line="1929"/>
         <source>Modélisation de la batterie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1955"/>
+        <location filename="gamel.ui" line="1916"/>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1972"/>
+        <location filename="gamel.ui" line="1933"/>
         <source>Tension constante</source>
         <translation type="unfinished"></translation>
     </message>
@@ -673,7 +696,7 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="1994"/>
+        <location filename="gamel.ui" line="2052"/>
         <source>Rs</source>
         <translation type="unfinished"></translation>
     </message>
@@ -683,18 +706,23 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2036"/>
+        <location filename="gamel.ui" line="2260"/>
         <source>Tension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2063"/>
+        <location filename="gamel.ui" line="2246"/>
         <source>Courant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="gamel.ui" line="1881"/>
         <source> %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="gamel.ui" line="2267"/>
+        <source>Etat batterie</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -708,22 +736,22 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2101"/>
+        <location filename="gamel.ui" line="2434"/>
         <source>Rd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2140"/>
+        <location filename="gamel.ui" line="2476"/>
         <source>Rt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2176"/>
+        <location filename="gamel.ui" line="2512"/>
         <source>Rc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2212"/>
+        <location filename="gamel.ui" line="2548"/>
         <source>Vseuil</source>
         <translation type="unfinished"></translation>
     </message>
@@ -733,17 +761,17 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2265"/>
+        <location filename="gamel.ui" line="2601"/>
         <source>x</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2304"/>
+        <location filename="gamel.ui" line="2640"/>
         <source>y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2343"/>
+        <location filename="gamel.ui" line="2679"/>
         <source>h</source>
         <translation type="unfinished"></translation>
     </message>
@@ -753,7 +781,7 @@ de Temps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2396"/>
+        <location filename="gamel.ui" line="2732"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -762,13 +790,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2407"/>
-        <location filename="gamel.ui" line="2441"/>
+        <location filename="gamel.ui" line="2743"/>
+        <location filename="gamel.ui" line="2777"/>
         <source>0,000 V</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2430"/>
+        <location filename="gamel.ui" line="2766"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -777,12 +805,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2499"/>
+        <location filename="gamel.ui" line="2835"/>
         <source>axes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.ui" line="2036"/>
+        <location filename="gamel.ui" line="2003"/>
         <source>Charge</source>
         <translation type="unfinished"></translation>
     </message>
@@ -802,31 +830,31 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.cpp" line="415"/>
-        <location filename="gamel.cpp" line="439"/>
-        <location filename="gamel.cpp" line="441"/>
+        <location filename="gamel.cpp" line="442"/>
+        <location filename="gamel.cpp" line="468"/>
+        <location filename="gamel.cpp" line="470"/>
         <source>Fichier GML (*.gml)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.cpp" line="415"/>
+        <location filename="gamel.cpp" line="442"/>
         <source>Sauvegarder les données d&apos;une gamelle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.cpp" line="441"/>
+        <location filename="gamel.cpp" line="470"/>
         <source>Charger les données d&apos;une gamelle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.cpp" line="664"/>
+        <location filename="gamel.cpp" line="675"/>
         <source>Batterie déchargée</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="gamel.cpp" line="665"/>
+        <location filename="gamel.cpp" line="676"/>
         <source>Batterie complètement déchargée : la carte a été mise hors tension.
-Rechargez la batterie (curseur « Charge » de l'onglet Batterie), puis remettez la carte sous tension.</source>
+Rechargez la batterie (curseur « Charge » de l&apos;onglet Batterie), puis remettez la carte sous tension.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -834,8 +862,8 @@ Rechargez la batterie (curseur « Charge » de l'onglet Batterie), puis remettez
     <name>MainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="29"/>
-        <source>Simulateur de carte ESP32 v2.00</source>
-        <oldsource>Simulateur de carte PIC v1.04</oldsource>
+        <source>Simulateur de carte ESP32</source>
+        <oldsource>Simulateur de carte ESP32 v2.00</oldsource>
         <translation type="unfinished">PIC Board Simulator v1.04</translation>
     </message>
     <message>
@@ -844,112 +872,157 @@ Rechargez la batterie (curseur « Charge » de l'onglet Batterie), puis remettez
         <translation type="unfinished">&amp;Window</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="108"/>
+        <location filename="mainwindow.ui" line="109"/>
         <source>&amp;Aide</source>
         <translation type="unfinished">&amp;Help</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="114"/>
+        <location filename="mainwindow.ui" line="115"/>
         <source>&amp;Fichier</source>
         <translation type="unfinished">&amp;File</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="127"/>
+        <location filename="mainwindow.ui" line="129"/>
         <source>&amp;Cascader</source>
         <translation type="unfinished">&amp;Cascade</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="136"/>
+        <location filename="mainwindow.ui" line="138"/>
         <source>À &amp;propos</source>
         <translation type="unfinished">&amp;About</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="145"/>
+        <location filename="mainwindow.ui" line="147"/>
         <source>&amp;Ouvrir un programme...</source>
         <translation type="unfinished">&amp;Open program file...</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="148"/>
+        <location filename="mainwindow.ui" line="150"/>
         <source>Ctrl+O</source>
         <translation type="unfinished">Ctrl+O</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="157"/>
+        <location filename="mainwindow.ui" line="159"/>
         <source>&amp;Quitter</source>
         <translation type="unfinished">&amp;Quit</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="160"/>
+        <location filename="mainwindow.ui" line="162"/>
         <source>Ctrl+Q</source>
         <translation type="unfinished">Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="172"/>
+        <location filename="mainwindow.ui" line="174"/>
         <source>&amp;Recharger le programme</source>
         <translation type="unfinished">&amp;Reload program file</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="184"/>
+        <location filename="mainwindow.ui" line="182"/>
+        <source>Dialogue fichier du &amp;système</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="185"/>
+        <source>Ouvre le firmware avec la boîte de dialogue fichier du système (décoché : boîte simplifiée dédiée aux firmwares .bin)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="197"/>
         <source>&amp;Micro-contrôleur</source>
         <translation type="unfinished">&amp;Microcontroller</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="187"/>
+        <location filename="mainwindow.ui" line="200"/>
         <source>Alt+M</source>
         <translation type="unfinished">Alt+M</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="196"/>
+        <location filename="mainwindow.ui" line="209"/>
         <source>&amp;Gamelle</source>
         <translation type="unfinished">&amp;Gamel</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="199"/>
+        <location filename="mainwindow.ui" line="212"/>
         <source>Alt+G</source>
         <translation type="unfinished">Alt+G</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="208"/>
+        <location filename="mainwindow.ui" line="221"/>
         <source>&amp;Piste</source>
         <translation type="unfinished">&amp;Track</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="211"/>
+        <location filename="mainwindow.ui" line="224"/>
         <source>Alt+P</source>
         <translation type="unfinished">Alt+T</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="220"/>
+        <location filename="mainwindow.ui" line="233"/>
+        <source>&amp;Terminal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="236"/>
+        <source>Terminal série (UART0)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="239"/>
+        <source>Alt+T</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="248"/>
         <source>&amp;Oscilloscopes</source>
         <translation type="unfinished">&amp;Oscilloscopes</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="223"/>
+        <location filename="mainwindow.ui" line="251"/>
         <source>Alt+O</source>
         <translation type="unfinished">Alt+O</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="228"/>
+        <location filename="mainwindow.ui" line="256"/>
         <source>O&amp;rganiser</source>
         <translation type="unfinished">O&amp;rganize</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="236"/>
+        <location filename="mainwindow.ui" line="264"/>
         <source>Mode simple</source>
         <translation type="unfinished">Beginner</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="241"/>
+        <location filename="mainwindow.ui" line="269"/>
         <source>Mode complet</source>
         <translation type="unfinished">Expert</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="30"/>
+        <source>Simulateur de carte ESP32 v%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="connexion.h" line="28"/>
+        <location filename="connexion.h" line="31"/>
         <source>Connexion</source>
         <translation type="unfinished">Connection</translation>
+    </message>
+    <message>
+        <location filename="fenetrecartemicro.cpp" line="97"/>
+        <source>Choisir un firmware</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetrecartemicro.cpp" line="123"/>
+        <source>Dossier :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="fenetrecartemicro.cpp" line="127"/>
+        <source>Remonter au dossier parent</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

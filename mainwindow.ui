@@ -116,6 +116,7 @@
     </property>
     <addaction name="action_Ouvrir_un_programme"/>
     <addaction name="action_Recharger_le_programme"/>
+    <addaction name="action_Dialogue_systeme"/>
     <addaction name="separator"/>
     <addaction name="action_Quitter"/>
    </widget>
@@ -171,6 +172,17 @@
    </property>
    <property name="text">
     <string>&amp;Recharger le programme</string>
+   </property>
+  </action>
+  <action name="action_Dialogue_systeme">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dialogue fichier du &amp;système</string>
+   </property>
+   <property name="toolTip">
+    <string>Ouvre le firmware avec la boîte de dialogue fichier du système (décoché : boîte simplifiée dédiée aux firmwares .bin)</string>
    </property>
   </action>
   <action name="action_Microcontroleur">

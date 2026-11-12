@@ -73,6 +73,10 @@ private slots:
     void action_apropos() {  apropos->show();  }
     void on_action_Mode_simple_triggered();
     void on_action_Mode_complet_triggered();
+    // Option (menu Fichier, cochee/decochee) : boite de dialogue fichier du
+    // systeme ou boite simplifiee pour l'ouverture du firmware ; sauvegardee
+    // dans espsimu.ini (parametres.h).
+    void on_action_Dialogue_systeme_toggled(bool checked);
 
 public slots :
     void organiser();

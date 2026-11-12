@@ -370,7 +370,16 @@ void FenetreCarteMicro::on_pushButtonOuvrir_clicked()
             repertoireDepart = info.dir().absolutePath();
     }
 
-    QString fichier = choisirFirmware(this, repertoireDepart);
+    // Option sauvegardee dans espsimu.ini (menu Fichier) : boite de dialogue
+    // fichier du systeme au lieu de la boite simplifiee dediee aux firmwares.
+    QString fichier;
+    if (Parametres::getDialogueSysteme()) {
+        fichier = QFileDialog::getOpenFileName(this, tr("Choisir un firmware"),
+                                               repertoireDepart,
+                                               tr("Firmware ESP32 (*.bin)"));
+    } else {
+        fichier = choisirFirmware(this, repertoireDepart);
+    }
     if (fichier.isEmpty()) return;
 
     accepteFirmware(fichier);

@@ -51,3 +51,25 @@ QString Parametres::getPisteRecent()
 {
     return lire("Piste/dernier");
 }
+
+// Valeur booleenne : pas de passerelle par enregistrer/lire (dedies aux
+// chemins de fichiers). Defaut selon la plateforme : boite fichier du
+// systeme sous Windows (custom Qt pas plus jolie que la native, look
+// Windows attendu par les etudiants), boite simplifiee dediee aux
+// firmwares sous Linux.
+void Parametres::setDialogueSysteme(bool systeme)
+{
+    QSettings paramIni(cheminIni(), QSettings::IniFormat);
+    paramIni.setValue("Firmware/dialogueSysteme", systeme);   // ecrit au retour de la fonction
+}
+
+bool Parametres::getDialogueSysteme()
+{
+#ifdef Q_OS_WIN
+    static const bool defaut = true;    // Windows : boite systeme par defaut
+#else
+    static const bool defaut = false;   // Linux : boite simplifiee par defaut
+#endif
+    QSettings paramIni(cheminIni(), QSettings::IniFormat);
+    return paramIni.value("Firmware/dialogueSysteme", defaut).toBool();
+}
