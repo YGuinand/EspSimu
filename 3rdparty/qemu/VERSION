@@ -57,9 +57,11 @@
 #            Recharger x2 : re-upload -> reprogrammation + reset + reboot,
 #            sans trap. 0 periode figée, 0 symbole manquant. Historique
 #            M1-M4 et fix Recharger (2.11) : etude-faisabilite-wasm.md.
-#            Chromium : moteur aussi validé à la 2.11 (le picker natif
-#            showOpenFilePicker n'est pas interceptable en headless ; Qt
-#            l'utilise dès que l'API existe, qwasmlocalfileaccess.cpp).
+#            Chromium : validé aussi à la 2.20 via shim showOpenFilePicker
+#            (le picker natif n'est pas interceptable en headless ; Qt
+#            l'utilise dès que l'API existe, qwasmlocalfileaccess.cpp) :
+#            marche 43-61k it/s, pause 197 it/s, reprise + Recharger x2 OK.
+#            Recette harnais : build/val.mjs / val-cr.mjs (local).
 #            Livraison : livraison-wasm/make-dist.sh assemble
 #            build/espsimu-wasm.zip (vérifie le sha256 contre cette section).
 # Discipline identique au desktop : reecrire cette section a chaque
