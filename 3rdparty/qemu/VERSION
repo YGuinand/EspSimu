@@ -92,10 +92,28 @@
 #     67ae2268f55659403d43fbc90b3bd32f95d08a23696a34ad5a943a3f8bbb3a7c —
 #     artefact non charge par l'app (xtensa = ESP32) ; copies quand meme
 #     par la recette.
-#   VALIDATION DIAG NON FAITE sur ces artefacts : le firmware de smoke test
-#   (testEspSimu/.pio/build/full/firmware.factory.bin) n'est pas present sur
-#   la machine de ce build — a rejouer avant livraison :
-#     ESPSIMU_DIAG=1 ./espsimu --diag-autostart <firmware.bin>
+#   VALIDATION DIAG FAITE le 2026-11-12 sur yg-hp (Fedora 44, gcc 16.2.1-3
+#   20261029 — machine DIFFERENTE de celle du build, qui n'a pas testEspSimu :
+#   le firmware de smoke test y a ete reconstruit le jour meme, env full de
+#   PlatformIO). Artefact reinstalle dans 3rdparty/qemu/lib/ puis re-verifie
+#   par sha256 sur destination. Protocole :
+#     ESPSIMU_DIAG=1 ESPSIMU_DIAG_AUTOCLOSE=1 ./espSimu --diag-autostart
+#         testEspSimu/.pio/build/full/firmware.factory.bin
+#   avec appli espSimu 2.20 (pull 10516b3, rebuild Desktop_Debug, exe a la
+#   racine du depot) ; 5 resets a 8 s, dump 5 s apres chacun. Resultats :
+#   exit 0 ; EspDiag ACTIF, aucun "Symbole manquant" ; boot 0,13-0,14 s ;
+#   0 periode figee sur les 5 dumps ; rafales mur=virt=Qt ~110 ms ; teardown
+#   complet (main-loop SORTI, cleanup fini ~6 ms, close pass2 accept+quit) ;
+#   IO25 lit 128 mV en continu (zone morte ADC2, pot a 0 mV en batch) —
+#   conforme a la reference du 2026-10-24. Un dump "ecart UART" auto au 4e
+#   cycle (silence de boot 1314 ms > seuil 1300 ms) : benin, simple jitter
+#   (runs voisins 1,20-1,27 s). Controle croise le meme jour : meme protocole
+#   rejoue sur la lib du 28-10 (c04052df...) -> indistinguable ; un run avait
+#   montre 1485 mV en cours de session : reglage manuel du pot AN0 pendant le
+#   smoke (confirme), pas un comportement de lib. L'artefact 03-11 est
+#   reinstalle apres les essais croises et re-verifie (sha256 ci-dessus).
+#   Logs : build/run33-lib28oct-diag.log, run34-lib03nov-diag.log,
+#   run35-lib28oct-controle-diag.log.
 #   Tag pose au moment du build : libqemu-esp32-2026-11-03 (mem commit).
 #
 # Source buildee le 2026-10-28 (rejeu complet des deux scripts de generation
